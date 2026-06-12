@@ -9,47 +9,68 @@ import { Platform } from 'react-native';
 
 export const Colors = {
   light: {
-    text: '#000000',
-    background: '#ffffff',
-    backgroundElement: '#F0F0F3',
-    backgroundSelected: '#E0E1E6',
-    textSecondary: '#60646C',
+    text: '#3D3428',
+    background: '#F5F1E8',
+    backgroundElement: '#FDFCF9',
+    backgroundSelected: '#E8DCC8',
+    textSecondary: '#7A6F5D',
+    card: '#FDFCF9',
+    cardForeground: '#3D3428',
+    popover: '#FDFCF9',
+    popoverForeground: '#3D3428',
+    primary: '#C9A961',
+    primaryForeground: '#3D3428',
+    secondary: '#E8DCC8',
+    secondaryForeground: '#3D3428',
+    muted: '#EAE4D8',
+    mutedForeground: '#7A6F5D',
+    accent: '#D4AF37',
+    accentForeground: '#3D3428',
+    destructive: '#C87D5F',
+    destructiveForeground: '#FDFCF9',
+    border: 'rgba(61, 52, 40, 0.12)',
+    input: 'transparent',
+    inputBackground: '#FAF7F0',
+    switchBackground: '#D4C4A8',
+    ring: '#C9A961',
   },
   dark: {
-    text: '#ffffff',
-    background: '#000000',
-    backgroundElement: '#212225',
-    backgroundSelected: '#2E3135',
-    textSecondary: '#B0B4BA',
+    text: '#FAFAFA',
+    background: '#0A0A0A',
+    backgroundElement: '#171717',
+    backgroundSelected: '#262626',
+    textSecondary: '#A1A1A1',
+    card: '#0A0A0A',
+    cardForeground: '#FAFAFA',
+    popover: '#0A0A0A',
+    popoverForeground: '#FAFAFA',
+    primary: '#FAFAFA',
+    primaryForeground: '#171717',
+    secondary: '#262626',
+    secondaryForeground: '#FAFAFA',
+    muted: '#262626',
+    mutedForeground: '#A1A1A1',
+    accent: '#262626',
+    accentForeground: '#FAFAFA',
+    destructive: '#82181A',
+    destructiveForeground: '#FB2C36',
+    border: '#262626',
+    input: '#262626',
+    inputBackground: '#262626',
+    switchBackground: '#262626',
+    ring: '#525252',
   },
 } as const;
 
 export type ThemeColor = keyof typeof Colors.light & keyof typeof Colors.dark;
 
-export const Fonts = Platform.select({
-  ios: {
-    /** iOS `UIFontDescriptorSystemDesignDefault` */
-    sans: 'system-ui',
-    /** iOS `UIFontDescriptorSystemDesignSerif` */
-    serif: 'ui-serif',
-    /** iOS `UIFontDescriptorSystemDesignRounded` */
-    rounded: 'ui-rounded',
-    /** iOS `UIFontDescriptorSystemDesignMonospaced` */
-    mono: 'ui-monospace',
-  },
-  default: {
-    sans: 'normal',
-    serif: 'serif',
-    rounded: 'normal',
-    mono: 'monospace',
-  },
-  web: {
-    sans: 'var(--font-display)',
-    serif: 'var(--font-serif)',
-    rounded: 'var(--font-rounded)',
-    mono: 'var(--font-mono)',
-  },
-});
+export const Fonts = {
+  sans: 'DMSans',
+  sansItalic: 'DMSans-Italic',
+  serif: 'CrimsonPro',
+  serifItalic: 'CrimsonPro-Italic',
+  mono: 'DMSans',
+};
 
 export const Spacing = {
   half: 2,

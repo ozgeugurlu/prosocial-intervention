@@ -1,0 +1,136 @@
+import { useEffect, useState } from 'react';
+import { Pressable, StyleSheet, View } from 'react-native';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+  FadeIn,
+  FadeOut,
+} from 'react-native-reanimated';
+import { ChevronRight } from 'lucide-react-native';
+
+import { ThemedText } from '@/components/themed-text';
+import { Fonts, Spacing } from '@/constants/theme';
+import { useTheme } from '@/hooks/use-theme';
+
+interface WeekDrawerProps {
+  title: string;
+  subtitle: string;
+  isCurrent?: boolean;
+  defaultOpen?: boolean;
+  children?: React.ReactNode;
+}
+
+const AnimatedChevron = Animated.createAnimatedComponent(ChevronRight);
+
+export function WeekDrawer({
+  title,
+  subtitle,
+  isCurrent = false,
+  defaultOpen = false,
+  children,
+}: WeekDrawerProps) {
+  const [isOpen, setIsOpen] = useState(defaultOpen);
+  const theme = useTheme();
+
+  // Shared value for chevron rotation (0 deg is pointing right, 90 deg is pointing down)
+  const rotation = useSharedValue(defaultOpen ? 90 : 0);
+
+  useEffect(() => {
+    rotation.value = withTiming(isOpen ? 90 : 0, { duration: 200 });
+  }, [isOpen, rotation]);
+
+  const animatedChevronStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ rotate: `${rotation.value}deg` }],
+    };
+  });
+
+  return (
+    <View style={[styles.container, { backgroundColor: theme.card, shadowColor: theme.text }]}>
+      <Pressable
+        style={styles.header}
+        onPress={() => setIsOpen((prev) => !prev)}
+      >
+        <View style={styles.headerLeft}>
+          <Animated.View style={animatedChevronStyle}>
+            <ChevronRight size={22} color={theme.textSecondary} strokeWidth={2} />
+          </Animated.View>
+          <View style={styles.textGroup}>
+            <ThemedText style={styles.title}>{title}</ThemedText>
+            <ThemedText style={styles.subtitle} themeColor="textSecondary">
+              {subtitle}
+            </ThemedText>
+          </View>
+        </View>
+
+        {isCurrent && (
+          <View style={[styles.badge, { backgroundColor: theme.secondary }]}>
+            <ThemedText style={[styles.badgeText, { color: theme.primary }]}>
+              Current
+            </ThemedText>
+          </View>
+        )}
+      </Pressable>
+
+      {isOpen && (
+        <Animated.View entering={FadeIn.duration(200)} exiting={FadeOut.duration(150)}>
+          <View style={styles.content}>
+            {children}
+          </View>
+        </Animated.View>
+      )}
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    borderRadius: 24,
+    padding: Spacing.four,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.04,
+    shadowRadius: 8,
+    elevation: 2,
+    marginBottom: Spacing.four,
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  headerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  textGroup: {
+    gap: 2,
+  },
+  title: {
+    fontFamily: Fonts.serif,
+    fontSize: 22,
+    fontWeight: '700',
+    lineHeight: 28,
+  },
+  subtitle: {
+    fontFamily: Fonts.sans,
+    fontSize: 14,
+    fontWeight: '500',
+    lineHeight: 18,
+  },
+  badge: {
+    paddingHorizontal: 12,
+    paddingVertical: 5,
+    borderRadius: 14,
+  },
+  badgeText: {
+    fontFamily: Fonts.sans,
+    fontSize: 13,
+    fontWeight: '600',
+  },
+  content: {
+    marginTop: Spacing.four,
+    gap: 12,
+  },
+});
