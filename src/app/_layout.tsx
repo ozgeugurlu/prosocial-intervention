@@ -1,6 +1,6 @@
+import { useFonts } from 'expo-font';
 import { DarkTheme, DefaultTheme, ThemeProvider } from 'expo-router';
 import { useColorScheme } from 'react-native';
-import { useFonts } from 'expo-font';
 
 import { AnimatedSplashOverlay } from '@/components/animated-icon';
 import AppTabs from '@/components/app-tabs';
@@ -23,7 +23,7 @@ function AppContent() {
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
-  
+
   const [loaded, error] = useFonts({
     'DMSans': require('../../assets/fonts/DMSans-VariableFont_opsz,wght.ttf'),
     'DMSans-Italic': require('../../assets/fonts/DMSans-Italic-VariableFont_opsz,wght.ttf'),

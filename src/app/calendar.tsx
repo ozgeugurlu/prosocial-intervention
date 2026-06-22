@@ -1,4 +1,3 @@
-import React from 'react';
 import { Platform, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -12,6 +11,53 @@ import { useStudy } from '@/contexts/study-context';
 import { useTheme } from '@/hooks/use-theme';
 
 const WEEKDAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+const BADGES = {
+  1: {
+    title: 'First Steps',
+    subtitle: 'Week 1',
+    iconType: 'sprout',
+  },
+  2: {
+    title: 'Empathy Builder',
+    subtitle: 'Week 2',
+    iconType: 'heart',
+  },
+  3: {
+    title: 'Deep Listener',
+    subtitle: 'Week 3',
+    iconType: 'ear',
+  },
+  4: {
+    title: 'Placeholder 1',
+    subtitle: 'Week 4',
+    iconType: 'ear',
+  },
+  5: {
+    title: 'Placeholder 2',
+    subtitle: 'Week 5',
+    iconType: 'ear',
+  },
+  6: {
+    title: 'Placeholder 3',
+    subtitle: 'Week 6',
+    iconType: 'ear',
+  },
+  7: {
+    title: 'Placeholder 4',
+    subtitle: 'Week 7',
+    iconType: 'ear',
+  },
+  8: {
+    title: 'Placeholder 5',
+    subtitle: 'Week 8',
+    iconType: 'sprout',
+  },
+  9: {
+    title: 'Placeholder 6',
+    subtitle: 'Week 9',
+    iconType: 'heart',
+  },
+}
 
 export default function CalendarScreen() {
   const safeAreaInsets = useSafeAreaInsets();
@@ -20,7 +66,7 @@ export default function CalendarScreen() {
     bottom: safeAreaInsets.bottom + BottomTabInset + Spacing.three,
   };
   const theme = useTheme();
-  const { currentDay } = useStudy();
+  const { currentDay, currentWeek } = useStudy();
 
   const contentPlatformStyle = Platform.select({
     android: {
@@ -81,10 +127,15 @@ export default function CalendarScreen() {
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.badgesScroll}
           >
-            <BadgeCard title="First Steps" subtitle="Week 1" iconType="sprout" />
-            <BadgeCard title="Empathy Builder" subtitle="Week 2" iconType="heart" />
-            <BadgeCard title="Deep Listener" subtitle="Week 3" iconType="ear" />
-            <BadgeCard title="Locked Badge" subtitle="Week 4" iconType="sprout" isEarned={false} />
+            {Object.keys(BADGES).map((key) => (
+              <BadgeCard
+                key={key}
+                title={BADGES[key].title}
+                subtitle={BADGES[key].subtitle}
+                iconType={BADGES[key].iconType}
+                isEarned={currentWeek >= Number(key)}
+              />
+            ))}
           </ScrollView>
         </HomeCard>
 
@@ -106,44 +157,56 @@ export default function CalendarScreen() {
             <CalendarWeekRow
               weekNumber={1}
               badgeIconType="sprout"
-              isBadgeEarned={true}
+              isBadgeEarned={currentWeek > 1}
               days={getDaysForWeek(1)}
             />
             <CalendarWeekRow
               weekNumber={2}
               badgeIconType="heart"
-              isBadgeEarned={true}
+              isBadgeEarned={currentWeek > 2}
               days={getDaysForWeek(2)}
             />
             <CalendarWeekRow
               weekNumber={3}
               badgeIconType="ear"
-              isBadgeEarned={true}
+              isBadgeEarned={currentWeek > 3}
               days={getDaysForWeek(3)}
             />
             <CalendarWeekRow
               weekNumber={4}
               badgeIconType="sprout"
-              isBadgeEarned={false}
+              isBadgeEarned={currentWeek > 4}
               days={getDaysForWeek(4)}
             />
             <CalendarWeekRow
               weekNumber={5}
               badgeIconType="heart"
-              isBadgeEarned={false}
+              isBadgeEarned={currentWeek > 5}
               days={getDaysForWeek(5)}
             />
             <CalendarWeekRow
               weekNumber={6}
               badgeIconType="ear"
-              isBadgeEarned={false}
+              isBadgeEarned={currentWeek > 6}
               days={getDaysForWeek(6)}
             />
             <CalendarWeekRow
               weekNumber={7}
               badgeIconType="sprout"
-              isBadgeEarned={false}
+              isBadgeEarned={currentWeek >= 7}
               days={getDaysForWeek(7)}
+            />
+            <CalendarWeekRow
+              weekNumber={8}
+              badgeIconType="ear"
+              isBadgeEarned={currentWeek > 8}
+              days={getDaysForWeek(8)}
+            />
+            <CalendarWeekRow
+              weekNumber={9}
+              badgeIconType="sprout"
+              isBadgeEarned={currentWeek >= 9}
+              days={getDaysForWeek(9)}
             />
           </View>
         </HomeCard>

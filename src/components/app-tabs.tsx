@@ -1,9 +1,9 @@
-import { Tabs } from 'expo-router';
-import { View, Pressable, StyleSheet, Keyboard } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Home, MessageCircle, Image as ImageIcon, Calendar, Users } from 'lucide-react-native';
 import { useTheme } from '@/hooks/use-theme';
-import { useState, useEffect } from 'react';
+import { Tabs } from 'expo-router';
+import { Calendar, Home, Image as ImageIcon, MessageCircle, Users } from 'lucide-react-native';
+import { useEffect, useState } from 'react';
+import { Keyboard, Pressable, StyleSheet, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface TabBarProps {
   state: {
@@ -30,7 +30,7 @@ interface TabBarProps {
 
 const getIconComponent = (routeName: string) => {
   switch (routeName) {
-    case 'index':
+    case 'home':
       return Home;
     case 'chat':
       return MessageCircle;
@@ -73,7 +73,7 @@ function CustomTabBar({ state, descriptors, navigation }: TabBarProps) {
   const bottomOffset = Math.max(insets.bottom, 16);
 
   const isDark = theme.background === '#0A0A0A';
-  
+
   // Background of the tab bar itself (card background)
   const barBg = theme.card;
 
@@ -160,7 +160,7 @@ export default function AppTabs() {
       }}
     >
       <Tabs.Screen
-        name="index"
+        name="home"
         options={{
           title: 'Home',
         }}

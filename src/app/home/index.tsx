@@ -1,3 +1,4 @@
+import { useRouter } from 'expo-router';
 import { Lock, Play, Sun } from 'lucide-react-native';
 import { useEffect, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
@@ -17,7 +18,7 @@ import { storage } from '@/utils/storage';
 const DEFAULTS = {
   credits: 0,
   status: 'Bronze',
-  studyLength: 50, // total study duration in days
+  studyLength: 63, // total study duration in days
 };
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -34,6 +35,7 @@ function getGreeting(): string {
 export default function HomeScreen() {
   const theme = useTheme();
   const insets = useSafeAreaInsets();
+  const router = useRouter();
   const { currentWeek, daysElapsed } = useStudy();
 
   const [credits, setCredits] = useState(DEFAULTS.credits);
@@ -42,8 +44,8 @@ export default function HomeScreen() {
   // Load persisted values on mount
   useEffect(() => {
     (async () => {
-      const storedCredits = await storage.getItem('@peach_credits', DEFAULTS.credits);
-      const storedStatus = await storage.getItem('@peach_status', DEFAULTS.status);
+      const storedCredits = await storage.getItem('@percy_credits', DEFAULTS.credits);
+      const storedStatus = await storage.getItem('@percy_status', DEFAULTS.status);
       setCredits(storedCredits);
       setStatus(storedStatus);
     })();
@@ -102,6 +104,16 @@ export default function HomeScreen() {
             </ThemedText>
           </View>
 
+          {/* ── Study Progress ─────────────────────────────────────────── */}
+          <View style={[styles.studyRow, { marginVertical: Spacing.two }]}>
+            <View style={styles.studyTextGroup}>
+              <ThemedText style={styles.studyValue}>
+                {daysRemaining} days remaining
+              </ThemedText>
+            </View>
+            <CircularProgress percentage={studyPercentage} size={64} strokeWidth={6} />
+          </View>
+
           <View style={styles.statsRow}>
             <View style={[styles.statBox, { backgroundColor: theme.background }]}>
               <ThemedText style={[styles.statValue, { color: theme.primary }]}>
@@ -149,7 +161,7 @@ export default function HomeScreen() {
             <View style={styles.videoCtaLeft}>
               <Play size={18} color={theme.text} fill={theme.text} />
               <ThemedText style={[styles.videoCtaText, { color: theme.text }]}>
-                Watch today's video
+                {"Watch today's video"}
               </ThemedText>
             </View>
             <ThemedText style={[styles.videoDuration, { color: theme.text }]}>
@@ -161,24 +173,18 @@ export default function HomeScreen() {
         {/* ── Locked Evening Card ────────────────────────────────────── */}
         <HomeCard style={styles.lockedCard}>
           <Lock size={28} color={theme.textSecondary} strokeWidth={1.6} />
-          <ThemedText style={styles.lockedText} themeColor="textSecondary">
-            Available this evening
-          </ThemedText>
-        </HomeCard>
-
-        {/* ── Study Progress ─────────────────────────────────────────── */}
-        <HomeCard>
-          <View style={styles.studyRow}>
-            <View style={styles.studyTextGroup}>
-              <ThemedText style={styles.studyLabel} themeColor="textSecondary">
-                Study Progress
-              </ThemedText>
-              <ThemedText style={styles.studyValue}>
-                {daysRemaining} days remaining
+          <Pressable
+            style={[styles.videoCta, { backgroundColor: theme.primary }]}
+            onPress={() => {
+              router.push('/home/survey');
+            }}
+          >
+            <View style={styles.videoCtaLeft}>
+              <ThemedText style={[styles.videoCtaText, { color: theme.text }]}>
+                {"Take survey"}
               </ThemedText>
             </View>
-            <CircularProgress percentage={2} size={64} strokeWidth={6} />
-          </View>
+          </Pressable>
         </HomeCard>
       </ScrollView>
     </ThemedView>

@@ -8,7 +8,7 @@ export interface ChatMessage {
 /**
  * Scaffolding for OpenAI API Connector.
  * In the final version, this utility will communicate with OpenAI's chat completions API
- * to send the message history and retrieve responses from the chatbot "Kai".
+ * to send the message history and retrieve responses from the chatbot "Percy".
  */
 export async function sendMessageToOpenAI(history: ChatMessage[]): Promise<string> {
   // Scaffold: Place your API key here (e.g. from process.env or expo-constants)
@@ -20,10 +20,10 @@ export async function sendMessageToOpenAI(history: ChatMessage[]): Promise<strin
     content: msg.content,
   }));
 
-  // Add the system prompt defining Kai's behavior
+  // Add the system prompt defining Percy's behavior
   const systemPrompt = {
     role: 'system',
-    content: 'You are Kai, a supportive and warm companion. Your goal is to help the user become more prosocial and achieve their change goals. Keep answers relatively short, thoughtful, and friendly.'
+    content: 'You are Percy, a supportive and warm personal digital coach. Your goal is to help the user become more prosocial and achieve their change goals. Keep answers relatively short, thoughtful, and friendly.'
   };
 
   try {

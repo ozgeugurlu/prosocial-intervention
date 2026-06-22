@@ -1,10 +1,11 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export interface StorageSchema {
-  '@peach_credits': number;
-  '@peach_status': string;
-  '@peach_start_date': string;
-  '@peach_onboarded': boolean;
+  '@percy_credits': number;
+  '@percy_status': string;
+  '@percy_start_date': string;
+  '@percy_onboarded': boolean;
+  '@percy_username': string;
 }
 
 export const storage = {

@@ -6,7 +6,8 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { VideoCard } from '@/components/video-card';
 import { WeekDrawer } from '@/components/week-drawer';
-import { BottomTabInset, MaxContentWidth, Spacing, Fonts } from '@/constants/theme';
+import { BottomTabInset, Fonts, MaxContentWidth, Spacing } from '@/constants/theme';
+import { useStudy } from '@/contexts/study-context';
 import { useTheme } from '@/hooks/use-theme';
 
 export default function ExploreScreen() {
@@ -16,6 +17,7 @@ export default function ExploreScreen() {
     bottom: safeAreaInsets.bottom + BottomTabInset + Spacing.three,
   };
   const theme = useTheme();
+  const { currentWeek } = useStudy();
 
   const contentPlatformStyle = Platform.select({
     android: {
@@ -53,9 +55,9 @@ export default function ExploreScreen() {
 
         {/* Content Section */}
         <View style={styles.drawersContainer}>
-          <WeekDrawer title="Week 1" subtitle="6 items" />
-          <WeekDrawer title="Week 2" subtitle="6 items" />
-          <WeekDrawer title="Week 3" subtitle="6 items" isCurrent={true} defaultOpen={true}>
+          <WeekDrawer title="Week 1" subtitle="6 items" isCurrent={currentWeek == 1} defaultOpen={currentWeek == 1} />
+          <WeekDrawer title="Week 2" subtitle="6 items" isCurrent={currentWeek == 2} defaultOpen={currentWeek == 2} />
+          <WeekDrawer title="Week 3" subtitle="6 items" isCurrent={currentWeek == 3} defaultOpen={currentWeek == 3}>
             <VideoCard
               title="The Power of Active Listening"
               metadata="Monday • 4:30"
@@ -79,6 +81,12 @@ export default function ExploreScreen() {
               backText="Bringing your complete attention to the current moment without distraction or judgment."
             />
           </WeekDrawer>
+          <WeekDrawer title="Week 4" subtitle="6 items" isCurrent={currentWeek == 4} defaultOpen={currentWeek == 4} />
+          <WeekDrawer title="Week 5" subtitle="6 items" isCurrent={currentWeek == 5} defaultOpen={currentWeek == 5} />
+          <WeekDrawer title="Week 6" subtitle="6 items" isCurrent={currentWeek == 6} defaultOpen={currentWeek == 6} />
+          <WeekDrawer title="Week 7" subtitle="6 items" isCurrent={currentWeek == 7} defaultOpen={currentWeek == 7} />
+          <WeekDrawer title="Week 8" subtitle="6 items" isCurrent={currentWeek == 8} defaultOpen={currentWeek == 8} />
+          <WeekDrawer title="Week 9" subtitle="6 items" isCurrent={currentWeek == 9} defaultOpen={currentWeek == 9} />
         </View>
       </ThemedView>
     </ScrollView>

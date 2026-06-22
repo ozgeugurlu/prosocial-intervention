@@ -11,23 +11,25 @@ import {
   Keyboard,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Sparkles, Send } from 'lucide-react-native';
+import { Bird, Send } from 'lucide-react-native';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Fonts, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
+import { useStudy } from '@/contexts/study-context';
 import { sendMessageToOpenAI, ChatMessage } from '@/utils/openai';
 
 export default function ChatScreen() {
   const theme = useTheme();
   const insets = useSafeAreaInsets();
+  const { userName } = useStudy();
   const flatListRef = useRef<FlatList>(null);
 
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: '1',
       role: 'assistant',
-      content: "Hello! I'm Kai, your companion for this journey. I'm here to support you in becoming more prosocial and achieving your change goals. How are you feeling today?",
+      content: `Hello${userName ? ' ' + userName : ''}! I'm Percy, your personal digital coach. I'm here to support you in becoming more prosocial and achieving your change goals. How are you feeling today?`,
       timestamp: new Date(),
     },
   ]);
@@ -157,12 +159,12 @@ export default function ChatScreen() {
       ]}>
         <View style={styles.headerContent}>
           <View style={[styles.avatar, { backgroundColor: isDark ? theme.primary : theme.accent }]}>
-            <Sparkles size={22} color={isDark ? '#171717' : '#ffffff'} />
+            <Bird size={24} color={isDark ? '#171717' : '#ffffff'} />
           </View>
           <View style={styles.headerTitleContainer}>
-            <ThemedText style={styles.headerTitle}>Kai</ThemedText>
+            <ThemedText style={styles.headerTitle}>Percy</ThemedText>
             <ThemedText style={styles.headerSubtitle} themeColor="textSecondary">
-              Your companion
+              Personal digital coach
             </ThemedText>
           </View>
         </View>
@@ -186,12 +188,12 @@ export default function ChatScreen() {
           onContentSizeChange={() => scrollToBottom(false)}
         />
 
-        {/* Loading Indicator for Kai's typing */}
+        {/* Loading Indicator for Percy's typing */}
         {isLoading && (
           <View style={styles.loadingContainer}>
             <ActivityIndicator size="small" color={isDark ? theme.primary : theme.accent} />
             <ThemedText style={styles.loadingText} themeColor="textSecondary">
-              Kai is typing...
+              Percy is typing...
             </ThemedText>
           </View>
         )}

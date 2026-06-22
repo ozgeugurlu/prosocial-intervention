@@ -161,7 +161,7 @@ export default function ProfileScreen() {
           <View style={styles.headerTitleContainer}>
             <ThemedText style={styles.headerTitle}>Support Team</ThemedText>
             <ThemedText style={styles.headerSubtitle} themeColor="textSecondary">
-              We're here to help
+              {"We're here to help"}
             </ThemedText>
           </View>
         </View>
@@ -204,7 +204,7 @@ export default function ProfileScreen() {
         ]}>
           <Lightbulb size={16} color={isDark ? theme.primary : theme.accent} style={styles.infoIcon} />
           <ThemedText style={styles.infoText} themeColor="textSecondary">
-            This channel is for technical support only. For intervention-related questions, please chat with Kai.
+            This channel is for technical support only. For intervention-related questions, please chat with Percy.
           </ThemedText>
         </View>
 
