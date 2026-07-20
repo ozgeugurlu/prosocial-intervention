@@ -1,4 +1,4 @@
-import { storage } from '@/utils/storage';
+import { storage, DailyProgress, StudyProgress } from '@/utils/storage';
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 
 interface StudyContextType {
@@ -9,10 +9,12 @@ interface StudyContextType {
   isLoading: boolean;
   isOnboarded: boolean;
   userName: string | null;
+  progress: StudyProgress;
   setStartDate: (date: string) => Promise<void>;
   setUserName: (name: string) => Promise<void>;
   completeOnboarding: () => Promise<void>;
   resetStudy: () => Promise<void>;
+  updateProgress: (day: number, task: keyof DailyProgress, completed: boolean) => Promise<void>;
 }
 
 const StudyContext = createContext<StudyContextType | undefined>(undefined);
@@ -21,6 +23,7 @@ export function StudyProvider({ children }: { children: ReactNode }) {
   const [startDate, setStartDateState] = useState<string | null>(null);
   const [isOnboarded, setIsOnboarded] = useState(false);
   const [userName, setUserNameState] = useState<string | null>(null);
+  const [progress, setProgressState] = useState<StudyProgress>({});
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -42,6 +45,10 @@ export function StudyProvider({ children }: { children: ReactNode }) {
         await storage.setItem('@percy_start_date', today);
         setStartDateState(today);
       }
+
+      const storedProgress = await storage.getItem('@percy_progress', {});
+      setProgressState(storedProgress);
+
       setIsLoading(false);
     }
     init();
@@ -69,6 +76,28 @@ export function StudyProvider({ children }: { children: ReactNode }) {
     const today = new Date().toISOString();
     await storage.setItem('@percy_start_date', today);
     setStartDateState(today);
+    await storage.setItem('@percy_progress', {});
+    setProgressState({});
+    await storage.setItem('@percy_daily_scores', {});
+  };
+
+  const updateProgress = async (day: number, task: keyof DailyProgress, completed: boolean) => {
+    setProgressState((prev) => {
+      const updated = {
+        ...prev,
+        [day]: {
+          ...(prev[day] || {
+            'morning chat': false,
+            'morning video': false,
+            'night chat': false,
+            'night survey': false,
+          }),
+          [task]: completed,
+        },
+      };
+      storage.setItem('@percy_progress', updated);
+      return updated;
+    });
   };
 
   // Calculate days elapsed using calendar-day math
@@ -95,10 +124,12 @@ export function StudyProvider({ children }: { children: ReactNode }) {
         isLoading,
         isOnboarded,
         userName,
+        progress,
         setStartDate,
         setUserName,
         completeOnboarding,
         resetStudy,
+        updateProgress,
       }}
     >
       {children}

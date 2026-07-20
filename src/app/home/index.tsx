@@ -1,14 +1,16 @@
 import { useRouter } from 'expo-router';
-import { Lock, Play, Sun } from 'lucide-react-native';
+import { Lock, Play, Sun, X } from 'lucide-react-native';
 import { useEffect, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { Dimensions, Modal, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { CircularProgress } from '@/components/circular-progress';
 import { CollapsibleCard } from '@/components/collapsible-card';
 import { HomeCard } from '@/components/home-card';
+import { RollingScoreCard } from '@/components/rolling-score-card';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
+import { VideoPlayer } from '@/components/video-player';
 import { BottomTabInset, Fonts, Spacing } from '@/constants/theme';
 import { useStudy } from '@/contexts/study-context';
 import { useTheme } from '@/hooks/use-theme';
@@ -40,6 +42,7 @@ export default function HomeScreen() {
 
   const [credits, setCredits] = useState(DEFAULTS.credits);
   const [status, setStatus] = useState(DEFAULTS.status);
+  const [showVideoModal, setShowVideoModal] = useState(false);
 
   // Load persisted values on mount
   useEffect(() => {
@@ -154,9 +157,7 @@ export default function HomeScreen() {
 
           <Pressable
             style={[styles.videoCta, { backgroundColor: theme.primary }]}
-            onPress={() => {
-              // TODO: navigate to video player
-            }}
+            onPress={() => setShowVideoModal(true)}
           >
             <View style={styles.videoCtaLeft}>
               <Play size={18} color={theme.text} fill={theme.text} />
@@ -186,7 +187,38 @@ export default function HomeScreen() {
             </View>
           </Pressable>
         </HomeCard>
+        <RollingScoreCard />
       </ScrollView>
+
+      {/* ── Video Modal ──────────────────────────────────────────── */}
+      <Modal
+        visible={showVideoModal}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setShowVideoModal(false)}
+      >
+        <Pressable
+          style={styles.modalBackdrop}
+          onPress={() => setShowVideoModal(false)}
+        />
+        <View style={[styles.modalSheet, { backgroundColor: theme.card, borderColor: theme.border }]}>
+          <View style={styles.modalHandle} />
+          <View style={styles.modalHeader}>
+            <ThemedText style={styles.modalTitle}>{"Today's Video"}</ThemedText>
+            <Pressable
+              style={[styles.modalCloseButton, { backgroundColor: theme.background }]}
+              onPress={() => setShowVideoModal(false)}
+            >
+              <X size={18} color={theme.textSecondary} />
+            </Pressable>
+          </View>
+          <VideoPlayer
+            videoId="6RypXcD_u1w"
+            width={Dimensions.get('window').width * 0.9}
+            height={(Dimensions.get('window').width * 0.91) / 16 * 9}
+          />
+        </View>
+      </Modal>
     </ThemedView>
   );
 }
@@ -385,5 +417,46 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: '700',
     lineHeight: 28
+  },
+
+  // Video Modal
+  modalBackdrop: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.45)',
+  },
+  modalSheet: {
+    borderTopLeftRadius: 28,
+    borderTopRightRadius: 28,
+    borderWidth: 1,
+    borderBottomWidth: 0,
+    paddingBottom: 32,
+    paddingHorizontal: Spacing.four,
+    paddingTop: 12,
+  },
+  modalHandle: {
+    width: 40,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: 'rgba(61,52,40,0.18)',
+    alignSelf: 'center',
+    marginBottom: 16,
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: Spacing.three,
+  },
+  modalTitle: {
+    fontFamily: Fonts.serif,
+    fontSize: 20,
+    fontWeight: '700',
+  },
+  modalCloseButton: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

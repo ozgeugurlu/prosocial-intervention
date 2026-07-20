@@ -88,7 +88,12 @@ function CustomTabBar({ state, descriptors, navigation }: TabBarProps) {
         }
       ]}>
         {state.routes.map((route, index) => {
-          const { options } = descriptors[route.key];
+          const { options } = descriptors[route.key] as any;
+
+          if (options.href === null || route.name === 'index') {
+            return null;
+          }
+
           const isFocused = state.index === index;
 
           const onPress = () => {
@@ -159,6 +164,12 @@ export default function AppTabs() {
         headerShown: false,
       }}
     >
+      <Tabs.Screen
+        name="index"
+        options={{
+          href: null,
+        }}
+      />
       <Tabs.Screen
         name="home"
         options={{

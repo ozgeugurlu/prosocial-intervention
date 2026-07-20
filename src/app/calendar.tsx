@@ -133,7 +133,7 @@ export default function CalendarScreen() {
                 title={BADGES[key].title}
                 subtitle={BADGES[key].subtitle}
                 iconType={BADGES[key].iconType}
-                isEarned={currentWeek >= Number(key)}
+                isEarned={currentWeek > Number(key)}
               />
             ))}
           </ScrollView>

@@ -1,22 +1,45 @@
 import { Play } from 'lucide-react-native';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Dimensions, Linking, Pressable, StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
 import { Fonts, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
+import YoutubePlayer from 'react-native-youtube-iframe';
+
 
 interface VideoCardProps {
   title: string;
   metadata: string;
+  videoId?: string;
   onPress?: () => void;
 }
 
-export function VideoCard({ title, metadata, onPress }: VideoCardProps) {
+export function VideoCard({
+  title,
+  metadata,
+  videoId = '6RypXcD_u1w',
+  onPress,
+}: VideoCardProps) {
   const theme = useTheme();
+
+  const { width } = Dimensions.get('window');
+
+  const handlePress = async () => {
+    if (onPress) {
+      onPress();
+      return;
+    }
+
+    try {
+      await Linking.openURL(videoUrl);
+    } catch (error) {
+      console.error('Failed to open URL:', error);
+    }
+  };
 
   return (
     <Pressable
-      onPress={onPress}
+      onPress={handlePress}
       style={({ pressed }) => [
         styles.card,
         { backgroundColor: theme.background },
@@ -31,6 +54,9 @@ export function VideoCard({ title, metadata, onPress }: VideoCardProps) {
         <ThemedText style={styles.metadata} themeColor="textSecondary">
           {metadata}
         </ThemedText>
+        <YoutubePlayer
+          videoId={videoId}
+        />
       </View>
     </Pressable>
   );

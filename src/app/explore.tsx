@@ -61,9 +61,7 @@ export default function ExploreScreen() {
             <VideoCard
               title="The Power of Active Listening"
               metadata="Monday • 4:30"
-              onPress={() => {
-                // Video action
-              }}
+              videoId="6RypXcD_u1w"
             />
             <FlashcardCard
               frontText="Deep Listening"
@@ -72,9 +70,7 @@ export default function ExploreScreen() {
             <VideoCard
               title="Communication and Connection"
               metadata="Wednesday • 5:20"
-              onPress={() => {
-                // Video action
-              }}
+              videoId="6RypXcD_u1w"
             />
             <FlashcardCard
               frontText="Being Fully Present"

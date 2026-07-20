@@ -13,31 +13,18 @@ import { ArrowLeft, CheckCircle2 } from 'lucide-react-native';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Fonts, Spacing, MaxContentWidth } from '@/constants/theme';
+import { useStudy } from '@/contexts/study-context';
 import { useTheme } from '@/hooks/use-theme';
+import { storage } from '@/utils/storage';
+import { SURVEY_EMOTIONS } from '@/constants/survey';
 
-const EMOTIONS = [
-  'Joyful, energetic, enthusiastic',
-  'Nervous, anxious, worried',
-  'Awe, amazed, wonder',
-  'Sad, depressed, down',
-  'Content, relaxed, peaceful',
-  'Proud, sense of accomplishment, successful',
-  'Lonely, isolated, solitary',
-  'Grateful, appreciative, thankful',
-  'Angry, irritable, mad',
-  'Tired, fatigued, low energy',
-  'Amused, having fun, laughing',
-  'Curious, interested, wanting to explore',
-  'Fearful, afraid, scared',
-  'Compassionate, sympathetic, concern for others',
-  'Love, affection, warmth',
-  'Stressed, overburdened, pressured',
-];
+const EMOTIONS = SURVEY_EMOTIONS;
 
 export default function SurveyScreen() {
   const theme = useTheme();
   const insets = useSafeAreaInsets();
   const router = useRouter();
+  const { currentDay, updateProgress } = useStudy();
 
   // State
   const [currentStep, setCurrentStep] = useState(0); // 0: Adherence Check, 1: Intro/Instructions, 2: Emotion Ratings
@@ -54,11 +41,12 @@ export default function SurveyScreen() {
 
   const isFormValid = adherence !== null && Object.keys(ratings).length === EMOTIONS.length;
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!isFormValid) return;
-    
-    // As per instruction: "does nothing with them for now"
-    console.log('Survey Submitted:', { adherence, ratings });
+
+    const ratingValues = Object.values(ratings);
+    await storage.setDayScoreFromRatings(currentDay, ratingValues);
+    await updateProgress(currentDay, 'night survey', true);
     setSubmitted(true);
   };
 
@@ -290,7 +278,7 @@ export default function SurveyScreen() {
                       { backgroundColor: theme.card, borderColor: theme.border },
                     ]}
                   >
-                    <ThemedText style={styles.emotionGroupWords}>{group}</ThemedText>
+                    <ThemedText style={styles.emotionGroupWords}>{group.label}</ThemedText>
                     
                     <View style={styles.scaleRow}>
                       {[1, 2, 3, 4, 5].map((score) => {

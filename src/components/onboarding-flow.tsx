@@ -1,7 +1,8 @@
-import { Bird, Check, Play, Send } from 'lucide-react-native';
+import { Bird, Check, Send } from 'lucide-react-native';
 import { useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
+  Dimensions,
   FlatList,
   Keyboard,
   KeyboardAvoidingView,
@@ -16,6 +17,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { VideoCard } from '@/components/video-card';
+import { VideoPlayer } from '@/components/video-player';
 import { Fonts, Spacing } from '@/constants/theme';
 import { useStudy } from '@/contexts/study-context';
 import { useTheme } from '@/hooks/use-theme';
@@ -45,7 +47,6 @@ export function OnboardingFlow({ onDone }: OnboardingFlowProps) {
   const [step, setStep] = useState<'name' | 'welcome' | 'expectations' | 'video' | 'ready'>('name');
   const [videoWatched, setVideoWatched] = useState(false);
   const [isPlayingVideo, setIsPlayingVideo] = useState(false);
-  const [videoProgress, setVideoProgress] = useState(0);
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
 
   // Keyboard listeners for dynamic bottom spacing
@@ -243,28 +244,13 @@ export function OnboardingFlow({ onDone }: OnboardingFlowProps) {
     setIsTyping(false);
   };
 
-  // Simulated video player
   const startVideoPlayback = () => {
     setIsPlayingVideo(true);
-    setVideoProgress(0);
+  };
 
-    const duration = 4000; // 4 seconds total simulation
-    const intervalTime = 100;
-    const stepAmount = 100 / (duration / intervalTime);
-
-    const timer = setInterval(() => {
-      setVideoProgress((prev) => {
-        if (prev >= 100) {
-          clearInterval(timer);
-          setTimeout(() => {
-            setIsPlayingVideo(false);
-            handleFinishVideo();
-          }, 400);
-          return 100;
-        }
-        return prev + stepAmount;
-      });
-    }, intervalTime);
+  const handleVideoComplete = () => {
+    setIsPlayingVideo(false);
+    handleFinishVideo();
   };
 
   const handleFinishVideo = async () => {
@@ -498,7 +484,6 @@ export function OnboardingFlow({ onDone }: OnboardingFlowProps) {
         </View>
       </KeyboardAvoidingView>
 
-      {/* Simulated Premium Video Player Overlay */}
       {isPlayingVideo && (
         <View style={styles.videoPlayerOverlay}>
           <View style={styles.videoPlayerCard}>
@@ -509,33 +494,16 @@ export function OnboardingFlow({ onDone }: OnboardingFlowProps) {
               </ThemedText>
             </View>
 
-            <View style={styles.screenContainer}>
-              <Play size={44} color={isDark ? theme.primary : theme.accent} />
-              <ThemedText style={styles.videoSimulationLabel}>
-                Simulating Video Playback...
-              </ThemedText>
-              <ThemedText style={styles.videoTimer}>
-                {Math.round((videoProgress / 100) * 195)}s / 195s
-              </ThemedText>
-            </View>
-
-            <View style={styles.progressBarContainer}>
-              <View
-                style={[
-                  styles.progressBarFill,
-                  {
-                    width: `${videoProgress}%`,
-                    backgroundColor: isDark ? theme.primary : theme.accent,
-                  },
-                ]}
-              />
-            </View>
+            <VideoPlayer
+              videoId="6RypXcD_u1w"
+              autoPlay
+              width={Math.min(Dimensions.get('window').width - Spacing.four * 4, 368)}
+              onEnd={handleVideoComplete}
+            />
 
             <Pressable
               style={[styles.videoCompleteButton, { backgroundColor: isDark ? '#262626' : '#E8DCC8' }]}
-              onPress={() => {
-                setVideoProgress(100);
-              }}
+              onPress={handleVideoComplete}
             >
               <ThemedText style={styles.videoCompleteText}>Skip to End</ThemedText>
             </Pressable>
@@ -749,36 +717,6 @@ const styles = StyleSheet.create({
     color: '#a1a1a1',
     fontSize: 14,
     textAlign: 'center',
-  },
-  screenContainer: {
-    height: 180,
-    backgroundColor: '#0a0a0a',
-    borderRadius: 16,
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: 12,
-    borderWidth: 1,
-    borderColor: '#222',
-  },
-  videoSimulationLabel: {
-    color: '#ffffff',
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  videoTimer: {
-    color: '#888888',
-    fontSize: 12,
-    fontFamily: Fonts.sans,
-  },
-  progressBarContainer: {
-    height: 6,
-    backgroundColor: '#333333',
-    borderRadius: 3,
-    overflow: 'hidden',
-  },
-  progressBarFill: {
-    height: '100%',
-    borderRadius: 3,
   },
   videoCompleteButton: {
     height: 44,
