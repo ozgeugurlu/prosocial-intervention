@@ -1,107 +1,66 @@
-import { forwardRef, useImperativeHandle, useRef, useState } from 'react';
 import { Dimensions, StyleSheet, View } from 'react-native';
-import YoutubePlayer, { YoutubeIframeRef } from 'react-native-youtube-iframe';
-
-export interface VideoPlayerRef {
-  /** Start playback */
-  play: () => void;
-  /** Pause playback */
-  pause: () => void;
-  /** Seek to a position in seconds */
-  seekTo: (seconds: number) => void;
-  /** Current playing state */
-  isPlaying: boolean;
-}
+import { WebView } from 'react-native-webview';
 
 export interface VideoPlayerProps {
   /** YouTube video ID, e.g. "6RypXcD_u1w" */
   videoId: string;
-  /** Whether to start playing immediately on mount */
-  autoPlay?: boolean;
   /** Height of the player in px (defaults to 16:9 ratio based on window width) */
   height?: number;
   /** Width of the player in px (defaults to window width) */
   width?: number;
-  /** Called when the video finishes playing */
-  onEnd?: () => void;
-  /** Called when the video starts playing */
-  onPlay?: () => void;
-  /** Called when the video is paused */
-  onPause?: () => void;
-  /** Called with the current playback state string */
-  onStateChange?: (state: string) => void;
 }
 
-const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(
-  (
-    {
-      videoId,
-      autoPlay = false,
-      height,
-      width,
-      onEnd,
-      onPlay,
-      onPause,
-      onStateChange,
-    },
-    ref
-  ) => {
-    const playerRef = useRef<YoutubeIframeRef>(null);
-    const [playing, setPlaying] = useState(autoPlay);
+export function VideoPlayer({ videoId, height, width }: VideoPlayerProps) {
+  const { width: windowWidth } = Dimensions.get('window');
+  const playerWidth = width ?? windowWidth;
+  const playerHeight = height ?? Math.round((playerWidth / 16) * 9);
 
-    const { width: windowWidth } = Dimensions.get('window');
-    const playerWidth = width ?? windowWidth;
-    const playerHeight = height ?? Math.round((playerWidth / 16) * 9);
+  const embedUrl = `https://www.youtube.com/embed/${videoId}?playsinline=1&rel=0&autoplay=1&controls=0&modestbranding=1&iv_load_policy=3&autohide=1&mute=0`;
 
-    // Expose imperative controls to parent via ref
-    useImperativeHandle(ref, () => ({
-      play: () => setPlaying(true),
-      pause: () => setPlaying(false),
-      seekTo: (seconds: number) => {
-        playerRef.current?.seekTo(seconds, true);
-      },
-      get isPlaying() {
-        return playing;
-      },
-    }));
+  const html = `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+        <style>
+          * { margin: 0; padding: 0; box-sizing: border-box; }
+          html, body { width: 100%; height: 100%; background: #000; overflow: hidden; }
+          iframe { width: 100%; height: 100%; border: 0; }
+        </style>
+      </head>
+      <body>
+        <iframe
+          src="${embedUrl}"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen
+        ></iframe>
+      </body>
+    </html>
+  `;
 
-    const handleStateChange = (state: string) => {
-      onStateChange?.(state);
-      if (state === 'playing') {
-        setPlaying(true);
-        onPlay?.();
-      } else if (state === 'paused') {
-        setPlaying(false);
-        onPause?.();
-      } else if (state === 'ended') {
-        setPlaying(false);
-        onEnd?.();
-      }
-    };
-
-    return (
-      <View style={[styles.container, { width: playerWidth, height: playerHeight }]}>
-        <YoutubePlayer
-          ref={playerRef}
-          height={playerHeight}
-          width={playerWidth}
-          videoId={videoId}
-          play={playing}
-          onChangeState={handleStateChange}
-        />
-      </View>
-    );
-  }
-);
-
-VideoPlayer.displayName = 'VideoPlayer';
-export { VideoPlayer };
+  return (
+    <View style={[styles.container, { width: playerWidth, height: playerHeight, pointerEvents: 'none' }]}>
+      <WebView
+        source={{ html: html, baseUrl: "https://com.lledlow.prosocial" }}
+        style={styles.webview}
+        javaScriptEnabled
+        domStorageEnabled
+        allowsInlineMediaPlayback
+        mediaPlaybackRequiresUserAction={false}
+        scrollEnabled={false}
+      />
+    </View>
+  );
+}
 
 const styles = StyleSheet.create({
   container: {
     overflow: 'hidden',
     backgroundColor: '#000',
-    width: '90%',
-    height: '100%',
+    borderRadius: 12,
+  },
+  webview: {
+    flex: 1,
+    backgroundColor: '#000',
   },
 });

@@ -4,7 +4,7 @@ import { Dimensions, Linking, Pressable, StyleSheet, View } from 'react-native';
 import { ThemedText } from '@/components/themed-text';
 import { Fonts, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
-import YoutubePlayer from 'react-native-youtube-iframe';
+import { VideoPlayer } from './video-player';
 
 
 interface VideoCardProps {
@@ -54,7 +54,7 @@ export function VideoCard({
         <ThemedText style={styles.metadata} themeColor="textSecondary">
           {metadata}
         </ThemedText>
-        <YoutubePlayer
+        <VideoPlayer
           videoId={videoId}
         />
       </View>

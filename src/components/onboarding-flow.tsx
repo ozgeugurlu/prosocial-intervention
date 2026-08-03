@@ -496,9 +496,7 @@ export function OnboardingFlow({ onDone }: OnboardingFlowProps) {
 
             <VideoPlayer
               videoId="6RypXcD_u1w"
-              autoPlay
               width={Math.min(Dimensions.get('window').width - Spacing.four * 4, 368)}
-              onEnd={handleVideoComplete}
             />
 
             <Pressable
