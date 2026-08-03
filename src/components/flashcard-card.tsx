@@ -6,18 +6,24 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
+import { Image } from 'expo-image';
 import { RotateCw } from 'lucide-react-native';
 
 import { ThemedText } from '@/components/themed-text';
 import { Fonts, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
+import type { Flashcard } from '@/utils/schema';
 
 interface FlashcardCardProps {
+  /** Text to display on the front (used when type is 'text' or as fallback) */
   frontText: string;
+  /** Text to display on the back */
   backText: string;
+  /** Card type — determines how the front is rendered */
+  type?: Flashcard['type'];
 }
 
-export function FlashcardCard({ frontText, backText }: FlashcardCardProps) {
+export function FlashcardCard({ frontText, backText, type = 'text' }: FlashcardCardProps) {
   const theme = useTheme();
   const [isFlipped, setIsFlipped] = useState(false);
   const rotate = useSharedValue(0);
@@ -43,18 +49,51 @@ export function FlashcardCard({ frontText, backText }: FlashcardCardProps) {
     };
   });
 
-  return (
-    <Pressable onPress={flipCard} style={styles.cardWrapper}>
-      <View style={[styles.cardContainer, { backgroundColor: theme.background }]}>
-        {/* Front Side */}
-        <Animated.View style={[styles.cardSide, frontAnimatedStyle]}>
-          <ThemedText style={styles.frontText}>{frontText}</ThemedText>
+  const renderFrontContent = () => {
+    if (type === 'image') {
+      return (
+        <>
+          <Image
+            source={{ uri: frontText }}
+            style={styles.frontImage}
+            contentFit="cover"
+            transition={200}
+          />
           <View style={styles.flipPrompt}>
             <RotateCw size={12} color={theme.textSecondary} />
             <ThemedText style={styles.flipText} themeColor="textSecondary">
               Tap to flip
             </ThemedText>
           </View>
+        </>
+      );
+    }
+
+    return (
+      <>
+        <ThemedText style={styles.frontText}>{frontText}</ThemedText>
+        <View style={styles.flipPrompt}>
+          <RotateCw size={12} color={theme.textSecondary} />
+          <ThemedText style={styles.flipText} themeColor="textSecondary">
+            Tap to flip
+          </ThemedText>
+        </View>
+      </>
+    );
+  };
+
+  return (
+    <Pressable onPress={flipCard} style={styles.cardWrapper}>
+      <View style={[styles.cardContainer, { backgroundColor: theme.background }]}>
+        {/* Front Side */}
+        <Animated.View
+          style={[
+            styles.cardSide,
+            type === 'image' && styles.cardSideImage,
+            frontAnimatedStyle,
+          ]}
+        >
+          {renderFrontContent()}
         </Animated.View>
 
         {/* Back Side */}
@@ -88,6 +127,9 @@ const styles = StyleSheet.create({
     padding: Spacing.three,
     backfaceVisibility: 'hidden',
   },
+  cardSideImage: {
+    padding: 0,
+  },
   cardBack: {
     position: 'absolute',
     top: 0,
@@ -103,6 +145,12 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     marginBottom: Spacing.two,
   },
+  frontImage: {
+    width: '100%',
+    height: 180,
+    borderTopLeftRadius: 18,
+    borderTopRightRadius: 18,
+  },
   backText: {
     fontFamily: Fonts.sans,
     fontSize: 14,
@@ -115,6 +163,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
+    paddingVertical: Spacing.two,
   },
   flipText: {
     fontFamily: Fonts.sans,
