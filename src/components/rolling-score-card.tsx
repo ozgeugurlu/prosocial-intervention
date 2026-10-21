@@ -43,7 +43,7 @@ export function RollingScoreCard() {
 
   return (
     <CollapsibleCard
-      title="Prosociality Score"
+      title="Daily well-being"
       leading={
         <View
           style={[styles.iconCircle, { backgroundColor: `${theme.primary}20` }]}
@@ -71,7 +71,7 @@ export function RollingScoreCard() {
       ) : (
         <View style={styles.emptyState}>
           <ThemedText style={styles.emptyText} themeColor="textSecondary">
-            Complete your daily reflection to see your trend.
+            Complete your evening reflection to see how your days are going.
           </ThemedText>
         </View>
       )}

@@ -94,7 +94,7 @@ export function OnboardingFlow({ onDone }: OnboardingFlowProps) {
         {
           id: '2',
           role: 'assistant',
-          content: 'Before we get started on this journey, what is your name?',
+          content: 'Before we get started, what would you like me to call you? A nickname is perfect. It stays on your phone and is never sent to the research team.',
           timestamp: new Date(),
         },
       ]);
@@ -143,7 +143,7 @@ export function OnboardingFlow({ onDone }: OnboardingFlowProps) {
     const welcome1: ChatMessage = {
       id: (Date.now() + 1).toString(),
       role: 'assistant',
-      content: `Hi ${trimmed}, welcome! I am your personal digital coach, Percy. I'm excited to be working together.`,
+      content: `Hi ${finalName}, welcome! I am your personal digital coach, Percy. I'm excited to be working together.`,
       timestamp: new Date(),
     };
     setMessages((prev) => [...prev, welcome1]);
@@ -412,7 +412,7 @@ export function OnboardingFlow({ onDone }: OnboardingFlowProps) {
                     fontFamily: Fonts.sans,
                   },
                 ]}
-                placeholder="Type your name..."
+                placeholder="A nickname is fine..."
                 placeholderTextColor={isDark ? '#7a7a7a' : '#7A6F5D'}
                 value={inputValue}
                 onChangeText={setInputValue}

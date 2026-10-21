@@ -5,6 +5,8 @@ export default function HomeLayout() {
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="index" />
       <Stack.Screen name="survey" options={{ presentation: 'card' }} />
+      <Stack.Screen name="weekly-survey" options={{ presentation: 'card' }} />
+      <Stack.Screen name="goal" options={{ presentation: 'card' }} />
     </Stack>
   );
 }

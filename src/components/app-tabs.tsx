@@ -1,6 +1,6 @@
 import { useTheme } from '@/hooks/use-theme';
 import { Tabs } from 'expo-router';
-import { Calendar, Home, Image as ImageIcon, MessageCircle, Users } from 'lucide-react-native';
+import { BookOpen, Calendar, Home, MessageCircle, UserRound } from 'lucide-react-native';
 import { useEffect, useState } from 'react';
 import { Keyboard, Pressable, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -35,11 +35,11 @@ const getIconComponent = (routeName: string) => {
     case 'chat':
       return MessageCircle;
     case 'explore':
-      return ImageIcon;
+      return BookOpen;
     case 'calendar':
       return Calendar;
     case 'profile':
-      return Users;
+      return UserRound;
     default:
       return Home;
   }
@@ -131,7 +131,7 @@ function CustomTabBar({ state, descriptors, navigation }: TabBarProps) {
               key={route.key}
               accessibilityRole="button"
               accessibilityState={isFocused ? { selected: true } : {}}
-              accessibilityLabel={options.tabBarAccessibilityLabel}
+              accessibilityLabel={options.tabBarAccessibilityLabel ?? options.title}
               testID={options.tabBarTestID}
               onPress={onPress}
               onLongPress={onLongPress}
@@ -185,7 +185,7 @@ export default function AppTabs() {
       <Tabs.Screen
         name="explore"
         options={{
-          title: 'Gallery',
+          title: 'Library',
         }}
       />
       <Tabs.Screen
@@ -197,7 +197,7 @@ export default function AppTabs() {
       <Tabs.Screen
         name="profile"
         options={{
-          title: 'Profile',
+          title: 'Me',
         }}
       />
     </Tabs>

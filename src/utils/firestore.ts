@@ -1,6 +1,30 @@
-import { doc, getDoc, collection, getDocs, query, orderBy } from 'firebase/firestore';
+import { doc, getDoc, collection, getDocs, query, orderBy, where } from 'firebase/firestore';
 import { db } from './firebase';
-import { Flashcard, FlashcardWeek, Script, ScriptSegment } from './schema';
+import {
+  FaqItem,
+  Flashcard,
+  FlashcardWeek,
+  MediaItem,
+  Script,
+  ScriptSegment,
+  StudyConfig,
+  WeeklySurveyInstrument,
+} from './schema';
+import { DEFAULT_FAQ, DEFAULT_STUDY_CONFIG, PLACEHOLDER_WEEKLY_SURVEY } from '@/constants/content-defaults';
+
+function toSegment(segData: Record<string, any>): ScriptSegment {
+  return {
+    content: segData.content || '',
+    order: typeof segData.order === 'number' ? segData.order : 0,
+    title: segData.title || '',
+    type: segData.type,
+    mediaId: segData.mediaId,
+    options: Array.isArray(segData.options) ? segData.options : undefined,
+    replies: segData.replies,
+    reply: segData.reply,
+    placeholder: segData.placeholder,
+  };
+}
 
 /**
  * Parses any value to a Javascript Date object.
@@ -127,16 +151,13 @@ export async function getScript(scriptId: string): Promise<Script | null> {
     const segments: ScriptSegment[] = [];
 
     segmentsSnap.forEach((docSnap) => {
-      const segData = docSnap.data();
-      segments.push({
-        content: segData.content || '',
-        order: typeof segData.order === 'number' ? segData.order : 0,
-        title: segData.title || '',
-      });
+      segments.push(toSegment(docSnap.data()));
     });
 
     return {
       name: scriptData.name || '',
+      studyDay: scriptData.studyDay,
+      slot: scriptData.slot,
       createdAt: parseDate(scriptData.createdAt),
       updatedAt: parseDate(scriptData.updatedAt),
       segments,
@@ -167,12 +188,7 @@ export async function getScripts(): Promise<(Script & { id: string })[]> {
       const segments: ScriptSegment[] = [];
 
       segmentsSnap.forEach((segDoc) => {
-        const segData = segDoc.data();
-        segments.push({
-          content: segData.content || '',
-          order: typeof segData.order === 'number' ? segData.order : 0,
-          title: segData.title || '',
-        });
+        segments.push(toSegment(segDoc.data()));
       });
 
       scripts.push({
@@ -188,5 +204,59 @@ export async function getScripts(): Promise<(Script & { id: string })[]> {
   } catch (error) {
     console.error('Error loading all Scripts:', error);
     throw error;
+  }
+}
+
+/**
+ * Finds the scripted Percy session for a study day and time slot
+ * (scripts with matching `studyDay` and `slot` fields).
+ */
+export async function getSessionScript(
+  studyDay: number,
+  slot: 'morning' | 'evening',
+): Promise<(Script & { id: string }) | null> {
+  const q = query(collection(db, 'scripts'), where('studyDay', '==', studyDay), where('slot', '==', slot));
+  const snap = await getDocs(q);
+  const first = snap.docs[0];
+  if (!first) return null;
+  const script = await getScript(first.id);
+  return script ? { ...script, id: first.id } : null;
+}
+
+export async function getMediaItems(): Promise<MediaItem[]> {
+  const snap = await getDocs(collection(db, 'media'));
+  return snap.docs.map((d) => ({ ...(d.data() as Omit<MediaItem, 'id'>), id: d.id }));
+}
+
+export async function getMediaItem(id: string): Promise<MediaItem | null> {
+  const snap = await getDoc(doc(db, 'media', id));
+  return snap.exists() ? { ...(snap.data() as Omit<MediaItem, 'id'>), id: snap.id } : null;
+}
+
+export async function getFaq(): Promise<FaqItem[]> {
+  try {
+    const snap = await getDocs(collection(db, 'faq'));
+    const items = snap.docs.map((d) => ({ ...(d.data() as Omit<FaqItem, 'id'>), id: d.id }));
+    return items.length ? items.sort((a, b) => a.order - b.order) : DEFAULT_FAQ;
+  } catch {
+    return DEFAULT_FAQ;
+  }
+}
+
+export async function getWeeklyInstrument(): Promise<WeeklySurveyInstrument> {
+  try {
+    const snap = await getDoc(doc(db, 'surveys', 'weekly'));
+    return snap.exists() ? (snap.data() as WeeklySurveyInstrument) : PLACEHOLDER_WEEKLY_SURVEY;
+  } catch {
+    return PLACEHOLDER_WEEKLY_SURVEY;
+  }
+}
+
+export async function getStudyConfig(): Promise<StudyConfig> {
+  try {
+    const snap = await getDoc(doc(db, 'appConfig', 'study'));
+    return snap.exists() ? { ...DEFAULT_STUDY_CONFIG, ...(snap.data() as StudyConfig) } : DEFAULT_STUDY_CONFIG;
+  } catch {
+    return DEFAULT_STUDY_CONFIG;
   }
 }

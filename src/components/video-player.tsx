@@ -15,7 +15,7 @@ export function VideoPlayer({ videoId, height, width }: VideoPlayerProps) {
   const playerWidth = width ?? windowWidth;
   const playerHeight = height ?? Math.round((playerWidth / 16) * 9);
 
-  const embedUrl = `https://www.youtube.com/embed/${videoId}?playsinline=1&rel=0&autoplay=1&controls=0&modestbranding=1&iv_load_policy=3&autohide=1&mute=0`;
+  const embedUrl = `https://www.youtube-nocookie.com/embed/${videoId}?playsinline=1&rel=0&autoplay=1&controls=0&modestbranding=1&iv_load_policy=3&autohide=1&mute=0`;
 
   const html = `
     <!DOCTYPE html>

@@ -12,6 +12,7 @@
     "expo-glass-effect": "~56.0.4",
     "expo-image": "~56.0.9",
     "expo-linking": "~56.0.13",
+    "expo-notifications": "~56.0.0",
     "expo-router": "~56.2.8",
     "expo-splash-screen": "~56.0.10",
     "expo-status-bar": "~56.0.4",
@@ -36,9 +37,12 @@
     "react-native-worklets": "0.8.3"
   },
   "devDependencies": {
+    "@firebase/rules-unit-testing": "^5.0.2",
     "@types/react": "~19.2.2",
     "eslint": "^9.0.0",
     "eslint-config-expo": "~56.0.4",
+    "firebase-admin": "^13.10.0",
+    "firebase-tools": "^14.27.0",
     "typescript": "~6.0.3"
   },
   "scripts": {
@@ -47,7 +51,11 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web",
-    "lint": "expo lint"
+    "lint": "expo lint",
+    "typecheck": "tsc --noEmit",
+    "test:rules": "firebase emulators:exec --only firestore --project peach-rules-test \"node --test tests/firestore.rules.test.mjs\"",
+    "deploy:rules": "firebase deploy --only firestore:rules",
+    "admin": "node scripts/admin/peach-admin.mjs"
   },
   "private": true
 }

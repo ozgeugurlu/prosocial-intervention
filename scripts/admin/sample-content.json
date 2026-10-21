@@ -1,0 +1,93 @@
+{
+  "_README": "FORMAT EXAMPLE ONLY. Replace with the real Percy scripts, media and survey before launch. Upload with: npm run admin -- seed-content scripts/admin/sample-content.json",
+
+  "scripts": {
+    "day01-morning": {
+      "name": "Day 1 morning (example)",
+      "studyDay": 1,
+      "slot": "morning",
+      "segments": [
+        { "title": "Greeting", "type": "message", "content": "Good morning, {name}! This is our very first morning check-in." },
+        { "title": "Mood", "type": "choice", "content": "How are you feeling as you start your day?",
+          "options": ["Pretty good", "Okay", "A bit low"],
+          "replies": {
+            "Pretty good": "Love to hear it. Let's put that energy to good use.",
+            "Okay": "Okay is a perfectly fine place to start.",
+            "A bit low": "Thanks for being honest with me. Small kind acts can lift our own mood too."
+          } },
+        { "title": "Video intro", "type": "video", "mediaId": "why-kindness-matters",
+          "content": "Here is a short video about why small acts of kindness matter. It will be saved in your Library." },
+        { "title": "Plan", "type": "input", "content": "What is one small kind thing you could do for someone today?",
+          "placeholder": "e.g. Hold the door, text a friend", "reply": "That's a great plan. I'll check in with you tonight to hear how it went." },
+        { "title": "Close", "type": "message", "content": "Have a wonderful day!" }
+      ]
+    },
+    "day01-evening": {
+      "name": "Day 1 evening (example)",
+      "studyDay": 1,
+      "slot": "evening",
+      "segments": [
+        { "title": "Greeting", "type": "message", "content": "Good evening, {name}. Let's take a moment to look back on today." },
+        { "title": "Did it", "type": "choice", "content": "Did you get a chance to do your kind act today?",
+          "options": ["Yes", "Not yet"],
+          "replies": { "Yes": "Wonderful! How did it feel?", "Not yet": "That's okay. Tomorrow is a fresh chance." } },
+        { "title": "Reflect", "type": "input", "content": "In a sentence or two, what stood out to you today?", "reply": "Thank you for sharing that." },
+        { "title": "Audio", "type": "audio", "mediaId": "evening-wind-down", "content": "Here is a short audio to help you wind down." },
+        { "title": "Survey nudge", "type": "message", "content": "Before bed, please complete your evening reflection on the Home screen. See you tomorrow morning!" }
+      ]
+    }
+  },
+
+  "media": {
+    "why-kindness-matters": {
+      "title": "Why small acts of kindness matter",
+      "type": "video",
+      "youtubeId": "REPLACE_WITH_VIDEO_ID",
+      "durationLabel": "4:30",
+      "week": 1,
+      "description": "How small changes in how we treat others can boost well-being, health and relationships."
+    },
+    "evening-wind-down": {
+      "title": "Evening wind-down",
+      "type": "audio",
+      "url": "https://firebasestorage.googleapis.com/REPLACE_WITH_YOUR_FILE.mp3",
+      "durationLabel": "3:00",
+      "week": 1
+    },
+    "week1-tip": {
+      "title": "Tip: start small",
+      "type": "text",
+      "week": 1,
+      "availableFromDay": 2,
+      "body": "The most lasting changes start small. A two-minute act of kindness you actually do beats a grand plan you never get to."
+    }
+  },
+
+  "surveys": {
+    "weekly": {
+      "version": "placeholder-v0",
+      "instructions": "REPLACE with your validated prosociality measure. Think about the past seven days. How often did you do each of the following?",
+      "scaleMin": 1,
+      "scaleMax": 5,
+      "minLabel": "Never",
+      "maxLabel": "Very often",
+      "items": [
+        { "id": "p1", "text": "Helped someone with a task or errand" },
+        { "id": "p2", "text": "Listened to someone who needed to talk" },
+        { "id": "p3", "text": "Shared something of mine with another person" },
+        { "id": "p4", "text": "Reached out to check on someone" },
+        { "id": "p5", "text": "Did something kind for a stranger" }
+      ]
+    }
+  },
+
+  "appConfig": {
+    "study": {
+      "studyLengthDays": 63,
+      "weeklySurveyOpenDays": 3,
+      "contactEmail": "REPLACE@georgetown.edu",
+      "irbProtocol": "REPLACE",
+      "irbContact": "REPLACE with IRB office phone/email"
+    }
+  }
+}

@@ -1,0 +1,86 @@
+rules_version = '2';
+
+// PEACH / Percy study app: Firestore security rules.
+//
+// Principles (see docs/IRB-data-flow.md):
+//  - A participant can read and write only their own subtree, keyed by their auth uid.
+//  - Study content (scripts, media, FAQ, surveys) is read-only to signed-in participants.
+//  - Research-team data (feedback, team replies, enrollment list) is written only
+//    with the Admin SDK / Firebase console, which bypasses these rules.
+//  - Nothing is publicly readable.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() { return request.auth != null; }
+    function isSelf(uid) { return signedIn() && request.auth.uid == uid; }
+    function onlyKeys(keys) { return request.resource.data.keys().hasOnly(keys); }
+
+    // ── Study content (managed by the research team) ───────────────────────
+    match /scripts/{scriptId} {
+      allow read: if signedIn();
+      match /segments/{segmentId} { allow read: if signedIn(); }
+    }
+    match /flashcards/{weekId} {
+      allow read: if signedIn();
+      match /cards/{cardId} { allow read: if signedIn(); }
+    }
+    match /media/{mediaId}   { allow read: if signedIn(); }
+    match /faq/{faqId}       { allow read: if signedIn(); }
+    match /surveys/{surveyId} { allow read: if signedIn(); }
+    match /appConfig/{docId} { allow read: if signedIn(); }
+
+    // ── Enrollment: pre-registered study IDs ───────────────────────────────
+    // A newly created account may read one ID and claim it if unclaimed.
+    // Listing IDs is never allowed.
+    match /enrollment/{studyId} {
+      allow get: if signedIn();
+      allow update: if signedIn()
+        && resource.data.get('claimedBy', null) == null
+        && request.resource.data.claimedBy == request.auth.uid
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['claimedBy', 'claimedAt'])
+        // The login placeholder email must belong to this study ID.
+        && request.auth.token.email == studyId.lower() + '@peach-study.invalid';
+    }
+
+    // ── Participant data ───────────────────────────────────────────────────
+    match /participants/{uid} {
+      allow read: if isSelf(uid);
+      allow create: if isSelf(uid)
+        && request.resource.data.studyId == request.auth.token.email.split('@')[0].upper();
+      // studyId can never be changed by the participant.
+      allow update: if isSelf(uid)
+        && request.resource.data.studyId == resource.data.studyId;
+      allow delete: if false;
+
+      match /days/{day}            { allow read, write: if isSelf(uid); }
+      match /dailySurveys/{day}    { allow read, create: if isSelf(uid); allow update, delete: if false; }
+      match /weeklySurveys/{week}  { allow read, create: if isSelf(uid); allow update, delete: if false; }
+      match /goals/{weekOf}        { allow read, create, update: if isSelf(uid); allow delete: if false; }
+      match /chatLogs/{sessionId}  { allow read, create, update: if isSelf(uid); allow delete: if false; }
+      match /unlocks/{mediaId}     { allow read, create, update: if isSelf(uid); allow delete: if false; }
+
+      // Participants may only send messages as themselves; team replies come from the Admin SDK.
+      match /support/{msgId} {
+        allow read: if isSelf(uid);
+        allow create: if isSelf(uid)
+          && onlyKeys(['from', 'text', 'createdAt'])
+          && request.resource.data.from == 'participant'
+          && request.resource.data.text is string
+          && request.resource.data.text.size() <= 2000;
+        allow update, delete: if false;
+      }
+
+      // Feedback written by the research team, read-only for the participant.
+      match /feedback/{week} {
+        allow read: if isSelf(uid);
+        allow write: if false;
+      }
+    }
+
+    // Everything else is closed.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

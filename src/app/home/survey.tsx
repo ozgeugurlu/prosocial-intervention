@@ -15,7 +15,8 @@ import { ThemedView } from '@/components/themed-view';
 import { Fonts, Spacing, MaxContentWidth } from '@/constants/theme';
 import { useStudy } from '@/contexts/study-context';
 import { useTheme } from '@/hooks/use-theme';
-import { storage } from '@/utils/storage';
+import { saveDailySurvey } from '@/utils/participant-data';
+import { computeAverageScore, storage } from '@/utils/storage';
 import { SURVEY_EMOTIONS } from '@/constants/survey';
 
 const EMOTIONS = SURVEY_EMOTIONS;
@@ -24,7 +25,8 @@ export default function SurveyScreen() {
   const theme = useTheme();
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const { currentDay, updateProgress } = useStudy();
+  const { uid, currentDay, updateProgress } = useStudy();
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   // State
   const [currentStep, setCurrentStep] = useState(0); // 0: Adherence Check, 1: Intro/Instructions, 2: Emotion Ratings
@@ -42,12 +44,23 @@ export default function SurveyScreen() {
   const isFormValid = adherence !== null && Object.keys(ratings).length === EMOTIONS.length;
 
   const handleSubmit = async () => {
-    if (!isFormValid) return;
+    if (!isFormValid || !adherence) return;
+    setSaveError(null);
 
-    const ratingValues = Object.values(ratings);
-    await storage.setDayScoreFromRatings(currentDay, ratingValues);
-    await updateProgress(currentDay, 'night survey', true);
-    setSubmitted(true);
+    // Ratings in SURVEY_EMOTIONS order (index 0..15).
+    const ratingValues = EMOTIONS.map((_, i) => ratings[i]);
+    const average = computeAverageScore(ratingValues);
+    try {
+      if (uid) {
+        await saveDailySurvey(uid, { day: currentDay, adherence, ratings: ratingValues, average });
+      }
+      await storage.setDayScore(currentDay, average);
+      await updateProgress(currentDay, 'night survey', true);
+      setSubmitted(true);
+    } catch (e) {
+      console.warn('Daily survey save failed', e);
+      setSaveError('We could not save your reflection. Please check your connection and try again.');
+    }
   };
 
   const isDark = theme.background === '#0A0A0A';
@@ -318,6 +331,9 @@ export default function SurveyScreen() {
                 );
               })}
 
+              {saveError && (
+                <ThemedText style={{ color: theme.destructive, textAlign: 'center' }}>{saveError}</ThemedText>
+              )}
               <View style={styles.buttonRow}>
                 <Pressable
                   style={[styles.navButtonSecondary, { borderColor: theme.border }]}

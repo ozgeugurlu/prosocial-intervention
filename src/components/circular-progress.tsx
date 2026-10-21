@@ -36,7 +36,7 @@ export function CircularProgress({
       rotation={0}
       lineCap="round"
     >
-      {(fill) => (
+      {(fill: number) => (
         <ThemedText style={{ fontFamily: Fonts.sans, fontWeight: '600', fontSize: size * 0.22 }}>
           {Math.round(fill)}%
         </ThemedText>

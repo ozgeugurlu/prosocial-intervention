@@ -31,7 +31,7 @@ export function VideoCard({
     }
 
     try {
-      await Linking.openURL(videoUrl);
+      await Linking.openURL(`https://www.youtube-nocookie.com/embed/${videoId}`);
     } catch (error) {
       console.error('Failed to open URL:', error);
     }

@@ -1,462 +1,223 @@
-import { useRouter } from 'expo-router';
-import { Lock, Play, Sun, X } from 'lucide-react-native';
-import { useEffect, useState } from 'react';
-import { Dimensions, Modal, Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { useRouter, type Href } from 'expo-router';
+import { Check, ChevronRight, ClipboardList, Flame, Lock, MessageCircle, Moon, PlayCircle, Sun } from 'lucide-react-native';
+import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { CircularProgress } from '@/components/circular-progress';
-import { CollapsibleCard } from '@/components/collapsible-card';
+import { GoalBoard } from '@/components/goal-board';
 import { HomeCard } from '@/components/home-card';
+import { ProsocialityCard } from '@/components/prosociality-card';
 import { RollingScoreCard } from '@/components/rolling-score-card';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { VideoPlayer } from '@/components/video-player';
+import { EVENING_OPENS_AT_HOUR, formatHour } from '@/constants/study';
 import { BottomTabInset, Fonts, Spacing } from '@/constants/theme';
 import { useStudy } from '@/contexts/study-context';
+import { useParticipantRecords } from '@/hooks/use-participant-records';
 import { useTheme } from '@/hooks/use-theme';
-import { storage } from '@/utils/storage';
+import { currentStreak, weeklySurveyWindow } from '@/utils/participation';
+import type { DailyProgress } from '@/utils/storage';
 
-// ─── Defaults ────────────────────────────────────────────────────────────────
-const DEFAULTS = {
-  credits: 0,
-  status: 'Bronze',
-  studyLength: 63, // total study duration in days
-};
-
-// ─── Helpers ─────────────────────────────────────────────────────────────────
 const DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
 function getGreeting(): string {
   const hour = new Date().getHours();
-  if (hour < 12) return 'Good Morning';
-  if (hour < 17) return 'Good Afternoon';
-  return 'Good Evening';
+  if (hour < 12) return 'Good morning';
+  if (hour < 17) return 'Good afternoon';
+  return 'Good evening';
 }
 
-// ─── Component ───────────────────────────────────────────────────────────────
+interface TaskRowProps {
+  icon: typeof Sun;
+  label: string;
+  done: boolean;
+  locked?: boolean;
+  lockedNote?: string;
+  onPress?: () => void;
+}
+
+function TaskRow({ icon: Icon, label, done, locked, lockedNote, onPress }: TaskRowProps) {
+  const theme = useTheme();
+  return (
+    <Pressable
+      onPress={locked || done ? undefined : onPress}
+      style={({ pressed }) => [styles.taskRow, { backgroundColor: theme.background }, pressed && !locked && !done && { opacity: 0.7 }]}
+      accessibilityRole="button"
+      accessibilityState={{ disabled: locked || done, checked: done }}
+    >
+      <Icon size={20} color={locked ? theme.textSecondary : theme.primary} />
+      <View style={{ flex: 1 }}>
+        <ThemedText style={[styles.taskLabel, done && styles.taskDone]} themeColor={locked ? 'textSecondary' : 'text'}>
+          {label}
+        </ThemedText>
+        {locked && lockedNote ? (
+          <ThemedText style={styles.taskNote} themeColor="textSecondary">
+            {lockedNote}
+          </ThemedText>
+        ) : null}
+      </View>
+      {done ? (
+        <View style={[styles.check, { backgroundColor: '#4CAF50' }]}>
+          <Check size={14} color="#fff" strokeWidth={3} />
+        </View>
+      ) : locked ? (
+        <Lock size={16} color={theme.textSecondary} />
+      ) : (
+        <ChevronRight size={18} color={theme.textSecondary} />
+      )}
+    </Pressable>
+  );
+}
+
 export default function HomeScreen() {
   const theme = useTheme();
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const { currentWeek, daysElapsed } = useStudy();
+  const { currentWeek, currentDay, daysElapsed, progress, userName, startDate } = useStudy();
+  const { goals, weekly, config } = useParticipantRecords();
 
-  const [credits, setCredits] = useState(DEFAULTS.credits);
-  const [status, setStatus] = useState(DEFAULTS.status);
-  const [showVideoModal, setShowVideoModal] = useState(false);
+  const today: Partial<DailyProgress> = progress[currentDay] ?? {};
+  const eveningOpen = new Date().getHours() >= EVENING_OPENS_AT_HOUR;
+  const eveningNote = `Opens at ${formatHour(EVENING_OPENS_AT_HOUR)}`;
+  const streak = currentStreak(progress, currentDay);
+  const studyLength = config.studyLengthDays;
+  const daysRemaining = Math.max(0, studyLength - daysElapsed);
+  const pct = Math.min(100, (daysElapsed / studyLength) * 100);
+  const window = weeklySurveyWindow(startDate, config.weeklySurveyOpenDays ?? 3);
+  const weeklyDone = weekly.some((w) => w.weekOf === window.weekOf);
+  const studyOver = currentDay > studyLength;
 
-  // Load persisted values on mount
-  useEffect(() => {
-    (async () => {
-      const storedCredits = await storage.getItem('@percy_credits', DEFAULTS.credits);
-      const storedStatus = await storage.getItem('@percy_status', DEFAULTS.status);
-      setCredits(storedCredits);
-      setStatus(storedStatus);
-    })();
-  }, []);
-
-  // Derived values
-  const weekDay = {
-    week: currentWeek,
-    dayName: DAY_NAMES[new Date().getDay()],
-  };
-
-  const daysRemaining = Math.max(0, DEFAULTS.studyLength - daysElapsed);
-  const studyPercentage = Math.min(100, (daysElapsed / DEFAULTS.studyLength) * 100);
+  const isDark = theme.background === '#0A0A0A';
+  const accent = isDark ? theme.primary : theme.accent;
+  const go = (href: Href) => router.push(href);
 
   return (
     <ThemedView style={styles.container}>
       <ScrollView
-        contentContainerStyle={[
-          styles.scrollContent,
-          {
-            paddingTop: insets.top + Spacing.four,
-            paddingBottom: BottomTabInset + Spacing.six,
-          },
-        ]}
+        contentContainerStyle={[styles.scroll, { paddingTop: insets.top + Spacing.four, paddingBottom: BottomTabInset + Spacing.six }]}
         showsVerticalScrollIndicator={false}
       >
-        {/* ── Week Badge ─────────────────────────────────────────────── */}
-        <View style={styles.badgeContainer}>
+        <View style={styles.badgeRow}>
           <View style={[styles.badge, { borderColor: theme.primary }]}>
             <View style={[styles.badgeDot, { backgroundColor: theme.primary }]} />
-            <ThemedText style={[styles.badgeText, { color: theme.text }]}>
-              Week {weekDay.week} • {weekDay.dayName}
+            <ThemedText style={styles.badgeText}>
+              Week {currentWeek} • {DAY_NAMES[new Date().getDay()]}
             </ThemedText>
           </View>
+          <Pressable
+            onPress={() => go('/calendar')}
+            style={[styles.badge, { borderColor: streak > 0 ? '#E8763A' : theme.border }]}
+            accessibilityLabel={`${streak} day streak`}
+          >
+            <Flame size={16} color={streak > 0 ? '#E8763A' : theme.textSecondary} fill={streak > 0 ? '#E8763A' : 'transparent'} />
+            <ThemedText style={styles.badgeText}>{streak}-day streak</ThemedText>
+          </Pressable>
         </View>
 
-        {/* ── Greeting ───────────────────────────────────────────────── */}
-        <View style={styles.greetingContainer}>
-          <ThemedText style={styles.greetingTitle}>{getGreeting()}</ThemedText>
-          <ThemedText style={styles.greetingSubtitle} themeColor="textSecondary">
-            Your journey continues.
+        <View style={styles.greeting}>
+          <ThemedText style={styles.greetingTitle}>
+            {getGreeting()}
+            {userName ? `, ${userName}` : ''}
+          </ThemedText>
+          <ThemedText style={styles.greetingSub} themeColor="textSecondary">
+            {studyOver ? 'You have completed the program. Thank you!' : 'Your journey continues.'}
           </ThemedText>
         </View>
 
-        {/* ── Progress Status ────────────────────────────────────────── */}
-        <CollapsibleCard
-          title="Progress Status"
-          leading={<View style={[styles.statusDot, { backgroundColor: '#4CAF50' }]} />}
-        >
-          <View style={styles.goalSection}>
-            <ThemedText style={styles.goalLabel} themeColor="textSecondary">
-              Your Change Goal
-            </ThemedText>
-            <ThemedText style={styles.goalText}>
-              Be more helpful, kind, and generous to others.
+        {/* Weekly survey (Sun–Tue by default) */}
+        {window.isOpen && !weeklyDone && (
+          <Pressable onPress={() => go('/home/weekly-survey')} style={[styles.weeklyCta, { backgroundColor: accent }]}>
+            <ClipboardList size={22} color={isDark ? '#171717' : '#3D3428'} />
+            <View style={{ flex: 1 }}>
+              <ThemedText style={[styles.weeklyTitle, { color: isDark ? '#171717' : '#3D3428' }]}>Your weekly survey is open</ThemedText>
+              <ThemedText style={[styles.weeklySub, { color: isDark ? '#171717' : '#3D3428' }]}>
+                About 3 minutes. It updates your prosociality score.
+              </ThemedText>
+            </View>
+            <ChevronRight size={20} color={isDark ? '#171717' : '#3D3428'} />
+          </Pressable>
+        )}
+
+        <GoalBoard goals={goals} />
+
+        {/* Today's tasks */}
+        <HomeCard>
+          <View style={styles.cardHeader}>
+            <ThemedText style={styles.cardTitle}>Today</ThemedText>
+            <ThemedText style={styles.cardMeta} themeColor="textSecondary">
+              Day {currentDay} of {studyLength}
             </ThemedText>
           </View>
+          <View style={styles.tasks}>
+            <ThemedText style={styles.section} themeColor="textSecondary">
+              Morning
+            </ThemedText>
+            <TaskRow icon={Sun} label="Morning chat with Percy" done={!!today['morning chat']} onPress={() => go('/chat')} />
+            <TaskRow icon={PlayCircle} label="Watch today's video" done={!!today['morning video']} onPress={() => go('/chat')} />
+            <ThemedText style={styles.section} themeColor="textSecondary">
+              Evening
+            </ThemedText>
+            <TaskRow
+              icon={Moon}
+              label="Evening chat with Percy"
+              done={!!today['night chat']}
+              locked={!eveningOpen}
+              lockedNote={eveningNote}
+              onPress={() => go('/chat')}
+            />
+            <TaskRow
+              icon={MessageCircle}
+              label="Evening reflection"
+              done={!!today['night survey']}
+              locked={!eveningOpen}
+              lockedNote={eveningNote}
+              onPress={() => go('/home/survey')}
+            />
+          </View>
+        </HomeCard>
 
-          {/* ── Study Progress ─────────────────────────────────────────── */}
-          <View style={[styles.studyRow, { marginVertical: Spacing.two }]}>
-            <View style={styles.studyTextGroup}>
-              <ThemedText style={styles.studyValue}>
+        {/* Study progress */}
+        <HomeCard>
+          <View style={styles.progressRow}>
+            <View style={{ flex: 1, gap: 4 }}>
+              <ThemedText style={styles.cardTitle}>Program progress</ThemedText>
+              <ThemedText themeColor="textSecondary" style={styles.cardMeta}>
                 {daysRemaining} days remaining
               </ThemedText>
             </View>
-            <CircularProgress percentage={studyPercentage} size={64} strokeWidth={6} />
+            <CircularProgress percentage={pct} size={64} strokeWidth={6} />
           </View>
-
-          <View style={styles.statsRow}>
-            <View style={[styles.statBox, { backgroundColor: theme.background }]}>
-              <ThemedText style={[styles.statValue, { color: theme.primary }]}>
-                {credits}
-              </ThemedText>
-              <ThemedText style={styles.statLabel} themeColor="textSecondary">
-                Credits Earned
-              </ThemedText>
-            </View>
-            <View style={[styles.statBox, { backgroundColor: theme.background }]}>
-              <ThemedText style={[styles.statValue, { color: theme.primary }]}>
-                {status}
-              </ThemedText>
-              <ThemedText style={styles.statLabel} themeColor="textSecondary">
-                Current Status
-              </ThemedText>
-            </View>
-          </View>
-        </CollapsibleCard>
-
-        {/* ── This Morning's Tasks ───────────────────────────────────── */}
-        <CollapsibleCard
-          title="This Morning's Tasks"
-          leading={
-            <View style={[styles.iconCircle, { backgroundColor: '#E8980820' }]}>
-              <Sun size={20} color="#E89808" strokeWidth={2.2} />
-            </View>
-          }
-        >
-          <View style={[styles.intentionBox, { backgroundColor: theme.background }]}>
-            <ThemedText style={styles.intentionLabel} themeColor="textSecondary">
-              Implementation Intention
-            </ThemedText>
-            <ThemedText style={styles.intentionText}>
-              If I see someone struggling with groceries, then I will offer to help carry them.
-            </ThemedText>
-          </View>
-
-          <Pressable
-            style={[styles.videoCta, { backgroundColor: theme.primary }]}
-            onPress={() => setShowVideoModal(true)}
-          >
-            <View style={styles.videoCtaLeft}>
-              <Play size={18} color={theme.text} fill={theme.text} />
-              <ThemedText style={[styles.videoCtaText, { color: theme.text }]}>
-                {"Watch today's video"}
-              </ThemedText>
-            </View>
-            <ThemedText style={[styles.videoDuration, { color: theme.text }]}>
-              4:30
-            </ThemedText>
-          </Pressable>
-        </CollapsibleCard>
-
-        {/* ── Locked Evening Card ────────────────────────────────────── */}
-        <HomeCard style={styles.lockedCard}>
-          <Lock size={28} color={theme.textSecondary} strokeWidth={1.6} />
-          <Pressable
-            style={[styles.videoCta, { backgroundColor: theme.primary }]}
-            onPress={() => {
-              router.push('/home/survey');
-            }}
-          >
-            <View style={styles.videoCtaLeft}>
-              <ThemedText style={[styles.videoCtaText, { color: theme.text }]}>
-                {"Take survey"}
-              </ThemedText>
-            </View>
-          </Pressable>
         </HomeCard>
+
+        <ProsocialityCard records={weekly} />
         <RollingScoreCard />
       </ScrollView>
-
-      {/* ── Video Modal ──────────────────────────────────────────── */}
-      <Modal
-        visible={showVideoModal}
-        transparent
-        animationType="slide"
-        onRequestClose={() => setShowVideoModal(false)}
-      >
-        <Pressable
-          style={styles.modalBackdrop}
-          onPress={() => setShowVideoModal(false)}
-        />
-        <View style={[styles.modalSheet, { backgroundColor: theme.card, borderColor: theme.border }]}>
-          <View style={styles.modalHandle} />
-          <View style={styles.modalHeader}>
-            <ThemedText style={styles.modalTitle}>{"Today's Video"}</ThemedText>
-            <Pressable
-              style={[styles.modalCloseButton, { backgroundColor: theme.background }]}
-              onPress={() => setShowVideoModal(false)}
-            >
-              <X size={18} color={theme.textSecondary} />
-            </Pressable>
-          </View>
-          <VideoPlayer
-            videoId="6RypXcD_u1w"
-            width={Dimensions.get('window').width * 0.9}
-            height={(Dimensions.get('window').width * 0.91) / 16 * 9}
-          />
-        </View>
-      </Modal>
     </ThemedView>
   );
 }
 
-// ─── Styles ──────────────────────────────────────────────────────────────────
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  scrollContent: {
-    paddingHorizontal: Spacing.four,
-    gap: Spacing.four,
-  },
-
-  // Badge
-  badgeContainer: {
-    alignItems: 'center',
-  },
-  badge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderRadius: 20,
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    gap: 8,
-  },
-  badgeDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-  },
-  badgeText: {
-    fontFamily: Fonts.sans,
-    fontSize: 14,
-    fontWeight: '600',
-  },
-
-  // Greeting
-  greetingContainer: {
-    alignItems: 'center',
-    gap: 4,
-  },
-  greetingTitle: {
-    fontFamily: Fonts.serif,
-    fontSize: 34,
-    fontWeight: '700',
-    lineHeight: 40,
-    textAlign: 'center',
-  },
-  greetingSubtitle: {
-    fontFamily: Fonts.sans,
-    fontSize: 16,
-    lineHeight: 22,
-    textAlign: 'center',
-  },
-
-  // Shared card innards
-  statusDot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-  },
-  iconCircle: {
-    width: 38,
-    height: 38,
-    borderRadius: 19,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-
-  // Goal section
-  goalSection: {
-    marginTop: Spacing.three,
-    gap: 4,
-  },
-  goalLabel: {
-    fontFamily: Fonts.sans,
-    fontSize: 13,
-    fontWeight: '500',
-    lineHeight: 18,
-  },
-  goalText: {
-    fontFamily: Fonts.sans,
-    fontSize: 17,
-    fontWeight: '500',
-    lineHeight: 24,
-  },
-
-  // Stats row
-  statsRow: {
-    flexDirection: 'row',
-    gap: 12,
-    marginTop: Spacing.three,
-  },
-  statBox: {
-    flex: 1,
-    borderRadius: 14,
-    paddingVertical: 14,
-    paddingHorizontal: 16,
-    gap: 2,
-  },
-  statValue: {
-    fontFamily: Fonts.serif,
-    fontSize: 28,
-    fontWeight: '700',
-    lineHeight: 34,
-  },
-  statLabel: {
-    fontFamily: Fonts.sans,
-    fontSize: 13,
-    fontWeight: '500',
-    lineHeight: 18,
-  },
-
-  // Implementation intention
-  intentionBox: {
-    marginTop: Spacing.three,
-    borderRadius: 14,
-    padding: 16,
-    gap: 6,
-  },
-  intentionLabel: {
-    fontFamily: Fonts.sans,
-    fontSize: 13,
-    fontWeight: '600',
-    lineHeight: 18,
-  },
-  intentionText: {
-    fontFamily: Fonts.sans,
-    fontSize: 16,
-    fontWeight: '400',
-    lineHeight: 23,
-  },
-
-  // Video CTA
-  videoCta: {
-    marginTop: 12,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    borderRadius: 14,
-    paddingVertical: 16,
-    paddingHorizontal: 20,
-  },
-  videoCtaLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-  },
-  videoCtaText: {
-    fontFamily: Fonts.serif,
-    fontSize: 17,
-    fontWeight: '700',
-    lineHeight: 22,
-  },
-  videoDuration: {
-    fontFamily: Fonts.sans,
-    fontSize: 15,
-    fontWeight: '500',
-  },
-
-  // Locked card
-  lockedCard: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 36,
-    gap: 10,
-  },
-  lockedText: {
-    fontFamily: Fonts.sans,
-    fontSize: 16,
-    fontWeight: '500',
-  },
-
-  // Study progress
-  studyRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  studyTextGroup: {
-    flex: 1,
-    gap: 2,
-    marginRight: Spacing.three,
-    position: 'relative'
-  },
-  studyLabel: {
-    fontFamily: Fonts.sans,
-    fontSize: 14,
-    fontWeight: '500',
-    lineHeight: 20,
-  },
-  studyValue: {
-    fontFamily: Fonts.serif,
-    fontSize: 22,
-    fontWeight: '700',
-    lineHeight: 28
-  },
-
-  // Video Modal
-  modalBackdrop: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.45)',
-  },
-  modalSheet: {
-    borderTopLeftRadius: 28,
-    borderTopRightRadius: 28,
-    borderWidth: 1,
-    borderBottomWidth: 0,
-    paddingBottom: 32,
-    paddingHorizontal: Spacing.four,
-    paddingTop: 12,
-  },
-  modalHandle: {
-    width: 40,
-    height: 4,
-    borderRadius: 2,
-    backgroundColor: 'rgba(61,52,40,0.18)',
-    alignSelf: 'center',
-    marginBottom: 16,
-  },
-  modalHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: Spacing.three,
-  },
-  modalTitle: {
-    fontFamily: Fonts.serif,
-    fontSize: 20,
-    fontWeight: '700',
-  },
-  modalCloseButton: {
-    width: 34,
-    height: 34,
-    borderRadius: 17,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
+  container: { flex: 1 },
+  scroll: { paddingHorizontal: Spacing.four, gap: Spacing.four, maxWidth: 680, width: '100%', alignSelf: 'center' },
+  badgeRow: { flexDirection: 'row', justifyContent: 'center', gap: 8, flexWrap: 'wrap' },
+  badge: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderRadius: 20, paddingVertical: 8, paddingHorizontal: 14, gap: 8 },
+  badgeDot: { width: 8, height: 8, borderRadius: 4 },
+  badgeText: { fontSize: 14, fontWeight: '600' },
+  greeting: { alignItems: 'center', gap: 4 },
+  greetingTitle: { fontFamily: Fonts.serif, fontSize: 34, fontWeight: '700', lineHeight: 40, textAlign: 'center' },
+  greetingSub: { fontSize: 16, lineHeight: 22, textAlign: 'center' },
+  weeklyCta: { flexDirection: 'row', alignItems: 'center', gap: 12, borderRadius: 20, padding: Spacing.three },
+  weeklyTitle: { fontSize: 16, fontWeight: '700' },
+  weeklySub: { fontSize: 13, opacity: 0.85 },
+  cardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline' },
+  cardTitle: { fontFamily: Fonts.serif, fontSize: 20, fontWeight: '700', lineHeight: 24 },
+  cardMeta: { fontSize: 13 },
+  tasks: { marginTop: Spacing.two, gap: Spacing.two },
+  section: { fontSize: 12, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.6, marginTop: Spacing.two },
+  taskRow: { flexDirection: 'row', alignItems: 'center', gap: 12, borderRadius: 14, paddingVertical: 12, paddingHorizontal: 14 },
+  taskLabel: { fontSize: 15, fontWeight: '600' },
+  taskDone: { textDecorationLine: 'line-through', opacity: 0.6 },
+  taskNote: { fontSize: 12 },
+  check: { width: 22, height: 22, borderRadius: 11, alignItems: 'center', justifyContent: 'center' },
+  progressRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
 });

@@ -1,56 +1,68 @@
-# Welcome to your Expo app 👋
+# PEACH: Percy prosocial intervention app
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Expo / React Native app for a 63-day (9-week) prosociality intervention. Participants check in with **Percy**, a fully scripted coach, every morning and evening; complete a nightly emotion reflection and a weekly prosociality survey; set a weekly goal and if-then plan; and see their streak, scores and participation feedback.
 
-## Get started
+All participant data is stored in the study's own Firebase project (`marsh-prosocial-intervention`) under a research-issued **study ID**. No names, emails or phone numbers are collected, and nothing is sent to an AI provider. See [`docs/IRB-data-flow.md`](docs/IRB-data-flow.md).
 
-1. Install dependencies
-
-   ```bash
-   npm install
-   ```
-
-2. Start the app
-
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+## Setup
 
 ```bash
-npm run reset-project
+npm install
+cp .env.example .env.local      # fill in the Firebase web-app config
+npx expo start
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+In Firebase console:
 
-### Other setup steps
+1. **Authentication → Sign-in method:** enable *Email/Password* (study IDs are mapped to placeholder `@peach-study.invalid` logins).
+2. **Firestore rules:** `npm run deploy:rules` (uses `firestore.rules`).
+3. **Study content:** edit `scripts/admin/sample-content.json` (or your own file) and upload with
+   `npm run admin -- seed-content path/to/content.json`. See [`docs/content-guide.md`](docs/content-guide.md).
+4. **Study IDs:** `npm run admin -- add-ids --range P- 1 300` pre-registers P-0001 … P-0300. Accounts can only be created for registered, unclaimed IDs.
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+The admin tool needs a service-account key: Firebase console → Project settings → Service accounts → *Generate new private key*, then `export GOOGLE_APPLICATION_CREDENTIALS=/secure/path/key.json`. Never commit the key.
 
-## Learn more
+## Research-team commands
 
-To learn more about developing your project with Expo, look at the following resources:
+| Command | What it does |
+|---|---|
+| `npm run admin -- add-ids P-0001 P-0002` | Pre-register study IDs |
+| `npm run admin -- reset-password P-0042 NewPass123` | Reset a participant's password (no email exists) |
+| `npm run admin -- unread` | List participant messages awaiting a reply |
+| `npm run admin -- reply P-0042 "Thanks, fixed!"` | Reply in the participant's Contact chat |
+| `npm run admin -- feedback P-0042 3 "Great week!"` | Write week-3 feedback shown in *My participation* |
+| `npm run admin -- export` | Export all data (JSON + one CSV per collection), keyed by study ID |
+| `npm run admin -- withdraw P-0042` | Delete a participant's data and login |
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+## App structure
 
-## Join the community
+| Area | Files |
+|---|---|
+| Login (study ID + password) | `src/contexts/auth-context.tsx`, `src/components/auth-screen.tsx` |
+| Percy intro → app tour → reminders | `src/components/onboarding-flow.tsx`, `src/components/tutorial.tsx` |
+| Scripted Percy chat with in-chat video/audio | `src/app/chat.tsx`, `src/utils/script-engine.ts`, `src/components/media-player.tsx` |
+| Home: tasks, reminder board, scores | `src/app/home/index.tsx`, `src/components/goal-board.tsx`, `src/components/prosociality-card.tsx` |
+| Weekly goal + if-then | `src/app/home/goal.tsx` |
+| Nightly reflection / weekly survey | `src/app/home/survey.tsx`, `src/app/home/weekly-survey.tsx` |
+| Streak + activity calendar | `src/app/calendar.tsx` |
+| Media library (unlocked items + flashcards) | `src/app/explore.tsx` |
+| Me: participation feedback, reminders, FAQ, contact, tour | `src/app/profile/*` |
+| Reminder notifications (local, on device) | `src/utils/notifications.ts` |
+| Firestore access | `src/utils/participant-data.ts`, `src/utils/firestore.ts` |
+| Metrics, streaks, evaluation logic | `src/utils/participation.ts` (`evaluateParticipation` is a placeholder for the team's design) |
 
-Join our community of developers creating universal apps.
+## Checks
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+```bash
+npm run typecheck
+npm run lint
+npm run test:rules    # Firestore security-rules tests (needs Java for the emulator)
+```
+
+## Before launch
+
+- Replace the placeholder weekly survey items with the validated measure (`/surveys/weekly`).
+- Replace `evaluateParticipation` thresholds and wording with the team's feedback design.
+- Confirm FAQ items marked `[CONFIRM]` match the approved consent form; set contact/IRB details in `/appConfig/study`.
+- Host videos/audio in Firebase Storage (`url`) rather than YouTube if the IRB prefers no third-party video service.
+- Choose the Firestore region/location and confirm the Google Cloud data-processing terms with your institution.
