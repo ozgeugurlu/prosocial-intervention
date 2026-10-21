@@ -63,6 +63,9 @@ function friendlyError(e: unknown): AuthError {
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  // While an account is being created and its study ID claimed, keep the app on
+  // the sign-up screen (so a failed claim can show its error there).
+  const [signingUp, setSigningUp] = useState(false);
 
   useEffect(
     () =>
@@ -89,6 +92,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (password.length < 8) throw new AuthError('Please choose a password of at least 8 characters.');
 
     let created: User | null = null;
+    setSigningUp(true);
     try {
       const cred = await createUserWithEmailAndPassword(auth, toLoginEmail(studyId), password);
       created = cred.user;
@@ -119,6 +123,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Roll back the auth account so the ID isn't left half-registered.
       if (created) await deleteUser(created).catch(() => undefined);
       throw friendlyError(e);
+    } finally {
+      setSigningUp(false);
     }
   };
 
@@ -128,7 +134,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, studyId: user ? studyIdFromUser(user) : null, isLoading, signIn, signUp, signOut }}
+      value={{
+        user: signingUp ? null : user,
+        studyId: user && !signingUp ? studyIdFromUser(user) : null,
+        isLoading,
+        signIn,
+        signUp,
+        signOut,
+      }}
     >
       {children}
     </AuthContext.Provider>

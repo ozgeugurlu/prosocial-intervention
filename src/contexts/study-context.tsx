@@ -60,16 +60,15 @@ export function StudyProvider({ children }: { children: ReactNode }) {
   const [reminders, setRemindersState] = useState<ReminderTimes | null>(null);
   const [userName, setUserNameState] = useState<string | null>(null);
   const [progress, setProgressState] = useState<StudyProgress>({});
-  const [isLoading, setIsLoading] = useState(true);
+  // The uid whose data has finished loading. Deriving isLoading from it means a
+  // freshly signed-in user never briefly sees another state (e.g. onboarding).
+  const [loadedFor, setLoadedFor] = useState<string | null>(null);
+  const isLoading = !!uid && loadedFor !== uid;
 
   useEffect(() => {
     let cancelled = false;
     async function load() {
-      if (!uid) {
-        setIsLoading(false);
-        return;
-      }
-      setIsLoading(true);
+      if (!uid) return;
 
       // Local cache first so the UI isn't blank while offline.
       const storedName = await storage.getItem('@percy_username', '');
@@ -102,7 +101,7 @@ export function StudyProvider({ children }: { children: ReactNode }) {
           setStartDateState(cachedStart || null);
         }
       }
-      if (!cancelled) setIsLoading(false);
+      if (!cancelled) setLoadedFor(uid);
     }
     load();
     return () => {
@@ -162,6 +161,7 @@ export function StudyProvider({ children }: { children: ReactNode }) {
     setIsOnboarded(false);
     setTutorialCompleted(false);
     setRemindersState(null);
+    setLoadedFor(null);
   };
 
   // Calendar-day math in the participant's local time zone
