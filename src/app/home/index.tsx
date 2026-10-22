@@ -106,6 +106,7 @@ export default function HomeScreen() {
               {DAY_NAMES[new Date().getDay()]}
             </ThemedText>
           </View>
+          {hasStarted && (
           <Pressable
             onPress={() => go('/calendar')}
             style={[styles.badge, { borderColor: streak > 0 ? '#E8763A' : theme.border }]}
@@ -114,6 +115,7 @@ export default function HomeScreen() {
             <Flame size={16} color={streak > 0 ? '#E8763A' : theme.textSecondary} fill={streak > 0 ? '#E8763A' : 'transparent'} />
             <ThemedText style={styles.badgeText}>{streak}-day streak</ThemedText>
           </Pressable>
+          )}
         </View>
 
         <View style={styles.greeting}>

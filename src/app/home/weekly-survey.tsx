@@ -14,6 +14,7 @@ import { ThemedView } from '@/components/themed-view';
 import { Fonts, Spacing } from '@/constants/theme';
 import { useStudy } from '@/contexts/study-context';
 import { useTheme } from '@/hooks/use-theme';
+import { DEMO } from '@/utils/demo';
 import { getWeeklyInstrument } from '@/utils/firestore';
 import { getWeeklySurveys, saveWeeklySurvey } from '@/utils/participant-data';
 import { scoreWeeklySurvey, weekOfFor } from '@/utils/participation';
@@ -35,7 +36,8 @@ export default function WeeklySurveyScreen() {
 
   useEffect(() => {
     getWeeklyInstrument().then(setInstrument);
-    if (uid) getWeeklySurveys(uid).then((r) => setAlready(r.some((x) => x.weekOf === weekOf)));
+    // The preview always shows the form so it can be reviewed.
+    if (uid && !DEMO) getWeeklySurveys(uid).then((r) => setAlready(r.some((x) => x.weekOf === weekOf)));
   }, [uid, weekOf]);
 
   const isDark = theme.isDark;

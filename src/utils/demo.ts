@@ -129,12 +129,40 @@ const store = (uid: string) => (stores[uid] ??= freshStore('P-DEMO'));
 
 // ─── Auth ────────────────────────────────────────────────────────────────────
 
-export function demoSignIn(studyId: string, isNew: boolean) {
-  const uid = `demo-${isNew ? 'new' : 'returning'}`;
-  stores[uid] = isNew ? freshStore(studyId) : stores[uid] ?? seasonedStore(studyId);
+export type DemoPersona = 'new' | 'tour' | 'prestart' | 'returning';
+
+/** Next Sunday at local midnight (today if today is Sunday is NOT used, so the countdown shows). */
+function upcomingSunday() {
+  const d = daysAgo(0);
+  d.setDate(d.getDate() + (7 - d.getDay() || 7));
+  return d;
+}
+
+/**
+ * Signs in as one of the preview personas:
+ *  - new: just created an account (Percy's welcome chat comes next)
+ *  - tour: finished the welcome chat (app tour + reminders come next)
+ *  - prestart: set up and waiting for their first Sunday
+ *  - returning: Day 11 of the program with history
+ */
+export function demoSignIn(studyId: string, persona: DemoPersona | boolean) {
+  const p: DemoPersona = persona === true ? 'new' : persona === false ? 'returning' : persona;
+  const uid = `demo-${p}-${Date.now()}`;
+  if (p === 'returning') {
+    stores[uid] = seasonedStore(studyId);
+    storage.setItem('@percy_username', 'Alex');
+  } else {
+    stores[uid] = freshStore(studyId);
+    if (p === 'tour' || p === 'prestart') {
+      Object.assign(stores[uid].profile, { onboarded: true, startDate: upcomingSunday().toISOString() });
+      storage.setItem('@percy_username', 'Alex');
+    }
+    if (p === 'prestart') {
+      Object.assign(stores[uid].profile, { tutorialCompleted: true, reminders: { morning: '08:30', evening: '20:00' } });
+    }
+    if (p === 'new') storage.removeItem('@percy_username');
+  }
   current = uid;
-  // The returning persona already chose a nickname during onboarding.
-  if (!isNew) storage.setItem('@percy_username', 'Alex');
   return { uid, email: `${studyId.toLowerCase()}@peach-study.invalid` };
 }
 export const demoCurrentUid = () => current;

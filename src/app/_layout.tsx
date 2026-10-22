@@ -7,9 +7,11 @@ import { AnimatedSplashOverlay } from '@/components/animated-icon';
 import AppTabs from '@/components/app-tabs';
 import { AuthScreen } from '@/components/auth-screen';
 import { OnboardingFlow } from '@/components/onboarding-flow';
+import { DemoPanel } from '@/components/demo-panel';
 import { Tutorial } from '@/components/tutorial';
 import { AuthProvider, useAuth } from '@/contexts/auth-context';
 import { StudyProvider, useStudy } from '@/contexts/study-context';
+import { DEMO } from '@/utils/demo';
 import { configureNotifications, scheduleReminders } from '@/utils/notifications';
 
 configureNotifications();
@@ -56,6 +58,7 @@ export default function RootLayout() {
         <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
           <AnimatedSplashOverlay />
           <AppContent />
+          {DEMO && <DemoPanel />}
         </ThemeProvider>
       </StudyProvider>
     </AuthProvider>

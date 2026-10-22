@@ -22,7 +22,7 @@ import {
 import { doc, runTransaction, serverTimestamp } from 'firebase/firestore';
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 
-import { DEMO, demoSignIn, demoSignOut } from '@/utils/demo';
+import { DEMO, demoSignIn, demoSignOut, type DemoPersona } from '@/utils/demo';
 import { auth, db } from '@/utils/firebase';
 
 const LOGIN_DOMAIN = 'peach-study.invalid';
@@ -41,6 +41,8 @@ interface AuthContextType {
   signIn: (studyId: string, password: string) => Promise<void>;
   signUp: (studyId: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
+  /** Preview builds only: switch to a sample participant. */
+  demoSwitch: (persona: DemoPersona | null) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -154,6 +156,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         signIn,
         signUp,
         signOut,
+        demoSwitch: (persona) => {
+          if (!DEMO) return;
+          setUser(persona ? (demoSignIn('P-0042', persona) as unknown as User) : null);
+        },
       }}
     >
       {children}
