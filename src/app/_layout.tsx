@@ -1,7 +1,7 @@
 import { useFonts } from 'expo-font';
-import { DarkTheme, DefaultTheme, ThemeProvider } from 'expo-router';
+import { DarkTheme, ThemeProvider } from 'expo-router';
 import { useEffect } from 'react';
-import { ActivityIndicator, useColorScheme, View } from 'react-native';
+import { ActivityIndicator, View } from 'react-native';
 
 import { AnimatedSplashOverlay } from '@/components/animated-icon';
 import AppTabs from '@/components/app-tabs';
@@ -15,6 +15,12 @@ import { DEMO } from '@/utils/demo';
 import { configureNotifications, scheduleReminders } from '@/utils/notifications';
 
 configureNotifications();
+
+// Navigator scenes are opaque navy, matching each screen's own background.
+const NAV_THEME = {
+  ...DarkTheme,
+  colors: { ...DarkTheme.colors, background: '#0B1E46', card: '#0B1E46', border: 'transparent' },
+};
 
 function AppContent() {
   const { user, isLoading: authLoading } = useAuth();
@@ -39,7 +45,6 @@ function AppContent() {
 }
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
 
   const [loaded, error] = useFonts({
     DMSans: require('../../assets/fonts/DMSans-VariableFont_opsz,wght.ttf'),
@@ -55,7 +60,7 @@ export default function RootLayout() {
   return (
     <AuthProvider>
       <StudyProvider>
-        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+        <ThemeProvider value={NAV_THEME}>
           <AnimatedSplashOverlay />
           <AppContent />
           {DEMO && <DemoPanel />}
