@@ -45,6 +45,8 @@ const NAVY = {
   onCta: '#0B1E46',
   userBubble: 'rgba(220, 227, 238, 0.20)',
   silver: '#C3CCD9',
+  /** Streak flame: soft aqua that sits calmly on navy. */
+  streak: '#8ED9D1',
   // Backdrop: bloom at the top, deep navy at the edges.
   backdrop: ['#3A62B0', '#1A3C82', '#0B1E46'],
   metalCard: ['rgba(255,255,255,0.16)', 'rgba(255,255,255,0.05)', 'rgba(255,255,255,0.11)'],

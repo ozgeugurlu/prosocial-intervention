@@ -101,7 +101,7 @@ export default function CalendarScreen() {
         {/* Streak */}
         <HomeCard style={styles.streakCard}>
           <View style={styles.streakMain}>
-            <Flame size={40} color="#E8763A" fill={streak > 0 ? '#E8763A' : 'transparent'} />
+            <Flame size={40} color="#E8763A" fill={streak > 0 ? theme.streak : 'transparent'} />
             <View>
               <ThemedText style={styles.streakNumber}>{streak}</ThemedText>
               <ThemedText themeColor="textSecondary" style={styles.streakLabel}>
@@ -144,7 +144,7 @@ export default function CalendarScreen() {
           </Pressable>
           {showRule && (
             <ThemedText style={styles.ruleLine} themeColor="textSecondary">
-              <ThemedText style={styles.ruleStrong}>4 green days in a week earns that week&apos;s badge:</ThemedText> a day turns
+              <ThemedText style={styles.ruleStrong}>4 green days in a week earns that week&apos;s badge:</ThemedText> A day turns
               green when you finish all 4: morning chat, video, evening chat and reflection.
             </ThemedText>
           )}

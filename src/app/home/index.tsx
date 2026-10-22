@@ -108,10 +108,10 @@ export default function HomeScreen() {
           {hasStarted && (
           <Pressable
             onPress={() => go('/calendar')}
-            style={[styles.badge, { borderColor: streak > 0 ? '#E8763A' : theme.border }]}
+            style={[styles.badge, { borderColor: streak > 0 ? theme.streak : theme.border }]}
             accessibilityLabel={`${streak} day streak`}
           >
-            <Flame size={16} color={streak > 0 ? '#E8763A' : theme.textSecondary} fill={streak > 0 ? '#E8763A' : 'transparent'} />
+            <Flame size={16} color={streak > 0 ? theme.streak : theme.textSecondary} fill={streak > 0 ? theme.streak : 'transparent'} />
             <ThemedText style={styles.badgeText}>{streak}-day streak</ThemedText>
           </Pressable>
           )}
