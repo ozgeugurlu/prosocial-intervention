@@ -44,8 +44,8 @@ const BADGES: { title: string; icon: BadgeIconType }[] = [
   { title: 'Steady Helper', icon: 'heart' },
   { title: 'Kindness Champion', icon: 'ear' },
 ];
-/** A week's badge is earned with at least this many active days in it. */
-const BADGE_MIN_ACTIVE_DAYS = 4;
+/** A week's badge is earned with this many green days (all four activities done) in that week. */
+const GREEN_DAYS_FOR_BADGE = 4;
 
 export default function CalendarScreen() {
   const theme = useTheme();
@@ -68,11 +68,16 @@ export default function CalendarScreen() {
     upcoming: { bg: theme.muted, fg: theme.textSecondary, border: 'transparent' },
   };
 
-  const weekActiveDays = (w: number) => {
+  const weekGreenDays = (w: number) => {
     let n = 0;
-    for (let d = w * 7 + 1; d <= Math.min((w + 1) * 7, currentDay); d++) if (isActiveDay(progress[d])) n++;
+    for (let d = w * 7 + 1; d <= Math.min((w + 1) * 7, currentDay); d++) if (dayState(progress, d, currentDay) === 'full') n++;
     return n;
   };
+  const thisWeek = Math.floor((currentDay - 1) / 7);
+  const greenThisWeek = hasStarted ? weekGreenDays(thisWeek) : 0;
+  const earnedCount = hasStarted ? BADGES.slice(0, weeks).filter((_, w) => weekGreenDays(w) >= GREEN_DAYS_FOR_BADGE).length : 0;
+  const thisBadge = BADGES[thisWeek];
+  const toGo = Math.max(0, GREEN_DAYS_FOR_BADGE - greenThisWeek);
 
   const selectedDate = startDate ? dateForStudyDay(startDate, selected) : null;
   const selectedProgress = progress[selected];
@@ -120,7 +125,43 @@ export default function CalendarScreen() {
 
         {/* Badges */}
         <HomeCard style={styles.card}>
-          <ThemedText style={styles.cardTitle}>Badges</ThemedText>
+          <View style={styles.badgeHead}>
+            <ThemedText style={styles.cardTitle}>Badges</ThemedText>
+            <ThemedText style={styles.badgeCount} themeColor="textSecondary">
+              {earnedCount} of {Math.min(weeks, BADGES.length)} earned
+            </ThemedText>
+          </View>
+          <ThemedText style={styles.badgeRule} themeColor="textSecondary">
+            Turn {GREEN_DAYS_FOR_BADGE} days green in a week to earn that week&apos;s badge. A day turns green when you
+            finish all four activities: both chats with Percy, the video and the evening reflection.
+          </ThemedText>
+          {hasStarted && thisBadge && (
+            <View style={[styles.goalBox, { backgroundColor: theme.background, borderColor: theme.border }]}>
+              <View style={styles.goalTop}>
+                <ThemedText style={styles.goalTitle}>
+                  {toGo === 0 ? `${thisBadge.title} earned!` : `This week: ${thisBadge.title}`}
+                </ThemedText>
+                <ThemedText style={styles.goalCount}>
+                  {Math.min(greenThisWeek, GREEN_DAYS_FOR_BADGE)}/{GREEN_DAYS_FOR_BADGE}
+                </ThemedText>
+              </View>
+              <View style={styles.pips}>
+                {Array.from({ length: GREEN_DAYS_FOR_BADGE }, (_, i) => (
+                  <View
+                    key={i}
+                    style={[styles.pip, { backgroundColor: i < greenThisWeek ? '#4CAF50' : theme.muted, borderColor: theme.border }]}
+                  />
+                ))}
+              </View>
+              <ThemedText style={styles.goalHint} themeColor="textSecondary">
+                {toGo === 0
+                  ? 'Nicely done. Keep going to grow your streak.'
+                  : toGo === 1
+                    ? 'One more green day to unlock it!'
+                    : `${toGo} more green days to unlock it.`}
+              </ThemedText>
+            </View>
+          )}
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.badges}>
             {BADGES.slice(0, weeks).map((b, w) => (
               <BadgeCard
@@ -128,7 +169,7 @@ export default function CalendarScreen() {
                 title={b.title}
                 subtitle={`Week ${w + 1}`}
                 iconType={b.icon}
-                isEarned={weekActiveDays(w) >= BADGE_MIN_ACTIVE_DAYS}
+                isEarned={hasStarted && weekGreenDays(w) >= GREEN_DAYS_FOR_BADGE}
               />
             ))}
           </ScrollView>
@@ -142,7 +183,7 @@ export default function CalendarScreen() {
               <View key={s} style={styles.legendItem}>
                 <View style={[styles.legendDot, { backgroundColor: colors[s].bg, borderColor: colors[s].border }]} />
                 <ThemedText themeColor="textSecondary" style={styles.legendText}>
-                  {s === 'full' ? 'All tasks' : s === 'partial' ? 'Some tasks' : 'Missed'}
+                  {s === 'full' ? 'Green: all 4 done' : s === 'partial' ? 'Some done' : 'Missed'}
                 </ThemedText>
               </View>
             ))}
@@ -227,6 +268,16 @@ const styles = StyleSheet.create({
   card: { gap: Spacing.three },
   cardTitle: { fontFamily: Fonts.serif, fontSize: 20, fontWeight: '700', lineHeight: 26 },
   badges: { flexDirection: 'row', gap: 12, paddingRight: Spacing.four },
+  badgeHead: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline' },
+  badgeCount: { fontSize: 13, fontWeight: '600' },
+  badgeRule: { fontSize: 14, lineHeight: 20 },
+  goalBox: { borderRadius: 14, borderWidth: 1, padding: Spacing.three, gap: 8 },
+  goalTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  goalTitle: { fontSize: 15, fontWeight: '700', flexShrink: 1 },
+  goalCount: { fontSize: 15, fontWeight: '700' },
+  pips: { flexDirection: 'row', gap: 6 },
+  pip: { flex: 1, height: 10, borderRadius: 5, borderWidth: 1 },
+  goalHint: { fontSize: 13 },
   legend: { flexDirection: 'row', gap: Spacing.three, flexWrap: 'wrap' },
   legendItem: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   legendDot: { width: 12, height: 12, borderRadius: 4, borderWidth: 1 },

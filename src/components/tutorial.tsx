@@ -54,7 +54,7 @@ const STEPS: Step[] = [
     icon: Flame,
     tab: 'Calendar tab',
     title: 'Keep your streak going',
-    body: 'The calendar records each day you check in. Complete at least one activity a day to build your streak, and see your prosociality score update after each weekly survey.',
+    body: 'The calendar records each day you check in. A day turns green when you finish all four activities. Turn 4 days green in a week to earn that week\'s badge, and keep checking in to build your streak.',
   },
   {
     icon: BookOpen,
