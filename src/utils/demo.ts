@@ -269,13 +269,19 @@ export const demoContent = {
   getMediaItem: async (id: string): Promise<MediaItem | null> => DEMO_MEDIA.find((m) => m.id === id) ?? null,
   getFlashcardWeeks: async (): Promise<(FlashcardWeek & { id: string })[]> => [
     {
+      id: 'onboarding',
+      name: 'Onboarding',
+      description: '',
+      week: -1,
+      cards: [{ front: 'What is an if-then plan?', back: 'A plan that links a situation to an action: "If X happens, then I will do Y."', type: 'text', order: 1 }],
+    },
+    {
       id: 'w1',
       name: 'Why kindness matters',
       description: '',
       week: 0,
       cards: [
         { front: 'Kindness and stress', back: 'Helping others is linked to lower stress and a better mood.', type: 'text', order: 2 },
-        { front: 'What is an if-then plan?', back: 'A plan that links a situation to an action: "If X happens, then I will do Y."', type: 'text', order: -1 },
       ],
     },
     {

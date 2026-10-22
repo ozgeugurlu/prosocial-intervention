@@ -1,5 +1,5 @@
 /**
- * Library: one drop-down per program week. Each open week lists, in order:
+ * Library: an Onboarding drop-down (content with week 0), then one drop-down per program week. Each open week lists, in order:
  *   1. the participant's if-then plan for that week (from week 2 on),
  *   2. the week's psychoeducation video (unless an item's `order` places it earlier),
  *   3. the rest of the week's videos, audio, messages and flashcards.
@@ -154,6 +154,26 @@ export default function LibraryScreen() {
         </View>
 
         <View>
+          {/* Onboarding: material from before Week 1 (week 0 in content), always open to view. */}
+          {(() => {
+            const entries = entriesFor(0);
+            if (entries.length === 0) return null;
+            return (
+              <WeekDrawer
+                title="Onboarding"
+                subtitle={`${entries.length} ${entries.length === 1 ? 'item' : 'items'}`}
+                defaultOpen={!hasStarted}
+              >
+                {entries.map((e, i) =>
+                  e.kind === 'media' ? (
+                    <MediaRow key={e.item.id} item={e.item} onPress={() => setOpen(e.item)} />
+                  ) : (
+                    <FlashcardCard key={`card-0-${i}`} frontText={e.card.front} backText={e.card.back} type={e.card.type} />
+                  ),
+                )}
+              </WeekDrawer>
+            );
+          })()}
           {Array.from({ length: weeks }, (_, i) => i + 1).map((week) => {
             const locked = week > reachedWeek;
             const entries = locked ? [] : entriesFor(week);

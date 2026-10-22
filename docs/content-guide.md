@@ -36,7 +36,7 @@ Each Library week holds **two videos and two flashcards** (plus, from week 2, th
 | `title`, `type` | `video`, `audio` or `text` |
 | `youtubeId` **or** `url` | `url` should be an https link to a file in Firebase Storage (recommended: no third party involved) |
 | `body` | Text for `text` items (informational messages) |
-| `week` | Which Library week (1–9) the item is listed under |
+| `week` | Which Library week (1–9) the item is listed under; `0` puts it in the **Onboarding** drop-down above Week 1 |
 | `psychoed` | `true` for the week's psychoeducation video; listed right after the participant's if-then plan unless other items have a lower `order` |
 | `day`, `order` | Day label shown on the row ("Monday") and position in the week (lower comes first; the psychoed video counts as 0, so use negative numbers to place something before it); flashcards share the same `order` numbers so videos and cards interleave |
 | `durationLabel`, `description` | Display only |
@@ -56,4 +56,4 @@ Each Library week holds **two videos and two flashcards** (plus, from week 2, th
 
 ## Flashcards (`/flashcards/{weekId}/cards/{cardId}`)
 
-`front`, `back`, `type`, and optional `order` (position among that week's videos). Each Library week unlocks on the Sunday the participant reaches it.
+`front`, `back`, `type`, and optional `order` (position among that week's videos). The week document's `week` is 0-indexed (0 = Week 1); use `-1` for the Onboarding drop-down. Onboarding is always open; each Library week unlocks on the Sunday the participant reaches it.
