@@ -52,7 +52,8 @@ export default function WeeklySurveyScreen() {
     setError(null);
     const s = scoreWeeklySurvey(instrument.items, responses, instrument.scaleMin, instrument.scaleMax);
     try {
-      await saveWeeklySurvey(uid, { weekOf, week: currentWeek, responses, score: s, instrumentVersion: instrument.version });
+      // The survey that opens on a Sunday covers the week that just ended.
+      await saveWeeklySurvey(uid, { weekOf, week: Math.max(1, currentWeek - 1), responses, score: s, instrumentVersion: instrument.version });
       setScore(s);
     } catch {
       setError('We could not save your survey. Please check your connection and try again.');

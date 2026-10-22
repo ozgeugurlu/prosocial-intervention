@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import Svg, { Circle, Line, Path, Text as SvgText } from 'react-native-svg';
 
@@ -39,6 +39,8 @@ export function LineChart({
   const strokeColor = color ?? theme.primary;
   const plotHeight = height - CHART_PADDING.top - CHART_PADDING.bottom;
 
+  // Fit the chart to its container once measured, so it never overflows the card.
+  const [measured, setMeasured] = useState(0);
   const plottedPoints = useMemo(
     () =>
       data
@@ -57,7 +59,7 @@ export function LineChart({
     );
   }
 
-  const chartWidth = Math.max(240, data.length * 56);
+  const chartWidth = measured > 0 ? measured : Math.max(240, data.length * 56);
   const plotWidth = chartWidth - CHART_PADDING.left - CHART_PADDING.right;
 
   const toX = (index: number) =>
@@ -81,7 +83,7 @@ export function LineChart({
     .join(' ');
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container} onLayout={(e) => setMeasured(Math.floor(e.nativeEvent.layout.width))}>
       <Svg width={chartWidth} height={height}>
         {gridValues.map((value) => {
           const y = toY(value);
