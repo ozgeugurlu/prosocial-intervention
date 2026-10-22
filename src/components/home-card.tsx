@@ -1,5 +1,7 @@
 import { PropsWithChildren } from 'react';
-import { StyleSheet, View, ViewStyle } from 'react-native';
+import { StyleSheet, ViewStyle } from 'react-native';
+
+import { MetalSurface } from '@/components/metal-surface';
 
 import { Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
@@ -16,18 +18,19 @@ export function HomeCard({ children, style }: PropsWithChildren<HomeCardProps>) 
   const theme = useTheme();
 
   return (
-    <View
+    <MetalSurface
+      finish="card"
       style={[
         styles.card,
         {
-          backgroundColor: theme.card,
-          shadowColor: theme.text,
+          shadowColor: theme.isDark ? '#000000' : '#2A3440',
+          borderColor: theme.border,
         },
         style,
       ]}
     >
       {children}
-    </View>
+    </MetalSurface>
   );
 }
 
@@ -36,8 +39,9 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     padding: Spacing.four,
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.04,
-    shadowRadius: 8,
-    elevation: 2,
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    elevation: 3,
+    borderWidth: StyleSheet.hairlineWidth,
   },
 });

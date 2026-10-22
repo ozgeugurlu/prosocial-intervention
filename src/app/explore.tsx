@@ -62,8 +62,8 @@ export default function LibraryScreen() {
   const shown = filter === 'all' ? available : available.filter((m) => m.type === filter);
   const cardWeeks = weeks.filter((w) => w.week + 1 <= currentWeek);
 
-  const isDark = theme.background === '#0A0A0A';
-  const accent = isDark ? theme.primary : theme.accent;
+  const isDark = theme.isDark;
+  const accent = theme.cta;
   const playerWidth = Math.min(Dimensions.get('window').width - 48, 600);
 
   return (
@@ -90,7 +90,7 @@ export default function LibraryScreen() {
                 accessibilityRole="tab"
                 accessibilityState={{ selected: active }}
               >
-                <ThemedText style={[styles.filterText, active && { color: isDark ? '#171717' : '#3D3428', fontWeight: '700' }]}>{f.label}</ThemedText>
+                <ThemedText style={[styles.filterText, active && { color: theme.onCta, fontWeight: '700' }]}>{f.label}</ThemedText>
               </Pressable>
             );
           })}

@@ -56,8 +56,8 @@ export default function ContactScreen() {
     }
   };
 
-  const isDark = theme.background === '#0A0A0A';
-  const accent = isDark ? theme.primary : theme.accent;
+  const isDark = theme.isDark;
+  const accent = theme.cta;
 
   const intro = (
     <View style={{ gap: Spacing.three, marginBottom: Spacing.three }}>
@@ -116,7 +116,7 @@ export default function ContactScreen() {
                 <View
                   style={[
                     styles.bubble,
-                    mine ? { backgroundColor: isDark ? '#262626' : '#E8DCC8' } : { backgroundColor: theme.card, borderColor: theme.border, borderWidth: 1 },
+                    mine ? { backgroundColor: theme.userBubble } : { backgroundColor: theme.card, borderColor: theme.border, borderWidth: 1 },
                   ]}
                 >
                   {!mine && <ThemedText style={styles.from}>Research team</ThemedText>}
@@ -134,7 +134,7 @@ export default function ContactScreen() {
         {error && <ThemedText style={{ color: theme.destructive, textAlign: 'center', paddingBottom: 6 }}>{error}</ThemedText>}
         <View style={[styles.inputBar, { backgroundColor: theme.card, borderTopColor: theme.border, paddingBottom: keyboard ? 8 : Math.max(insets.bottom, 16) }]}>
           <TextInput
-            style={[styles.input, { backgroundColor: isDark ? '#171717' : '#FAF7F0', color: theme.text }]}
+            style={[styles.input, { backgroundColor: theme.inputBackground, color: theme.text }]}
             placeholder="Write a message…"
             placeholderTextColor={theme.textSecondary}
             value={text}
@@ -148,7 +148,7 @@ export default function ContactScreen() {
             style={[styles.send, { backgroundColor: accent }, (sending || !text.trim()) && { opacity: 0.5 }]}
             accessibilityLabel="Send message"
           >
-            <Send size={18} color={isDark ? '#171717' : '#3D3428'} />
+            <Send size={18} color={theme.onCta} />
           </Pressable>
         </View>
       </KeyboardAvoidingView>

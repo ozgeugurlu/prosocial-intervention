@@ -33,9 +33,9 @@ export function AuthScreen() {
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
-  const isDark = theme.background === '#0A0A0A';
-  const buttonBg = isDark ? theme.primary : theme.accent;
-  const buttonFg = isDark ? '#171717' : '#3D3428';
+  const isDark = theme.isDark;
+  const buttonBg = theme.cta;
+  const buttonFg = theme.onCta;
 
   const submit = async () => {
     setError(null);

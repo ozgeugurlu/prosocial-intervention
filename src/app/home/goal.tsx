@@ -43,8 +43,8 @@ export default function GoalScreen() {
   }, [uid, weekOf]);
 
   const valid = goal.trim() && ifPart.trim() && thenPart.trim();
-  const isDark = theme.background === '#0A0A0A';
-  const accent = isDark ? theme.primary : theme.accent;
+  const isDark = theme.isDark;
+  const accent = theme.cta;
 
   const save = async () => {
     if (!uid || !valid) return;
@@ -129,7 +129,7 @@ export default function GoalScreen() {
               onPress={save}
               disabled={!valid || saving}
             >
-              <ThemedText style={[styles.saveText, { color: isDark ? '#171717' : '#3D3428' }]}>
+              <ThemedText style={[styles.saveText, { color: theme.onCta }]}>
                 {saving ? 'Saving…' : 'Save to my board'}
               </ThemedText>
             </Pressable>

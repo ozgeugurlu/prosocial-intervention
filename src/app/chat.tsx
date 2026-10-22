@@ -72,9 +72,9 @@ function ChatSession({ slot, onSlotChange }: { slot: Slot; onSlotChange: (s: Slo
 
   const sessionId = `d${currentDay}-${slot}`;
   const eveningLocked = slot === 'evening' && new Date().getHours() < EVENING_OPENS_AT_HOUR && events.length === 0;
-  const isDark = theme.background === '#0A0A0A';
-  const accent = isDark ? theme.primary : theme.accent;
-  const onAccent = isDark ? '#171717' : '#3D3428';
+  const isDark = theme.isDark;
+  const accent = theme.cta;
+  const onAccent = theme.onCta;
 
   // ── Persist + complete ─────────────────────────────────────────────────
   const persist = useCallback(
@@ -233,7 +233,7 @@ function ChatSession({ slot, onSlotChange }: { slot: Slot; onSlotChange: (s: Slo
             styles.bubble,
             isPercy
               ? [styles.bubbleLeft, { backgroundColor: theme.card, borderColor: theme.border }]
-              : { backgroundColor: isDark ? '#262626' : '#E8DCC8' },
+              : { backgroundColor: theme.userBubble },
           ]}
         >
           <ThemedText style={[styles.messageText, { fontFamily: isPercy ? Fonts.serif : Fonts.sans }]}>{text}</ThemedText>
@@ -291,7 +291,7 @@ function ChatSession({ slot, onSlotChange }: { slot: Slot; onSlotChange: (s: Slo
       <View style={[styles.header, { paddingTop: Math.max(insets.top, 16), backgroundColor: theme.card, borderBottomColor: theme.border }]}>
         <View style={styles.headerContent}>
           <View style={[styles.avatar, { backgroundColor: accent }]}>
-            <Bird size={24} color={isDark ? '#171717' : '#ffffff'} />
+            <Bird size={24} color={theme.onCta} />
           </View>
           <View style={{ flex: 1 }}>
             <ThemedText style={styles.headerTitle}>Percy</ThemedText>
@@ -343,7 +343,7 @@ function ChatSession({ slot, onSlotChange }: { slot: Slot; onSlotChange: (s: Slo
           {showTextInput ? (
             <View style={styles.inputInner}>
               <TextInput
-                style={[styles.textInput, { backgroundColor: isDark ? '#171717' : '#FAF7F0', color: theme.text }]}
+                style={[styles.textInput, { backgroundColor: theme.inputBackground, color: theme.text }]}
                 placeholder={waitingSegment?.placeholder ?? 'Type your answer…'}
                 placeholderTextColor={theme.textSecondary}
                 value={input}

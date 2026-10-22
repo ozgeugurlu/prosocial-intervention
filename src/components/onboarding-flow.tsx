@@ -317,7 +317,7 @@ export function OnboardingFlow({ onDone }: OnboardingFlowProps) {
             styles.messageBubble,
             isBot
               ? [styles.messageBubbleLeft, { backgroundColor: theme.card, borderColor: theme.border }]
-              : [styles.messageBubbleRight, { backgroundColor: theme.background === '#0A0A0A' ? '#262626' : '#E8DCC8' }],
+              : [styles.messageBubbleRight, { backgroundColor: theme.userBubble }],
           ]}
         >
           <ThemedText
@@ -335,7 +335,7 @@ export function OnboardingFlow({ onDone }: OnboardingFlowProps) {
     );
   };
 
-  const isDark = theme.background === '#0A0A0A';
+  const isDark = theme.isDark;
   const bottomPadding = isKeyboardVisible
     ? (Platform.OS === 'ios' ? 8 : 16)
     : Math.max(insets.bottom, 16) + 12;
@@ -354,8 +354,8 @@ export function OnboardingFlow({ onDone }: OnboardingFlowProps) {
         ]}
       >
         <View style={styles.headerContent}>
-          <View style={[styles.avatar, { backgroundColor: isDark ? theme.primary : theme.accent }]}>
-            <Bird size={24} color={isDark ? '#171717' : '#ffffff'} />
+          <View style={[styles.avatar, { backgroundColor: theme.cta }]}>
+            <Bird size={24} color={theme.onCta} />
           </View>
           <View style={styles.headerTitleContainer}>
             <ThemedText style={styles.headerTitle}>Coach Percy</ThemedText>
@@ -383,7 +383,7 @@ export function OnboardingFlow({ onDone }: OnboardingFlowProps) {
         {/* Typing indicator */}
         {isTyping && (
           <View style={styles.loadingContainer}>
-            <ActivityIndicator size="small" color={isDark ? theme.primary : theme.accent} />
+            <ActivityIndicator size="small" color={theme.cta} />
             <ThemedText style={styles.loadingText} themeColor="textSecondary">
               Percy is typing...
             </ThemedText>
@@ -407,13 +407,13 @@ export function OnboardingFlow({ onDone }: OnboardingFlowProps) {
                 style={[
                   styles.textInput,
                   {
-                    backgroundColor: isDark ? '#171717' : '#FAF7F0',
+                    backgroundColor: theme.inputBackground,
                     color: theme.text,
                     fontFamily: Fonts.sans,
                   },
                 ]}
                 placeholder="A nickname is fine..."
-                placeholderTextColor={isDark ? '#7a7a7a' : '#7A6F5D'}
+                placeholderTextColor={theme.textSecondary}
                 value={inputValue}
                 onChangeText={setInputValue}
                 onSubmitEditing={handleSendName}
@@ -423,23 +423,23 @@ export function OnboardingFlow({ onDone }: OnboardingFlowProps) {
                 style={[
                   styles.sendButton,
                   {
-                    backgroundColor: isDark ? theme.primary : theme.accent,
+                    backgroundColor: theme.cta,
                   },
                 ]}
                 onPress={handleSendName}
                 disabled={!inputValue.trim()}
               >
-                <Send size={18} color={isDark ? '#171717' : '#3D3428'} />
+                <Send size={18} color={theme.onCta} />
               </Pressable>
             </View>
           )}
 
           {step === 'welcome' && !isTyping && (
             <Pressable
-              style={[styles.actionButton, { backgroundColor: isDark ? theme.primary : theme.accent }]}
+              style={[styles.actionButton, { backgroundColor: theme.cta }]}
               onPress={handleProceedToExpectations}
             >
-              <ThemedText style={[styles.actionButtonText, { color: isDark ? '#171717' : '#3D3428' }]}>
+              <ThemedText style={[styles.actionButtonText, { color: theme.onCta }]}>
                 What to expect
               </ThemedText>
             </Pressable>
@@ -447,10 +447,10 @@ export function OnboardingFlow({ onDone }: OnboardingFlowProps) {
 
           {step === 'expectations' && !isTyping && (
             <Pressable
-              style={[styles.actionButton, { backgroundColor: isDark ? theme.primary : theme.accent }]}
+              style={[styles.actionButton, { backgroundColor: theme.cta }]}
               onPress={handleProceedToVideo}
             >
-              <ThemedText style={[styles.actionButtonText, { color: isDark ? '#171717' : '#3D3428' }]}>
+              <ThemedText style={[styles.actionButtonText, { color: theme.onCta }]}>
                 Continue
               </ThemedText>
             </Pressable>
@@ -473,10 +473,10 @@ export function OnboardingFlow({ onDone }: OnboardingFlowProps) {
 
           {step === 'ready' && !isTyping && (
             <Pressable
-              style={[styles.actionButton, { backgroundColor: isDark ? theme.primary : theme.accent }]}
+              style={[styles.actionButton, { backgroundColor: theme.cta }]}
               onPress={onDone}
             >
-              <ThemedText style={[styles.actionButtonText, { color: isDark ? '#171717' : '#3D3428' }]}>
+              <ThemedText style={[styles.actionButtonText, { color: theme.onCta }]}>
                 Get Started
               </ThemedText>
             </Pressable>
@@ -501,7 +501,7 @@ export function OnboardingFlow({ onDone }: OnboardingFlowProps) {
             />
 
             <Pressable
-              style={[styles.videoCompleteButton, { backgroundColor: isDark ? '#262626' : '#E8DCC8' }]}
+              style={[styles.videoCompleteButton, { backgroundColor: theme.userBubble }]}
               onPress={handleVideoComplete}
             >
               <ThemedText style={styles.videoCompleteText}>{"I've finished watching"}</ThemedText>

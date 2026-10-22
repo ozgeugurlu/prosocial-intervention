@@ -91,7 +91,7 @@ export function MediaPlayer({ item, width, onPlay }: MediaPlayerProps) {
         style={[styles.poster, { width, height, backgroundColor: isAudio ? theme.muted : '#1d1a15' }]}
       >
         <View style={[styles.playCircle, { backgroundColor: theme.primary }]}>
-          {isAudio ? <Headphones size={20} color="#3D3428" /> : <Play size={20} color="#3D3428" fill="#3D3428" />}
+          {isAudio ? <Headphones size={20} color={theme.onCta} /> : <Play size={20} color={theme.onCta} fill={theme.onCta} />}
         </View>
         <ThemedText style={[styles.posterTitle, isAudio && { color: theme.text, fontSize: 15 }]} numberOfLines={2}>
           {item.title}

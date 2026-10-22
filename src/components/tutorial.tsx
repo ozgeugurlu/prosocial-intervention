@@ -82,9 +82,9 @@ export function Tutorial({ onDone, askForReminders = true }: { onDone: () => voi
   const onReminderStep = askForReminders && index === STEPS.length;
   const isLast = index === total - 1;
 
-  const isDark = theme.background === '#0A0A0A';
-  const accent = isDark ? theme.primary : theme.accent;
-  const onAccent = isDark ? '#171717' : '#3D3428';
+  const isDark = theme.isDark;
+  const accent = theme.cta;
+  const onAccent = theme.onCta;
 
   const finish = async () => {
     if (askForReminders) {

@@ -1,3 +1,4 @@
+import { MetalSurface } from '@/components/metal-surface';
 import { useTheme } from '@/hooks/use-theme';
 import { Tabs } from 'expo-router';
 import { BookOpen, Calendar, Home, MessageCircle, UserRound } from 'lucide-react-native';
@@ -72,17 +73,15 @@ function CustomTabBar({ state, descriptors, navigation }: TabBarProps) {
   // Position nicely relative to the home indicator (ignoring web since we are shipping to iOS and Android only)
   const bottomOffset = Math.max(insets.bottom, 16);
 
-  const isDark = theme.background === '#0A0A0A';
+  const isDark = theme.isDark;
 
   // Background of the tab bar itself (card background)
-  const barBg = theme.card;
 
   return (
     <View style={[styles.barContainer, { bottom: bottomOffset }]}>
-      <View style={[
+      <MetalSurface finish="bar" style={[
         styles.barInner,
         {
-          backgroundColor: barBg,
           borderColor: theme.border,
           shadowColor: isDark ? '#000000' : theme.text,
         }
@@ -119,11 +118,11 @@ function CustomTabBar({ state, descriptors, navigation }: TabBarProps) {
 
           // Style definitions based on active state and light/dark theme
           const buttonBg = isFocused
-            ? (isDark ? theme.primary : theme.accent) // gold/mustard in light, white in dark
-            : (isDark ? '#171717' : theme.background); // warm sand in light, element background in dark
+            ? 'transparent' // the active tab gets a polished-steel gradient below
+            : theme.backgroundElement;
 
           const iconColor = isFocused
-            ? (isDark ? '#171717' : theme.text) // dark brown/charcoal text color on active gold tab in light
+            ? theme.onCta
             : theme.textSecondary; // muted text color for inactive
 
           return (
@@ -143,6 +142,7 @@ function CustomTabBar({ state, descriptors, navigation }: TabBarProps) {
                 isFocused && styles.activeButtonShadow,
               ]}
             >
+              {isFocused && <MetalSurface finish="cta" style={styles.activeFill} />}
               <IconComponent
                 size={22}
                 color={iconColor}
@@ -151,7 +151,7 @@ function CustomTabBar({ state, descriptors, navigation }: TabBarProps) {
             </Pressable>
           );
         })}
-      </View>
+      </MetalSurface>
     </View>
   );
 }
@@ -235,9 +235,18 @@ const styles = StyleSheet.create({
     width: 54,
     height: 54,
     borderRadius: 20,
+    overflow: 'hidden',
+  },
+  activeFill: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    borderRadius: 20,
   },
   activeButtonShadow: {
-    shadowColor: '#3D3428',
+    shadowColor: '#1E242B',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 6,

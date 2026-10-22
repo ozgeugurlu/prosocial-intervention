@@ -63,7 +63,7 @@ export default function SurveyScreen() {
     }
   };
 
-  const isDark = theme.background === '#0A0A0A';
+  const isDark = theme.isDark;
 
   if (submitted) {
     return (
@@ -75,10 +75,10 @@ export default function SurveyScreen() {
             {"Thank you for completing today's check-in! Your response helps track your journey."}
           </ThemedText>
           <Pressable
-            style={[styles.submitButton, { backgroundColor: isDark ? theme.primary : theme.accent }]}
+            style={[styles.submitButton, { backgroundColor: theme.cta }]}
             onPress={() => router.back()}
           >
-            <ThemedText style={[styles.submitButtonText, { color: isDark ? '#171717' : '#3D3428' }]}>
+            <ThemedText style={[styles.submitButtonText, { color: theme.onCta }]}>
               Go Back Home
             </ThemedText>
           </Pressable>
@@ -145,10 +145,10 @@ export default function SurveyScreen() {
                   styles.progressBarSegment,
                   {
                     backgroundColor: isCompleted
-                      ? (isDark ? theme.primary : theme.accent)
+                      ? (theme.cta)
                       : isActive
-                      ? (isDark ? 'rgba(250, 250, 250, 0.6)' : 'rgba(61, 52, 40, 0.4)')
-                      : (isDark ? 'rgba(250, 250, 250, 0.15)' : 'rgba(61, 52, 40, 0.08)'),
+                      ? theme.textSecondary
+                      : theme.border,
                   },
                 ]}
               />
@@ -179,7 +179,7 @@ export default function SurveyScreen() {
                       styles.optionButton,
                       { borderColor: theme.border },
                       adherence === 'yes' && {
-                        backgroundColor: isDark ? theme.primary : theme.accent,
+                        backgroundColor: theme.cta,
                         borderColor: 'transparent',
                       },
                     ]}
@@ -188,7 +188,7 @@ export default function SurveyScreen() {
                     <ThemedText
                       style={[
                         styles.optionText,
-                        adherence === 'yes' && { color: isDark ? '#171717' : '#3D3428', fontWeight: '700' },
+                        adherence === 'yes' && { color: theme.onCta, fontWeight: '700' },
                       ]}
                     >
                       Yes
@@ -220,7 +220,7 @@ export default function SurveyScreen() {
               <Pressable
                 style={[
                   styles.submitButton,
-                  { backgroundColor: isDark ? theme.primary : theme.accent },
+                  { backgroundColor: theme.cta },
                   adherence === null && styles.disabledButton,
                 ]}
                 onPress={() => setCurrentStep(1)}
@@ -229,7 +229,7 @@ export default function SurveyScreen() {
                 <ThemedText
                   style={[
                     styles.submitButtonText,
-                    { color: isDark ? '#171717' : '#3D3428' },
+                    { color: theme.onCta },
                     adherence === null && { color: theme.mutedForeground },
                   ]}
                 >
@@ -267,10 +267,10 @@ export default function SurveyScreen() {
                   </ThemedText>
                 </Pressable>
                 <Pressable
-                  style={[styles.navButtonPrimary, { backgroundColor: isDark ? theme.primary : theme.accent }]}
+                  style={[styles.navButtonPrimary, { backgroundColor: theme.cta }]}
                   onPress={() => setCurrentStep(2)}
                 >
-                  <ThemedText style={[styles.navButtonPrimaryText, { color: isDark ? '#171717' : '#3D3428' }]}>
+                  <ThemedText style={[styles.navButtonPrimaryText, { color: theme.onCta }]}>
                     Continue
                   </ThemedText>
                 </Pressable>
@@ -302,11 +302,11 @@ export default function SurveyScreen() {
                             style={[
                               styles.scaleBubble,
                               {
-                                backgroundColor: isDark ? '#171717' : '#FAF7F0',
+                                backgroundColor: theme.inputBackground,
                                 borderColor: theme.border,
                               },
                               isSelected && {
-                                backgroundColor: isDark ? theme.primary : theme.accent,
+                                backgroundColor: theme.cta,
                                 borderColor: 'transparent',
                               },
                             ]}
@@ -316,7 +316,7 @@ export default function SurveyScreen() {
                               style={[
                                 styles.scaleBubbleText,
                                 isSelected && {
-                                  color: isDark ? '#171717' : '#3D3428',
+                                  color: theme.onCta,
                                   fontWeight: '700',
                                 },
                               ]}
@@ -346,7 +346,7 @@ export default function SurveyScreen() {
                 <Pressable
                   style={[
                     styles.navButtonPrimary,
-                    { backgroundColor: isDark ? theme.primary : theme.accent },
+                    { backgroundColor: theme.cta },
                     !isFormValid && styles.disabledButton,
                   ]}
                   onPress={handleSubmit}
@@ -355,7 +355,7 @@ export default function SurveyScreen() {
                   <ThemedText
                     style={[
                       styles.navButtonPrimaryText,
-                      { color: isDark ? '#171717' : '#3D3428' },
+                      { color: theme.onCta },
                       !isFormValid && { color: theme.mutedForeground },
                     ]}
                   >

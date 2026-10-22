@@ -38,9 +38,9 @@ export default function WeeklySurveyScreen() {
     if (uid) getWeeklySurveys(uid).then((r) => setAlready(r.some((x) => x.weekOf === weekOf)));
   }, [uid, weekOf]);
 
-  const isDark = theme.background === '#0A0A0A';
-  const accent = isDark ? theme.primary : theme.accent;
-  const onAccent = isDark ? '#171717' : '#3D3428';
+  const isDark = theme.isDark;
+  const accent = theme.cta;
+  const onAccent = theme.onCta;
 
   const complete = !!instrument && instrument.items.every((it) => responses[it.id] != null);
 

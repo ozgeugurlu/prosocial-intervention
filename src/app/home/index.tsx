@@ -88,8 +88,8 @@ export default function HomeScreen() {
   const weeklyDone = weekly.some((w) => w.weekOf === window.weekOf);
   const studyOver = currentDay > studyLength;
 
-  const isDark = theme.background === '#0A0A0A';
-  const accent = isDark ? theme.primary : theme.accent;
+  const isDark = theme.isDark;
+  const accent = theme.cta;
   const go = (href: Href) => router.push(href);
 
   return (
@@ -133,14 +133,14 @@ export default function HomeScreen() {
         {/* Weekly survey (Sun–Tue by default) */}
         {window.isOpen && !weeklyDone && (
           <Pressable onPress={() => go('/home/weekly-survey')} style={[styles.weeklyCta, { backgroundColor: accent }]}>
-            <ClipboardList size={22} color={isDark ? '#171717' : '#3D3428'} />
+            <ClipboardList size={22} color={theme.onCta} />
             <View style={{ flex: 1 }}>
-              <ThemedText style={[styles.weeklyTitle, { color: isDark ? '#171717' : '#3D3428' }]}>Your weekly survey is open</ThemedText>
-              <ThemedText style={[styles.weeklySub, { color: isDark ? '#171717' : '#3D3428' }]}>
+              <ThemedText style={[styles.weeklyTitle, { color: theme.onCta }]}>Your weekly survey is open</ThemedText>
+              <ThemedText style={[styles.weeklySub, { color: theme.onCta }]}>
                 About 3 minutes. It updates your prosociality score.
               </ThemedText>
             </View>
-            <ChevronRight size={20} color={isDark ? '#171717' : '#3D3428'} />
+            <ChevronRight size={20} color={theme.onCta} />
           </Pressable>
         )}
 

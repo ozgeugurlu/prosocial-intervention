@@ -21,8 +21,8 @@ export default function RemindersScreen() {
   const [status, setStatus] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
-  const isDark = theme.background === '#0A0A0A';
-  const accent = isDark ? theme.primary : theme.accent;
+  const isDark = theme.isDark;
+  const accent = theme.cta;
 
   const save = async () => {
     setSaving(true);
@@ -50,7 +50,7 @@ export default function RemindersScreen() {
         <TimeStepper label="Evening" value={times.evening} minHour={16} maxHour={23} onChange={(v) => setTimes({ ...times, evening: v })} />
         {status && <ThemedText style={{ color: theme.destructive }}>{status}</ThemedText>}
         <Pressable style={[styles.save, { backgroundColor: accent }, saving && { opacity: 0.6 }]} onPress={save} disabled={saving}>
-          <ThemedText style={[styles.saveText, { color: isDark ? '#171717' : '#3D3428' }]}>{saving ? 'Saving…' : 'Save reminder times'}</ThemedText>
+          <ThemedText style={[styles.saveText, { color: theme.onCta }]}>{saving ? 'Saving…' : 'Save reminder times'}</ThemedText>
         </Pressable>
         <ThemedText themeColor="textSecondary" style={styles.note}>
           Reminders are scheduled on your phone. Your chosen times are also saved to your study record so they come back if you

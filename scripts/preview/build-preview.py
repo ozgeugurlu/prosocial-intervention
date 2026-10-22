@@ -3,7 +3,7 @@
 Builds a single self-contained HTML preview of the app in demo mode (sample data,
 no Firebase), framed like a phone on desktop. Usage (from the repo root):
 
-    python3 scripts/preview/build-preview.py [output.html] [--fragment]
+    python3 scripts/preview/build-preview.py [output.html] [--fragment] [--split]
 """
 import base64, glob, json, os, re, shutil, subprocess, sys, tempfile
 
@@ -41,19 +41,28 @@ html = re.sub(r'<link rel="(preload|stylesheet|icon)"[^>]*>\s*', '', html)
 html = re.sub(r'<title>.*?</title>', '<title>PEACH Preview</title>', html)
 frame = """
 <style>
-:root{--page-bg:#E9E2D3}
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--page-bg:#000}}
-:root[data-theme="dark"]{--page-bg:#000}
+:root{--page-bg:#CDD3DA}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--page-bg:#07090B}}
+:root[data-theme="dark"]{--page-bg:#07090B}
 body{background:var(--page-bg)}
 @media (min-width: 520px){
   body{display:flex;align-items:center;justify-content:center;padding:16px;box-sizing:border-box}
   #root{max-width:400px;max-height:860px;width:100%;border-radius:36px;overflow:hidden;
-        box-shadow:0 20px 60px rgba(61,52,40,.25);border:8px solid #2b2620;position:relative;transform:translateZ(0)}
+        box-shadow:0 24px 60px rgba(20,26,33,.35),inset 0 0 0 1px rgba(255,255,255,.15);border:8px solid #2A3038;position:relative;transform:translateZ(0)}
 }
 </style>"""
 html = html.replace('</head>', frame + '<style>' + css + '</style></head>')
 prelude = '<script>try{history.replaceState(null,"","/")}catch(e){}</script>'
 html = re.sub(r'<script src="[^"]+" defer></script>', lambda m: prelude + '<script>' + js + '</script>', html)
+if '--split' in sys.argv:
+    # Page + separate app.js (for hosts that cap a single page's size). The script
+    # is resolved against the page's real URL before the router moves to "/".
+    js_out = os.path.join(os.path.dirname(out_file), 'app.js')
+    open(js_out, 'w').write(js.replace('<\\/script', '</script'))
+    loader = ("<script>(function(){var src=new URL('app.js',document.baseURI).href;"
+              "try{history.replaceState(null,'','/')}catch(e){}"
+              "var s=document.createElement('script');s.src=src;document.body.appendChild(s);})();</script>")
+    html = re.sub(re.escape(prelude) + r'<script>.*</script>', lambda m: loader, html, flags=re.S)
 if '--fragment' in sys.argv:
     # For hosts that supply their own <!doctype>/<html>/<head>/<body> skeleton:
     # keep the title and styles, then the body content.

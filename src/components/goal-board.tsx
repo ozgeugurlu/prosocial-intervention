@@ -17,8 +17,8 @@ export function GoalBoard({ goals }: { goals: WeeklyGoal[] }) {
   const current = goals.find((g) => g.weekOf === thisWeek);
   const previous = goals.find((g) => g.weekOf < thisWeek);
   const isSunday = new Date().getDay() === 0;
-  const isDark = theme.background === '#0A0A0A';
-  const accent = isDark ? theme.primary : theme.accent;
+  const isDark = theme.isDark;
+  const accent = theme.cta;
 
   return (
     <HomeCard>
@@ -74,7 +74,7 @@ export function GoalBoard({ goals }: { goals: WeeklyGoal[] }) {
             </ThemedText>
           )}
           <Pressable style={[styles.cta, { backgroundColor: accent }]} onPress={() => router.push('/home/goal')}>
-            <ThemedText style={[styles.ctaText, { color: isDark ? '#171717' : '#3D3428' }]}>Set this week&apos;s goal</ThemedText>
+            <ThemedText style={[styles.ctaText, { color: theme.onCta }]}>Set this week&apos;s goal</ThemedText>
           </Pressable>
         </View>
       )}
