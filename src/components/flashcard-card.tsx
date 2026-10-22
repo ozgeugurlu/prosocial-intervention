@@ -117,14 +117,14 @@ const styles = StyleSheet.create({
   },
   cardContainer: {
     borderRadius: 18,
-    minHeight: 110,
+    minHeight: 84,
     overflow: 'hidden',
   },
   cardSide: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: Spacing.three,
+    padding: 12,
     backfaceVisibility: 'hidden',
   },
   cardSideImage: {
@@ -139,10 +139,10 @@ const styles = StyleSheet.create({
   },
   frontText: {
     fontFamily: Fonts.serif,
-    fontSize: 18,
+    fontSize: 14,
     fontWeight: '700',
     textAlign: 'center',
-    lineHeight: 24,
+    lineHeight: 19,
     marginBottom: Spacing.two,
   },
   frontImage: {
@@ -153,17 +153,17 @@ const styles = StyleSheet.create({
   },
   backText: {
     fontFamily: Fonts.sans,
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: '500',
     textAlign: 'center',
-    lineHeight: 20,
+    lineHeight: 18,
     marginBottom: Spacing.two,
   },
   flipPrompt: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-    paddingVertical: Spacing.two,
+    paddingVertical: 4,
   },
   flipText: {
     fontFamily: Fonts.sans,

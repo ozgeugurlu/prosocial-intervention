@@ -96,13 +96,14 @@ export function WeekDrawer({
 
 const styles = StyleSheet.create({
   container: {
-    borderRadius: 24,
-    padding: Spacing.four,
+    borderRadius: 20,
+    paddingVertical: Spacing.three,
+    paddingHorizontal: 18,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.04,
     shadowRadius: 8,
     elevation: 2,
-    marginBottom: Spacing.four,
+    marginBottom: 12,
   },
   locked: {
     opacity: 0.6,
@@ -122,13 +123,13 @@ const styles = StyleSheet.create({
   },
   title: {
     fontFamily: Fonts.serif,
-    fontSize: 18,
+    fontSize: 17,
     fontWeight: '700',
     lineHeight: 24,
   },
   subtitle: {
     fontFamily: Fonts.sans,
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: '500',
     lineHeight: 18,
   },
@@ -143,7 +144,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   content: {
-    marginTop: Spacing.four,
-    gap: 12,
+    marginTop: Spacing.three,
+    gap: 10,
   },
 });

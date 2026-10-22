@@ -221,7 +221,7 @@ export default function SurveyScreen() {
                 style={[
                   styles.submitButton,
                   { backgroundColor: theme.cta },
-                  adherence === null && styles.disabledButton,
+                  adherence === null && [styles.disabledButton, { borderColor: theme.textSecondary }],
                 ]}
                 onPress={() => setCurrentStep(1)}
                 disabled={adherence === null}
@@ -230,7 +230,7 @@ export default function SurveyScreen() {
                   style={[
                     styles.submitButtonText,
                     { color: theme.onCta },
-                    adherence === null && { color: theme.mutedForeground },
+                    adherence === null && { color: theme.textSecondary },
                   ]}
                 >
                   Next Step
@@ -347,7 +347,7 @@ export default function SurveyScreen() {
                   style={[
                     styles.navButtonPrimary,
                     { backgroundColor: theme.cta },
-                    !isFormValid && styles.disabledButton,
+                    !isFormValid && [styles.disabledButton, { borderColor: theme.textSecondary }],
                   ]}
                   onPress={handleSubmit}
                   disabled={!isFormValid}
@@ -356,7 +356,7 @@ export default function SurveyScreen() {
                     style={[
                       styles.navButtonPrimaryText,
                       { color: theme.onCta },
-                      !isFormValid && { color: theme.mutedForeground },
+                      !isFormValid && { color: theme.textSecondary },
                     ]}
                   >
                     Submit Reflection
@@ -603,8 +603,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '700',
   },
+  // Not ready yet: an outlined button that is still clearly readable on navy.
   disabledButton: {
-    backgroundColor: '#EAE4D8',
+    backgroundColor: 'transparent',
+    borderWidth: 1.5,
     shadowOpacity: 0,
     elevation: 0,
   },

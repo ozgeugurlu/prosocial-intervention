@@ -78,7 +78,7 @@ function MediaRow({ item, onPress }: { item: MediaItem; onPress: () => void }) {
       accessibilityLabel={`${item.type === 'text' ? 'Read' : 'Play'} ${item.title}`}
     >
       <View style={[styles.playTile, { backgroundColor: theme.cta }]}>
-        <Icon size={22} color={theme.onCta} fill={item.type === 'video' ? theme.onCta : 'transparent'} />
+        <Icon size={18} color={theme.onCta} fill={item.type === 'video' ? theme.onCta : 'transparent'} />
       </View>
       <View style={{ flex: 1, minWidth: 0 }}>
         <ThemedText style={styles.mediaTitle} numberOfLines={1}>
@@ -242,17 +242,17 @@ const styles = StyleSheet.create({
   content: { paddingHorizontal: Spacing.four, gap: Spacing.four, maxWidth: 800, width: '100%', alignSelf: 'center' },
   header: { gap: 4 },
   title: { fontFamily: Fonts.serif, fontSize: 29, fontWeight: '700', lineHeight: 34 },
-  subtitle: { fontSize: 16, lineHeight: 22 },
-  reminder: { borderRadius: 18, borderWidth: 1, padding: Spacing.three, gap: 6 },
+  subtitle: { fontSize: 14, lineHeight: 20 },
+  reminder: { borderRadius: 16, borderWidth: 1, padding: 12, gap: 4 },
   reminderHead: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   reminderLabel: { fontSize: 12, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.6 },
-  reminderGoal: { fontFamily: Fonts.serif, fontSize: 18, fontWeight: '600', lineHeight: 24 },
-  reminderPlan: { fontSize: 15, lineHeight: 22 },
-  kw: { fontWeight: '700', fontSize: 15 },
-  mediaRow: { flexDirection: 'row', alignItems: 'center', gap: 14, borderRadius: 18, borderWidth: 1, padding: 14 },
-  playTile: { width: 56, height: 56, borderRadius: 16, alignItems: 'center', justifyContent: 'center' },
-  mediaTitle: { fontSize: 16, fontWeight: '600', lineHeight: 21 },
-  mediaMeta: { fontSize: 14 },
+  reminderGoal: { fontFamily: Fonts.serif, fontSize: 15, fontWeight: '600', lineHeight: 20 },
+  reminderPlan: { fontSize: 14, lineHeight: 20 },
+  kw: { fontWeight: '700', fontSize: 14 },
+  mediaRow: { flexDirection: 'row', alignItems: 'center', gap: 12, borderRadius: 16, borderWidth: 1, padding: 12 },
+  playTile: { width: 44, height: 44, borderRadius: 13, alignItems: 'center', justifyContent: 'center' },
+  mediaTitle: { fontSize: 14, fontWeight: '600', lineHeight: 19 },
+  mediaMeta: { fontSize: 12 },
   backdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.4)' },
   sheet: { maxHeight: '85%', borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: Spacing.four, gap: Spacing.three },
   sheetHeader: { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 },
