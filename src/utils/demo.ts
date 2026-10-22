@@ -236,6 +236,7 @@ export const demoData = {
 /** Example Library content for the preview (real content comes from Firestore). */
 const DEMO_MEDIA: MediaItem[] = [
   // Onboarding (week 0), then each week: two videos and two flashcards (flashcards are below).
+  { id: 'onb-prosocial', week: 0, order: 0, type: 'video', title: 'What does it mean to be prosocial?', url: 'demo' },
   { id: 'onb-ifthen', week: 0, order: 1, type: 'video', title: 'What is an if-then plan?', url: 'demo' },
   { id: 'w1-ifthen', week: 1, day: 'Sunday', order: -2, type: 'video', title: 'Making if-then plans that stick', url: 'demo' },
   { id: 'why-kindness-matters', week: 1, psychoed: true, type: 'video', title: 'Why small acts of kindness matter', url: 'demo' },
