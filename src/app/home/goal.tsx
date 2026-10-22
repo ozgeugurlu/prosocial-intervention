@@ -1,5 +1,5 @@
 import { useRouter } from 'expo-router';
-import { ArrowLeft } from 'lucide-react-native';
+import { ArrowLeft, Bird } from 'lucide-react-native';
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -7,6 +7,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Fonts, Spacing } from '@/constants/theme';
+import { IF_THEN_INSTRUCTION, WEEKLY_INTROS } from '@/constants/weekly-intros';
 import { useStudy } from '@/contexts/study-context';
 import { useTheme } from '@/hooks/use-theme';
 import { getGoals, saveGoal } from '@/utils/participant-data';
@@ -18,7 +19,8 @@ export default function GoalScreen() {
   const theme = useTheme();
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const { uid } = useStudy();
+  const { uid, currentWeek, userName } = useStudy();
+  const weekIntro = WEEKLY_INTROS[currentWeek];
   const weekOf = weekOfFor();
 
   const [goal, setGoal] = useState('');
@@ -81,9 +83,26 @@ export default function GoalScreen() {
       ) : (
         <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
           <ScrollView contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + Spacing.six }]} keyboardShouldPersistTaps="handled">
-            <ThemedText themeColor="textSecondary" style={styles.intro}>
-              For the week of {formatWeekOf(weekOf)}. Choose one goal, then make a plan for exactly when and how you will act on it.
-            </ThemedText>
+            {weekIntro ? (
+              <View style={[styles.percyCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+                <View style={styles.percyHead}>
+                  <View style={[styles.percyAvatar, { backgroundColor: theme.cta }]}>
+                    <Bird size={18} color={theme.onCta} />
+                  </View>
+                  <ThemedText style={styles.percyLabel} themeColor="textSecondary">
+                    Week {currentWeek} · {weekIntro.theme}
+                  </ThemedText>
+                </View>
+                <ThemedText style={styles.percyText}>
+                  {userName ? weekIntro.intro.replace(/\{name\}/g, userName) : weekIntro.intro.replace(/ \{name\}/g, '')}
+                </ThemedText>
+                <ThemedText style={styles.percyCta}>{IF_THEN_INSTRUCTION}</ThemedText>
+              </View>
+            ) : (
+              <ThemedText themeColor="textSecondary" style={styles.intro}>
+                For the week of {formatWeekOf(weekOf)}. Choose one goal, then make a plan for exactly when and how you will act on it.
+              </ThemedText>
+            )}
 
             <ThemedText style={styles.label}>My goal this week</ThemedText>
             <TextInput
@@ -146,6 +165,12 @@ const styles = StyleSheet.create({
   headerTitle: { fontFamily: Fonts.serif, fontSize: 22, fontWeight: '700' },
   content: { padding: Spacing.four, gap: Spacing.two, maxWidth: 640, width: '100%', alignSelf: 'center' },
   intro: { fontSize: 15, lineHeight: 22, marginBottom: Spacing.two },
+  percyCard: { borderWidth: 1, borderRadius: 18, padding: Spacing.three, gap: 10, marginBottom: Spacing.two },
+  percyHead: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  percyAvatar: { width: 32, height: 32, borderRadius: 16, alignItems: 'center', justifyContent: 'center' },
+  percyLabel: { fontSize: 12, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.6 },
+  percyText: { fontFamily: Fonts.serif, fontSize: 17, lineHeight: 25 },
+  percyCta: { fontSize: 15, fontWeight: '700' },
   label: { fontSize: 15, fontWeight: '700', marginTop: Spacing.three },
   input: { borderWidth: 1, borderRadius: 14, paddingHorizontal: 14, paddingVertical: 12, fontSize: 16, fontFamily: Fonts.sans, textAlignVertical: 'top' },
   ifRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 10 },

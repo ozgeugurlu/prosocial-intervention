@@ -96,8 +96,8 @@ function seasonedStore(studyId: string): Store {
   s.goals = [
     {
       weekOf: weekOf(today),
-      goal: 'Reach out to a friend I have not talked to in a while',
-      ifThen: { if: 'I finish lunch on Wednesday', then: 'I will text Sam to ask how they are doing' },
+      goal: 'Thank someone for something specific every day',
+      ifThen: { if: 'I sit down with my morning coffee', then: 'I will text one person to thank them for something specific' },
     },
     {
       weekOf: weekOf(daysAgo(7)),
