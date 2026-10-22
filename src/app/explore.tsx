@@ -44,9 +44,9 @@ function IfThenReminder({ goal, isCurrent }: { goal?: WeeklyGoal; isCurrent: boo
         <>
           <ThemedText style={styles.reminderGoal}>{goal.goal}</ThemedText>
           <ThemedText style={styles.reminderPlan}>
-            <ThemedText style={styles.kw}>If </ThemedText>
+            <ThemedText style={[styles.kw, { color: theme.ifThen }]}>If </ThemedText>
             {goal.ifThen.if}
-            <ThemedText style={styles.kw}>, then </ThemedText>
+            <ThemedText style={[styles.kw, { color: theme.ifThen }]}>, then </ThemedText>
             {goal.ifThen.then}.
           </ThemedText>
         </>

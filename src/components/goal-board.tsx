@@ -48,9 +48,9 @@ export function GoalBoard({ goals }: { goals: WeeklyGoal[] }) {
               If-then plan
             </ThemedText>
             <ThemedText style={styles.plan}>
-              <ThemedText style={styles.kw}>If </ThemedText>
+              <ThemedText style={[styles.kw, { color: theme.ifThen }]}>If </ThemedText>
               {current.ifThen.if}
-              <ThemedText style={styles.kw}>, then </ThemedText>
+              <ThemedText style={[styles.kw, { color: theme.ifThen }]}>, then </ThemedText>
               {current.ifThen.then}.
             </ThemedText>
           </View>

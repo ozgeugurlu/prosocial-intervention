@@ -117,7 +117,7 @@ export default function GoalScreen() {
 
             <ThemedText style={styles.label}>My if-then plan</ThemedText>
             <View style={styles.ifRow}>
-              <ThemedText style={styles.kw}>If</ThemedText>
+              <ThemedText style={[styles.kw, { color: theme.ifThen }]}>If</ThemedText>
               <TextInput
                 value={ifPart}
                 onChangeText={setIf}
@@ -129,7 +129,7 @@ export default function GoalScreen() {
               />
             </View>
             <View style={styles.ifRow}>
-              <ThemedText style={styles.kw}>then</ThemedText>
+              <ThemedText style={[styles.kw, { color: theme.ifThen }]}>then</ThemedText>
               <TextInput
                 value={thenPart}
                 onChangeText={setThen}
