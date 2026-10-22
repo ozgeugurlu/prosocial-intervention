@@ -67,8 +67,9 @@ export type ThemeColor = ColorKeys<typeof Colors.light> & ColorKeys<typeof Color
 export const Fonts = {
   sans: 'DMSans',
   sansItalic: 'DMSans-Italic',
-  serif: 'CrimsonPro',
-  serifItalic: 'CrimsonPro-Italic',
+  // The app uses one typeface throughout; the "serif" role maps to DM Sans too.
+  serif: 'DMSans',
+  serifItalic: 'DMSans-Italic',
   mono: 'DMSans',
 };
 
