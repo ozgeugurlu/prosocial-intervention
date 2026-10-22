@@ -7,7 +7,7 @@ import Animated, {
   FadeIn,
   FadeOut,
 } from 'react-native-reanimated';
-import { ChevronRight } from 'lucide-react-native';
+import { ChevronRight, Lock } from 'lucide-react-native';
 
 import { ThemedText } from '@/components/themed-text';
 import { Fonts, Spacing } from '@/constants/theme';
@@ -18,6 +18,8 @@ interface WeekDrawerProps {
   subtitle: string;
   isCurrent?: boolean;
   defaultOpen?: boolean;
+  /** Locked weeks can't be opened; `subtitle` should say when they unlock. */
+  locked?: boolean;
   children?: React.ReactNode;
 }
 
@@ -28,6 +30,7 @@ export function WeekDrawer({
   subtitle,
   isCurrent = false,
   defaultOpen = false,
+  locked = false,
   children,
 }: WeekDrawerProps) {
   const [isOpen, setIsOpen] = useState(defaultOpen);
@@ -47,15 +50,22 @@ export function WeekDrawer({
   });
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.card, shadowColor: theme.text }]}>
+    <View style={[styles.container, { backgroundColor: theme.card, shadowColor: theme.text }, locked && styles.locked]}>
       <Pressable
         style={styles.header}
-        onPress={() => setIsOpen((prev) => !prev)}
+        onPress={() => !locked && setIsOpen((prev) => !prev)}
+        disabled={locked}
+        accessibilityRole="button"
+        accessibilityState={{ expanded: isOpen && !locked, disabled: locked }}
       >
         <View style={styles.headerLeft}>
-          <Animated.View style={animatedChevronStyle}>
-            <ChevronRight size={22} color={theme.textSecondary} strokeWidth={2} />
-          </Animated.View>
+          {locked ? (
+            <Lock size={20} color={theme.textSecondary} strokeWidth={2} />
+          ) : (
+            <Animated.View style={animatedChevronStyle}>
+              <ChevronRight size={22} color={theme.textSecondary} strokeWidth={2} />
+            </Animated.View>
+          )}
           <View style={styles.textGroup}>
             <ThemedText style={styles.title}>{title}</ThemedText>
             <ThemedText style={styles.subtitle} themeColor="textSecondary">
@@ -73,7 +83,7 @@ export function WeekDrawer({
         )}
       </Pressable>
 
-      {isOpen && (
+      {isOpen && !locked && (
         <Animated.View entering={FadeIn.duration(200)} exiting={FadeOut.duration(150)}>
           <View style={styles.content}>
             {children}
@@ -93,6 +103,9 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 2,
     marginBottom: Spacing.four,
+  },
+  locked: {
+    opacity: 0.6,
   },
   header: {
     flexDirection: 'row',

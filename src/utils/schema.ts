@@ -6,6 +6,8 @@ export type Flashcard = {
   front: string;
   back: string;
   type: 'text' | 'image' | 'video';
+  /** Position within the week's Library list (shared with media `order`). */
+  order?: number;
 };
 
 export type FlashcardWeek = {
@@ -72,6 +74,12 @@ export type MediaItem = {
   description?: string;
   durationLabel?: string;
   week?: number;
+  /** Day label shown in the Library, e.g. "Monday". */
+  day?: string;
+  /** The week's psychoeducation video: listed first in the Library, after the if-then plan. */
+  psychoed?: boolean;
+  /** Position within the week's Library list (shared with flashcard `order`). */
+  order?: number;
   availableFromDay?: number;
 };
 

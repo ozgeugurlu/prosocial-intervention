@@ -1,10 +1,12 @@
 /**
- * Library: every video, audio clip and informational message the participant
- * has unlocked (sent by Percy in a chat, or released on a scheduled study day),
- * plus the weekly flashcards for weeks they have reached.
+ * Library: one drop-down per program week. Each open week lists, in order:
+ *   1. the participant's if-then plan for that week,
+ *   2. the week's psychoeducation video,
+ *   3. the rest of the week's videos, audio, messages and flashcards.
+ * Weeks after the current one stay locked until the participant reaches them.
  */
-import { useFocusEffect } from 'expo-router';
-import { BookOpen, FileText, Headphones, Lock, PlayCircle, X } from 'lucide-react-native';
+import { useFocusEffect, useRouter } from 'expo-router';
+import { FileText, Headphones, Play, Target, X } from 'lucide-react-native';
 import { useCallback, useMemo, useState } from 'react';
 import { Dimensions, Modal, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -16,54 +18,126 @@ import { ThemedView } from '@/components/themed-view';
 import { WeekDrawer } from '@/components/week-drawer';
 import { BottomTabInset, Fonts, Spacing } from '@/constants/theme';
 import { useStudy } from '@/contexts/study-context';
+import { useParticipantRecords } from '@/hooks/use-participant-records';
 import { useTheme } from '@/hooks/use-theme';
 import { getFlashcardWeeks, getMediaItems } from '@/utils/firestore';
-import { getUnlockedMediaIds } from '@/utils/participant-data';
-import type { FlashcardWeek, MediaItem } from '@/utils/schema';
+import type { WeeklyGoal } from '@/utils/participant-data';
+import { dateForStudyDay, toDateKey } from '@/utils/participation';
+import type { Flashcard, MediaItem } from '@/utils/schema';
 
-type Filter = 'all' | 'video' | 'audio' | 'text' | 'cards';
-const FILTERS: { key: Filter; label: string }[] = [
-  { key: 'all', label: 'All' },
-  { key: 'video', label: 'Videos' },
-  { key: 'audio', label: 'Audio' },
-  { key: 'text', label: 'Messages' },
-  { key: 'cards', label: 'Flashcards' },
-];
+type Entry = { kind: 'media'; item: MediaItem; order: number } | { kind: 'card'; card: Flashcard; order: number };
 
-const ICONS = { video: PlayCircle, audio: Headphones, text: FileText } as const;
+const PROGRAM_WEEKS = 9;
+
+function IfThenReminder({ goal, isCurrent }: { goal?: WeeklyGoal; isCurrent: boolean }) {
+  const theme = useTheme();
+  const router = useRouter();
+  return (
+    <View style={[styles.reminder, { backgroundColor: theme.background, borderColor: theme.border }]}>
+      <View style={styles.reminderHead}>
+        <Target size={16} color={theme.primary} />
+        <ThemedText style={styles.reminderLabel} themeColor="textSecondary">
+          Your if-then plan
+        </ThemedText>
+      </View>
+      {goal ? (
+        <>
+          <ThemedText style={styles.reminderGoal}>{goal.goal}</ThemedText>
+          <ThemedText style={styles.reminderPlan}>
+            <ThemedText style={styles.kw}>If </ThemedText>
+            {goal.ifThen.if}
+            <ThemedText style={styles.kw}>, then </ThemedText>
+            {goal.ifThen.then}.
+          </ThemedText>
+        </>
+      ) : isCurrent ? (
+        <Pressable onPress={() => router.push('/home/goal')} accessibilityRole="button">
+          <ThemedText style={[styles.reminderPlan, { color: theme.primary, fontWeight: '700' }]}>
+            Set this week&apos;s goal and if-then plan →
+          </ThemedText>
+        </Pressable>
+      ) : (
+        <ThemedText style={styles.reminderPlan} themeColor="textSecondary">
+          No plan was set this week.
+        </ThemedText>
+      )}
+    </View>
+  );
+}
+
+function MediaRow({ item, onPress }: { item: MediaItem; onPress: () => void }) {
+  const theme = useTheme();
+  const Icon = item.type === 'audio' ? Headphones : item.type === 'text' ? FileText : Play;
+  const meta = [item.psychoed ? 'Psychoeducation' : item.day, item.durationLabel].filter(Boolean).join(' • ');
+  return (
+    <Pressable
+      onPress={onPress}
+      style={({ pressed }) => [styles.mediaRow, { backgroundColor: theme.background, borderColor: theme.border }, pressed && { opacity: 0.8 }]}
+      accessibilityRole="button"
+      accessibilityLabel={`${item.type === 'text' ? 'Read' : 'Play'} ${item.title}`}
+    >
+      <View style={[styles.playTile, { backgroundColor: theme.cta }]}>
+        <Icon size={22} color={theme.onCta} fill={item.type === 'video' ? theme.onCta : 'transparent'} />
+      </View>
+      <View style={{ flex: 1, minWidth: 0 }}>
+        <ThemedText style={styles.mediaTitle} numberOfLines={1}>
+          {item.title}
+        </ThemedText>
+        {meta ? (
+          <ThemedText style={styles.mediaMeta} themeColor="textSecondary">
+            {meta}
+          </ThemedText>
+        ) : null}
+      </View>
+    </Pressable>
+  );
+}
 
 export default function LibraryScreen() {
   const theme = useTheme();
   const insets = useSafeAreaInsets();
-  const { uid, currentDay, currentWeek } = useStudy();
+  const { currentWeek, startDate, hasStarted } = useStudy();
+  const { goals, config } = useParticipantRecords();
 
   const [media, setMedia] = useState<MediaItem[]>([]);
-  const [unlocked, setUnlocked] = useState<Set<string>>(new Set());
-  const [weeks, setWeeks] = useState<(FlashcardWeek & { id: string })[]>([]);
-  const [filter, setFilter] = useState<Filter>('all');
+  const [cardWeeks, setCardWeeks] = useState<Record<number, Flashcard[]>>({});
   const [open, setOpen] = useState<MediaItem | null>(null);
 
   useFocusEffect(
     useCallback(() => {
       getMediaItems().then(setMedia).catch(() => undefined);
-      getFlashcardWeeks().then(setWeeks).catch(() => undefined);
-      if (uid) getUnlockedMediaIds(uid).then(setUnlocked).catch(() => undefined);
-    }, [uid]),
+      getFlashcardWeeks()
+        .then((ws) => setCardWeeks(Object.fromEntries(ws.map((w) => [w.week + 1, w.cards]))))
+        .catch(() => undefined);
+    }, []),
   );
 
-  const available = useMemo(
-    () =>
-      media
-        .filter((m) => unlocked.has(m.id) || (m.availableFromDay != null && m.availableFromDay <= currentDay))
-        .sort((a, b) => (b.week ?? 0) - (a.week ?? 0) || a.title.localeCompare(b.title)),
-    [media, unlocked, currentDay],
-  );
-  const lockedCount = media.length - available.length;
-  const shown = filter === 'all' ? available : available.filter((m) => m.type === filter);
-  const cardWeeks = weeks.filter((w) => w.week + 1 <= currentWeek);
+  const weeks = Math.ceil((config.studyLengthDays || PROGRAM_WEEKS * 7) / 7);
+  const reachedWeek = hasStarted ? currentWeek : 0;
 
-  const isDark = theme.isDark;
-  const accent = theme.cta;
+  const entriesFor = useMemo(
+    () => (week: number): Entry[] => {
+      const items: Entry[] = media
+        .filter((m) => m.week === week)
+        .map((m) => ({ kind: 'media' as const, item: m, order: m.psychoed ? -1 : (m.order ?? 500) }));
+      (cardWeeks[week] ?? []).forEach((c, i) => items.push({ kind: 'card', card: c, order: c.order ?? 600 + i }));
+      return items.sort((a, b) => a.order - b.order);
+    },
+    [media, cardWeeks],
+  );
+
+  const goalFor = (week: number) => {
+    if (!startDate) return undefined;
+    const weekOf = toDateKey(dateForStudyDay(startDate, (week - 1) * 7 + 1));
+    return goals.find((g) => g.weekOf === weekOf);
+  };
+
+  const unlockLabel = (week: number) => {
+    if (!startDate) return 'Unlocks as you progress';
+    const d = dateForStudyDay(startDate, (week - 1) * 7 + 1);
+    return `Unlocks ${d.toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric' })}`;
+  };
+
   const playerWidth = Math.min(Dimensions.get('window').width - 48, 600);
 
   return (
@@ -75,90 +149,36 @@ export default function LibraryScreen() {
         <View style={styles.header}>
           <ThemedText style={styles.title}>Library</ThemedText>
           <ThemedText style={styles.subtitle} themeColor="textSecondary">
-            Everything Percy has shared with you
+            Your plans, videos and cards, week by week
           </ThemedText>
         </View>
 
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filters}>
-          {FILTERS.map((f) => {
-            const active = filter === f.key;
+        <View>
+          {Array.from({ length: weeks }, (_, i) => i + 1).map((week) => {
+            const locked = week > reachedWeek;
+            const entries = locked ? [] : entriesFor(week);
+            const count = entries.length + 1; // + the if-then plan
             return (
-              <Pressable
-                key={f.key}
-                onPress={() => setFilter(f.key)}
-                style={[styles.filter, { borderColor: active ? 'transparent' : theme.border, backgroundColor: active ? accent : theme.card }]}
-                accessibilityRole="tab"
-                accessibilityState={{ selected: active }}
+              <WeekDrawer
+                key={week}
+                title={`Week ${week}`}
+                subtitle={locked ? unlockLabel(week) : `${count} ${count === 1 ? 'item' : 'items'}`}
+                isCurrent={week === reachedWeek}
+                defaultOpen={week === reachedWeek}
+                locked={locked}
               >
-                <ThemedText style={[styles.filterText, active && { color: theme.onCta, fontWeight: '700' }]}>{f.label}</ThemedText>
-              </Pressable>
+                <IfThenReminder goal={goalFor(week)} isCurrent={week === reachedWeek} />
+                {entries.map((e, i) =>
+                  e.kind === 'media' ? (
+                    <MediaRow key={e.item.id} item={e.item} onPress={() => setOpen(e.item)} />
+                  ) : (
+                    <FlashcardCard key={`card-${i}`} frontText={e.card.front} backText={e.card.back} type={e.card.type} />
+                  ),
+                )}
+              </WeekDrawer>
             );
           })}
-        </ScrollView>
-
-        {filter !== 'cards' && (
-          <View style={styles.list}>
-            {shown.length === 0 && (
-              <View style={[styles.empty, { backgroundColor: theme.card }]}>
-                <BookOpen size={28} color={theme.textSecondary} />
-                <ThemedText themeColor="textSecondary" style={styles.emptyText}>
-                  Nothing here yet. Videos, audio and messages appear here after Percy sends them to you.
-                </ThemedText>
-              </View>
-            )}
-            {shown.map((m) => {
-              const Icon = ICONS[m.type] ?? FileText;
-              return (
-                <Pressable
-                  key={m.id}
-                  onPress={() => setOpen(m)}
-                  style={({ pressed }) => [styles.item, { backgroundColor: theme.card, borderColor: theme.border }, pressed && { opacity: 0.75 }]}
-                >
-                  <View style={[styles.itemIcon, { backgroundColor: `${theme.primary}22` }]}>
-                    <Icon size={22} color={theme.primary} />
-                  </View>
-                  <View style={{ flex: 1, gap: 2 }}>
-                    <ThemedText style={styles.itemTitle} numberOfLines={2}>
-                      {m.title}
-                    </ThemedText>
-                    <ThemedText themeColor="textSecondary" style={styles.itemMeta}>
-                      {[m.week ? `Week ${m.week}` : null, m.type === 'text' ? 'Message' : m.type === 'audio' ? 'Audio' : 'Video', m.durationLabel]
-                        .filter(Boolean)
-                        .join(' · ')}
-                    </ThemedText>
-                  </View>
-                </Pressable>
-              );
-            })}
-            {lockedCount > 0 && (
-              <View style={styles.lockedRow}>
-                <Lock size={14} color={theme.textSecondary} />
-                <ThemedText themeColor="textSecondary" style={styles.lockedText}>
-                  {lockedCount} more {lockedCount === 1 ? 'item unlocks' : 'items unlock'} as the program goes on
-                </ThemedText>
-              </View>
-            )}
-          </View>
-        )}
-
-        {(filter === 'cards' || filter === 'all') && cardWeeks.length > 0 && (
-          <View style={{ gap: Spacing.two }}>
-            {filter === 'all' && <ThemedText style={styles.sectionTitle}>Flashcards</ThemedText>}
-            {cardWeeks.map((week) => (
-              <WeekDrawer
-                key={week.id}
-                title={`Week ${week.week + 1}${week.name ? `: ${week.name}` : ''}`}
-                subtitle={`${week.cards.length} ${week.cards.length === 1 ? 'card' : 'cards'}`}
-                isCurrent={currentWeek === week.week + 1}
-                defaultOpen={filter === 'cards' && currentWeek === week.week + 1}
-              >
-                {week.cards.map((card, i) => (
-                  <FlashcardCard key={i} frontText={card.front} backText={card.back} type={card.type} />
-                ))}
-              </WeekDrawer>
-            ))}
-          </View>
-        )}
+        </View>
       </ScrollView>
 
       <Modal visible={!!open} transparent animationType="slide" onRequestClose={() => setOpen(null)}>
@@ -193,19 +213,16 @@ const styles = StyleSheet.create({
   header: { gap: 4 },
   title: { fontFamily: Fonts.serif, fontSize: 34, fontWeight: '700', lineHeight: 40 },
   subtitle: { fontSize: 16, lineHeight: 22 },
-  filters: { gap: 8 },
-  filter: { borderWidth: 1, borderRadius: 18, paddingHorizontal: 14, paddingVertical: 8 },
-  filterText: { fontSize: 14 },
-  list: { gap: Spacing.two },
-  empty: { borderRadius: 18, padding: Spacing.four, alignItems: 'center', gap: Spacing.two },
-  emptyText: { fontSize: 14, lineHeight: 20, textAlign: 'center' },
-  item: { flexDirection: 'row', alignItems: 'center', gap: 12, borderRadius: 16, borderWidth: 1, padding: Spacing.three },
-  itemIcon: { width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center' },
-  itemTitle: { fontSize: 16, fontWeight: '600', lineHeight: 21 },
-  itemMeta: { fontSize: 13 },
-  lockedRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, paddingVertical: Spacing.two },
-  lockedText: { fontSize: 13 },
-  sectionTitle: { fontFamily: Fonts.serif, fontSize: 22, fontWeight: '700' },
+  reminder: { borderRadius: 18, borderWidth: 1, padding: Spacing.three, gap: 6 },
+  reminderHead: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  reminderLabel: { fontSize: 12, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.6 },
+  reminderGoal: { fontFamily: Fonts.serif, fontSize: 18, fontWeight: '600', lineHeight: 24 },
+  reminderPlan: { fontSize: 15, lineHeight: 22 },
+  kw: { fontWeight: '700', fontSize: 15 },
+  mediaRow: { flexDirection: 'row', alignItems: 'center', gap: 14, borderRadius: 18, borderWidth: 1, padding: 14 },
+  playTile: { width: 56, height: 56, borderRadius: 16, alignItems: 'center', justifyContent: 'center' },
+  mediaTitle: { fontSize: 16, fontWeight: '600', lineHeight: 21 },
+  mediaMeta: { fontSize: 14 },
   backdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.4)' },
   sheet: { maxHeight: '85%', borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: Spacing.four, gap: Spacing.three },
   sheetHeader: { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 },

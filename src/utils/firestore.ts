@@ -68,6 +68,7 @@ export async function getFlashcardWeek(weekId: string): Promise<FlashcardWeek | 
         type: cardData.type === 'text' || cardData.type === 'image' || cardData.type === 'video' 
           ? cardData.type 
           : 'text',
+        order: typeof cardData.order === 'number' ? cardData.order : undefined,
       });
     });
 
@@ -110,6 +111,7 @@ export async function getFlashcardWeeks(): Promise<(FlashcardWeek & { id: string
           type: cardData.type === 'text' || cardData.type === 'image' || cardData.type === 'video' 
             ? cardData.type 
             : 'text',
+          order: typeof cardData.order === 'number' ? cardData.order : undefined,
         });
       });
 

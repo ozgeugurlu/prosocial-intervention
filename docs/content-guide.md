@@ -34,7 +34,10 @@ Branching beyond per-option replies is not supported yet; tell the developer if 
 | `title`, `type` | `video`, `audio` or `text` |
 | `youtubeId` **or** `url` | `url` should be an https link to a file in Firebase Storage (recommended: no third party involved) |
 | `body` | Text for `text` items (informational messages) |
-| `week`, `durationLabel`, `description` | Display only |
+| `week` | Which Library week (1–9) the item is listed under |
+| `psychoed` | `true` for the week's psychoeducation video; listed first, right after the participant's if-then plan |
+| `day`, `order` | Day label shown on the row ("Monday") and position in the week; flashcards share the same `order` numbers so videos and cards interleave |
+| `durationLabel`, `description` | Display only |
 | `availableFromDay` | Optional: unlock automatically on that study day, without Percy sending it |
 
 ## Weekly survey (`/surveys/weekly`)
@@ -51,4 +54,4 @@ Branching beyond per-option replies is not supported yet; tell the developer if 
 
 ## Flashcards (`/flashcards/{weekId}/cards/{cardId}`)
 
-Unchanged from the original app: `front`, `back`, `type`. Weeks unlock as the participant reaches them.
+`front`, `back`, `type`, and optional `order` (position among that week's videos). Each Library week unlocks on the Sunday the participant reaches it.

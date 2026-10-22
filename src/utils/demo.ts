@@ -233,6 +233,19 @@ export const demoData = {
 
 // ─── Study content ──────────────────────────────────────────────────────────
 
+/** Example Library content for the preview (real content comes from Firestore). */
+const DEMO_MEDIA: MediaItem[] = [
+  { id: 'why-kindness-matters', week: 1, psychoed: true, type: 'video', title: 'Why small acts of kindness matter', durationLabel: '4:30', url: 'demo' },
+  { id: 'w1-ifthen', week: 1, day: 'Monday', order: 1, type: 'video', title: 'Making if-then plans that stick', durationLabel: '3:15', url: 'demo' },
+  { id: 'evening-wind-down', week: 1, day: 'Wednesday', order: 3, type: 'audio', title: 'Evening wind-down', durationLabel: '3:00', url: 'demo' },
+  { id: 'week1-tip', week: 1, day: 'Friday', order: 5, type: 'text', title: 'Tip: start small', body: 'The most lasting changes start small. A two-minute act of kindness you actually do beats a grand plan you never get to.' },
+  { id: 'w2-psychoed', week: 2, psychoed: true, type: 'video', title: 'Helping and your health', durationLabel: '5:10', url: 'demo' },
+  { id: 'w2-listen', week: 2, day: 'Monday', order: 1, type: 'video', title: 'The power of active listening', durationLabel: '4:30', url: 'demo' },
+  { id: 'w2-connect', week: 2, day: 'Wednesday', order: 3, type: 'video', title: 'Communication and connection', durationLabel: '5:20', url: 'demo' },
+  { id: 'w2-friday', week: 2, day: 'Friday', order: 5, type: 'video', title: 'Building stronger connections', durationLabel: '6:30', url: 'demo' },
+  { id: 'w3-psychoed', week: 3, psychoed: true, type: 'video', title: 'Generosity and well-being', durationLabel: '4:45', url: 'demo' },
+];
+
 type SampleScript = { name: string; studyDay: number; slot: 'morning' | 'evening'; segments: Omit<ScriptSegment, 'order'>[] };
 const sampleScripts = sample.scripts as unknown as Record<string, SampleScript>;
 
@@ -252,12 +265,8 @@ export const demoContent = {
       segments: s.segments.map((seg, i) => ({ ...seg, order: i }) as ScriptSegment),
     };
   },
-  getMediaItems: async (): Promise<MediaItem[]> =>
-    Object.entries(sample.media).map(([id, m]) => ({ ...(m as Omit<MediaItem, 'id'>), id, youtubeId: undefined, url: 'demo' })),
-  getMediaItem: async (id: string): Promise<MediaItem | null> => {
-    const m = (sample.media as Record<string, Omit<MediaItem, 'id'>>)[id];
-    return m ? { ...m, id, youtubeId: undefined, url: 'demo' } : null;
-  },
+  getMediaItems: async (): Promise<MediaItem[]> => DEMO_MEDIA,
+  getMediaItem: async (id: string): Promise<MediaItem | null> => DEMO_MEDIA.find((m) => m.id === id) ?? null,
   getFlashcardWeeks: async (): Promise<(FlashcardWeek & { id: string })[]> => [
     {
       id: 'w1',
@@ -265,8 +274,8 @@ export const demoContent = {
       description: '',
       week: 0,
       cards: [
-        { front: 'True or false: helping others can lower stress.', back: 'True. Helping others is linked to lower stress and better mood.', type: 'text' },
-        { front: 'What is an if-then plan?', back: 'A plan that links a situation to an action: "If X happens, then I will do Y."', type: 'text' },
+        { front: 'Kindness and stress', back: 'Helping others is linked to lower stress and a better mood.', type: 'text', order: 2 },
+        { front: 'What is an if-then plan?', back: 'A plan that links a situation to an action: "If X happens, then I will do Y."', type: 'text', order: 4 },
       ],
     },
     {
@@ -274,7 +283,10 @@ export const demoContent = {
       name: 'Small acts, big effects',
       description: '',
       week: 1,
-      cards: [{ front: 'Name one two-minute kind act.', back: 'Holding a door, a thank-you text, or offering your seat.', type: 'text' }],
+      cards: [
+        { front: 'Two-minute kindness', back: 'Hold a door, send a thank-you text, or offer your seat.', type: 'text', order: 2 },
+        { front: 'Noticing needs', back: 'Look for small signs that someone could use a hand.', type: 'text', order: 4 },
+      ],
     },
   ],
 };
