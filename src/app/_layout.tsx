@@ -1,14 +1,13 @@
 import { useFonts } from 'expo-font';
-import { DarkTheme, ThemeProvider } from 'expo-router';
+import { DarkTheme, DefaultTheme, ThemeProvider } from 'expo-router';
 import { useEffect } from 'react';
-import { ActivityIndicator, View } from 'react-native';
+import { ActivityIndicator, useColorScheme, View } from 'react-native';
 
 import { AnimatedSplashOverlay } from '@/components/animated-icon';
 import AppTabs from '@/components/app-tabs';
 import { AuthScreen } from '@/components/auth-screen';
 import { OnboardingFlow } from '@/components/onboarding-flow';
 import { DemoPanel } from '@/components/demo-panel';
-import { NavyBackdrop } from '@/components/navy-backdrop';
 import { Tutorial } from '@/components/tutorial';
 import { AuthProvider, useAuth } from '@/contexts/auth-context';
 import { StudyProvider, useStudy } from '@/contexts/study-context';
@@ -16,12 +15,6 @@ import { DEMO } from '@/utils/demo';
 import { configureNotifications, scheduleReminders } from '@/utils/notifications';
 
 configureNotifications();
-
-// Screens and navigators are transparent so the navy backdrop shows through everywhere.
-const NAV_THEME = {
-  ...DarkTheme,
-  colors: { ...DarkTheme.colors, background: 'transparent', card: 'transparent', border: 'transparent' },
-};
 
 function AppContent() {
   const { user, isLoading: authLoading } = useAuth();
@@ -46,6 +39,7 @@ function AppContent() {
 }
 
 export default function RootLayout() {
+  const colorScheme = useColorScheme();
 
   const [loaded, error] = useFonts({
     DMSans: require('../../assets/fonts/DMSans-VariableFont_opsz,wght.ttf'),
@@ -61,8 +55,7 @@ export default function RootLayout() {
   return (
     <AuthProvider>
       <StudyProvider>
-        <ThemeProvider value={NAV_THEME}>
-          <NavyBackdrop />
+        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
           <AnimatedSplashOverlay />
           <AppContent />
           {DEMO && <DemoPanel />}

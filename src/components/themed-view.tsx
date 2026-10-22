@@ -12,6 +12,5 @@ export type ThemedViewProps = ViewProps & {
 export function ThemedView({ style, lightColor, darkColor, type, ...otherProps }: ThemedViewProps) {
   const theme = useTheme();
 
-  // Screens are transparent by default so the app-wide navy backdrop shows through.
-  return <View style={[{ backgroundColor: type ? theme[type] : 'transparent' }, style]} {...otherProps} />;
+  return <View style={[{ backgroundColor: theme[type ?? 'background'] }, style]} {...otherProps} />;
 }
