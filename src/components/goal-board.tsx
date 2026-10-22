@@ -45,12 +45,6 @@ export function GoalBoard({ goals }: { goals: WeeklyGoal[] }) {
         <View style={styles.body}>
           <View style={[styles.box, { backgroundColor: theme.background }]}>
             <ThemedText style={styles.label} themeColor="textSecondary">
-              This week&apos;s goal
-            </ThemedText>
-            <ThemedText style={styles.goal}>{current.goal}</ThemedText>
-          </View>
-          <View style={[styles.box, { backgroundColor: theme.background }]}>
-            <ThemedText style={styles.label} themeColor="textSecondary">
               If-then plan
             </ThemedText>
             <ThemedText style={styles.plan}>
