@@ -49,7 +49,8 @@ export function BadgeCard({ title, subtitle, iconType, isEarned = true }: BadgeC
   // Earned badges glow in soft jade (the same as a completed day); locked ones stay muted.
   const color = isEarned ? '#79D2A9' : theme.textSecondary;
   const bg = isEarned ? '#79D2A930' : theme.muted;
-  const Icon = isEarned && iconType !== 'lock' ? ICONS[iconType] : Lock;
+  // Every badge shows its own icon; locked ones are dimmed with a small lock.
+  const Icon = iconType !== 'lock' ? ICONS[iconType] : Lock;
 
   return (
     <View
@@ -62,7 +63,12 @@ export function BadgeCard({ title, subtitle, iconType, isEarned = true }: BadgeC
       ]}
     >
       <View style={[styles.circle, { backgroundColor: bg }]}>
-        <Icon size={26} color={color} strokeWidth={2} />
+        <Icon size={26} color={color} strokeWidth={2} style={!isEarned ? { opacity: 0.55 } : undefined} />
+        {!isEarned && (
+          <View style={[styles.lockBadge, { backgroundColor: theme.card, borderColor: theme.border }]}>
+            <Lock size={11} color={theme.textSecondary} strokeWidth={2.4} />
+          </View>
+        )}
       </View>
       <View style={styles.textGroup}>
         <ThemedText style={styles.title}>{title}</ThemedText>
@@ -90,6 +96,17 @@ const styles = StyleSheet.create({
     width: 52,
     height: 52,
     borderRadius: 26,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  lockBadge: {
+    position: 'absolute',
+    right: -2,
+    bottom: -2,
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    borderWidth: 1,
     alignItems: 'center',
     justifyContent: 'center',
   },
