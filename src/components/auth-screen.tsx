@@ -69,7 +69,7 @@ export function AuthScreen() {
           <View style={[styles.logo, { backgroundColor: `${theme.primary}25` }]}>
             <HandHeart size={36} color={theme.primary} strokeWidth={1.8} />
           </View>
-          <ThemedText style={styles.title}>{mode === 'signUp' ? 'Welcome to PEACH' : 'Welcome back'}</ThemedText>
+          <ThemedText style={styles.title}>{mode === 'signUp' ? 'Welcome to Ripple' : 'Welcome back'}</ThemedText>
           <ThemedText style={styles.subtitle} themeColor="textSecondary">
             {mode === 'signUp'
               ? 'Create your account with the study ID you received from the research team.'

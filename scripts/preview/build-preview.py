@@ -38,7 +38,7 @@ def inline(m):
 js = re.sub(r'"(/assets/[^"]+)"', inline, js).replace('</script', '<\\/script')
 css = ''.join(open(c).read() + '\n' for c in glob.glob('_expo/static/css/*.css'))
 html = re.sub(r'<link rel="(preload|stylesheet|icon)"[^>]*>\s*', '', html)
-html = re.sub(r'<title>.*?</title>', '<title>PEACH Preview</title>', html)
+html = re.sub(r'<title>.*?</title>', '<title>Ripple Preview</title>', html)
 frame = """
 <style>
 :root{--page-bg:#C9D1DC}
