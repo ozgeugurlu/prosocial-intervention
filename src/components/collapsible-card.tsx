@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   title: {
-    fontFamily: Fonts.serif,
+    fontFamily: Fonts.sans,
     fontSize: 20,
     fontWeight: '700',
     lineHeight: 26,

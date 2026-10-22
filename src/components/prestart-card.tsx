@@ -34,6 +34,6 @@ export function PrestartCard({ compact = false }: { compact?: boolean }) {
 const styles = StyleSheet.create({
   card: { alignItems: 'center', gap: Spacing.two },
   icon: { width: 56, height: 56, borderRadius: 28, alignItems: 'center', justifyContent: 'center' },
-  title: { fontFamily: Fonts.serif, fontSize: 24, lineHeight: 30, fontWeight: '700', textAlign: 'center' },
+  title: { fontFamily: Fonts.sans, fontSize: 24, lineHeight: 30, fontWeight: '700', textAlign: 'center' },
   text: { fontSize: 15, lineHeight: 22, textAlign: 'center' },
 });
