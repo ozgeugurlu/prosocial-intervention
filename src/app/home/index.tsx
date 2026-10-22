@@ -1,5 +1,5 @@
 import { useRouter, type Href } from 'expo-router';
-import { Check, ChevronRight, ClipboardList, Flame, Lock, MessageCircle, Moon, PlayCircle, Sun } from 'lucide-react-native';
+import { Check, ChevronRight, ClipboardList, Flame, Lock, MessageCircle, Moon, PlayCircle, type LucideIcon } from 'lucide-react-native';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -28,7 +28,7 @@ function getGreeting(): string {
 }
 
 interface TaskRowProps {
-  icon: typeof Sun;
+  icon: LucideIcon;
   label: string;
   done: boolean;
   locked?: boolean;
@@ -159,13 +159,13 @@ export default function HomeScreen() {
             <ThemedText style={styles.section} themeColor="textSecondary">
               Morning
             </ThemedText>
-            <TaskRow icon={Sun} label="Morning chat with Percy" done={!!today['morning chat']} onPress={() => go('/chat')} />
+            <TaskRow icon={MessageCircle} label="Morning chat with Percy" done={!!today['morning chat']} onPress={() => go('/chat')} />
             <TaskRow icon={PlayCircle} label="Watch today's video" done={!!today['morning video']} onPress={() => go('/chat')} />
             <ThemedText style={styles.section} themeColor="textSecondary">
               Evening
             </ThemedText>
             <TaskRow
-              icon={Moon}
+              icon={MessageCircle}
               label="Evening chat with Percy"
               done={!!today['night chat']}
               locked={!eveningOpen}
@@ -173,7 +173,7 @@ export default function HomeScreen() {
               onPress={() => go('/chat')}
             />
             <TaskRow
-              icon={MessageCircle}
+              icon={Moon}
               label="Evening reflection"
               done={!!today['night survey']}
               locked={!eveningOpen}
