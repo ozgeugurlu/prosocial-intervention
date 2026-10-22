@@ -235,7 +235,8 @@ export const demoData = {
 
 /** Example Library content for the preview (real content comes from Firestore). */
 const DEMO_MEDIA: MediaItem[] = [
-  // Each week: two videos and two flashcards (flashcards are below).
+  // Onboarding (week 0), then each week: two videos and two flashcards (flashcards are below).
+  { id: 'onb-ifthen', week: 0, order: 1, type: 'video', title: 'What is an if-then plan?', durationLabel: '2:45', url: 'demo' },
   { id: 'w1-ifthen', week: 1, day: 'Sunday', order: -2, type: 'video', title: 'Making if-then plans that stick', durationLabel: '3:15', url: 'demo' },
   { id: 'why-kindness-matters', week: 1, psychoed: true, type: 'video', title: 'Why small acts of kindness matter', durationLabel: '4:30', url: 'demo' },
   { id: 'w2-psychoed', week: 2, psychoed: true, type: 'video', title: 'Helping and your health', durationLabel: '5:10', url: 'demo' },
@@ -269,19 +270,13 @@ export const demoContent = {
   getMediaItem: async (id: string): Promise<MediaItem | null> => DEMO_MEDIA.find((m) => m.id === id) ?? null,
   getFlashcardWeeks: async (): Promise<(FlashcardWeek & { id: string })[]> => [
     {
-      id: 'onboarding',
-      name: 'Onboarding',
-      description: '',
-      week: -1,
-      cards: [{ front: 'What is an if-then plan?', back: 'A plan that links a situation to an action: "If X happens, then I will do Y."', type: 'text', order: 1 }],
-    },
-    {
       id: 'w1',
       name: 'Why kindness matters',
       description: '',
       week: 0,
       cards: [
         { front: 'Kindness and stress', back: 'Helping others is linked to lower stress and a better mood.', type: 'text', order: 2 },
+        { front: 'Small steps count', back: 'A two-minute act of kindness you actually do beats a grand plan you never get to.', type: 'text', order: 4 },
       ],
     },
     {
