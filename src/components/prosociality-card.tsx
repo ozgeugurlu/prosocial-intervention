@@ -1,4 +1,5 @@
 import { HeartHandshake } from 'lucide-react-native';
+import type { ReactNode } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { CollapsibleCard } from '@/components/collapsible-card';
@@ -20,11 +21,17 @@ export function ProsocialityCard({
   scaleMin = 1,
   scaleMax = 5,
   weeks = PROGRAM_WEEKS,
+  title = 'Prosociality score',
+  top,
 }: {
   records: WeeklySurveyRecord[];
   scaleMin?: number;
   scaleMax?: number;
   weeks?: number;
+  /** Card title; Home uses "Your progress". */
+  title?: string;
+  /** Optional content shown above the score (Home puts program progress here). */
+  top?: ReactNode;
 }) {
   const theme = useTheme();
   // Preview builds show an illustrative nine-week trend until there is real data to plot.
@@ -45,14 +52,20 @@ export function ProsocialityCard({
 
   return (
     <CollapsibleCard
-      title="Prosociality score"
+      title={title}
       leading={
         <View style={[styles.icon, { backgroundColor: `${theme.primary}20` }]}>
           <HeartHandshake size={20} color={theme.primary} strokeWidth={2.2} />
         </View>
       }
     >
-      <View style={styles.summary}>
+      {top}
+      {top ? (
+        <ThemedText style={styles.section} themeColor="textSecondary">
+          Prosociality score
+        </ThemedText>
+      ) : null}
+      <View style={[styles.summary, top ? { marginTop: Spacing.one } : null]}>
         <View>
           <ThemedText style={styles.label} themeColor="textSecondary">
             {latest ? latest.label : 'Latest score'}
@@ -94,5 +107,6 @@ const styles = StyleSheet.create({
   change: { fontSize: 13, fontWeight: '600' },
   hint: { fontSize: 12 },
   empty: { fontSize: 14, lineHeight: 20, paddingVertical: Spacing.two, textAlign: 'center' },
+  section: { fontSize: 12, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.6, marginTop: Spacing.three },
   axis: { fontSize: 12, textAlign: 'center', marginTop: -2 },
 });
