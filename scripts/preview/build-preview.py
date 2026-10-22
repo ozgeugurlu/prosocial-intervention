@@ -41,14 +41,14 @@ html = re.sub(r'<link rel="(preload|stylesheet|icon)"[^>]*>\s*', '', html)
 html = re.sub(r'<title>.*?</title>', '<title>PEACH Preview</title>', html)
 frame = """
 <style>
-:root{--page-bg:#CDD3DA}
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--page-bg:#07090B}}
-:root[data-theme="dark"]{--page-bg:#07090B}
+:root{--page-bg:#C9D1DC}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--page-bg:#040A14}}
+:root[data-theme="dark"]{--page-bg:#040A14}
 body{background:var(--page-bg)}
 @media (min-width: 520px){
   body{display:flex;align-items:center;justify-content:center;padding:16px;box-sizing:border-box}
   #root{max-width:400px;max-height:860px;width:100%;border-radius:36px;overflow:hidden;
-        box-shadow:0 24px 60px rgba(20,26,33,.35),inset 0 0 0 1px rgba(255,255,255,.15);border:8px solid #2A3038;position:relative;transform:translateZ(0)}
+        box-shadow:0 24px 60px rgba(20,26,33,.35),inset 0 0 0 1px rgba(255,255,255,.15);border:8px solid #13213D;position:relative;transform:translateZ(0)}
 }
 </style>"""
 html = html.replace('</head>', frame + '<style>' + css + '</style></head>')
