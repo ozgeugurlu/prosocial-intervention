@@ -150,12 +150,12 @@ export function demoSignIn(studyId: string, persona: DemoPersona | boolean) {
   const uid = `demo-${p}-${Date.now()}`;
   if (p === 'returning') {
     stores[uid] = seasonedStore(studyId);
-    storage.setItem('@percy_username', 'Alex');
+    storage.setItem('@percy_username', 'Özge');
   } else {
     stores[uid] = freshStore(studyId);
     if (p === 'tour' || p === 'prestart') {
       Object.assign(stores[uid].profile, { onboarded: true, startDate: upcomingSunday().toISOString() });
-      storage.setItem('@percy_username', 'Alex');
+      storage.setItem('@percy_username', 'Özge');
     }
     if (p === 'prestart') {
       Object.assign(stores[uid].profile, { tutorialCompleted: true, reminders: { morning: '08:30', evening: '20:00' } });
