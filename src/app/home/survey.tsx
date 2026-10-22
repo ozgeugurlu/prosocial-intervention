@@ -69,7 +69,7 @@ export default function SurveyScreen() {
     return (
       <ThemedView style={styles.container}>
         <View style={styles.successContent}>
-          <CheckCircle2 size={80} color="#4CAF50" strokeWidth={1.5} />
+          <CheckCircle2 size={80} color="#79D2A9" strokeWidth={1.5} />
           <ThemedText style={styles.successTitle}>Reflection Saved</ThemedText>
           <ThemedText style={styles.successSubtitle} themeColor="textSecondary">
             {"Thank you for completing today's check-in! Your response helps track your journey."}

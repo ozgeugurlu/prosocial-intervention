@@ -92,7 +92,7 @@ export default function MeScreen() {
         </HomeCard>
 
         <View style={[styles.privacy, { backgroundColor: theme.card, borderColor: theme.border }]}>
-          <ShieldCheck size={20} color="#4CAF50" />
+          <ShieldCheck size={20} color="#79D2A9" />
           <ThemedText themeColor="textSecondary" style={styles.privacyText}>
             Your responses are stored with your study ID only, in a secure database controlled by the research team.
             Your nickname stays on this phone. Percy is scripted, so your messages are never sent to an AI company.

@@ -34,8 +34,8 @@ export function CalendarWeekRow({
       icon: '#8B9A47',
     },
     heart: {
-      bg: '#4CAF5025',
-      icon: '#4CAF50',
+      bg: '#79D2A930',
+      icon: '#79D2A9',
     },
     ear: {
       bg: '#E8980825',

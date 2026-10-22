@@ -57,8 +57,8 @@ function TaskRow({ icon: Icon, label, done, locked, lockedNote, onPress }: TaskR
         ) : null}
       </View>
       {done ? (
-        <View style={[styles.check, { backgroundColor: '#4CAF50' }]}>
-          <Check size={14} color="#fff" strokeWidth={3} />
+        <View style={[styles.check, { backgroundColor: '#79D2A9' }]}>
+          <Check size={14} color="#0B1E46" strokeWidth={3} />
         </View>
       ) : locked ? (
         <Lock size={16} color={theme.textSecondary} />

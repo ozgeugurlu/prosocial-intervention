@@ -77,7 +77,7 @@ export default function WeeklySurveyScreen() {
       <ThemedView style={styles.container}>
         {header}
         <View style={styles.done}>
-          <CheckCircle2 size={72} color="#4CAF50" strokeWidth={1.5} />
+          <CheckCircle2 size={72} color="#79D2A9" strokeWidth={1.5} />
           <ThemedText style={styles.doneTitle}>{already && score == null ? 'Already completed' : 'Thank you!'}</ThemedText>
           <ThemedText themeColor="textSecondary" style={styles.doneText}>
             {score != null

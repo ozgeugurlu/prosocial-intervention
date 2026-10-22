@@ -301,7 +301,7 @@ export function OnboardingFlow({ onDone }: OnboardingFlowProps) {
             />
             {videoWatched && (
               <View style={styles.watchedIndicator}>
-                <Check size={16} color="#4CAF50" strokeWidth={3} />
+                <Check size={16} color="#79D2A9" strokeWidth={3} />
                 <ThemedText style={styles.watchedText}>Watched</ThemedText>
               </View>
             )}
@@ -618,7 +618,7 @@ const styles = StyleSheet.create({
   },
   watchedText: {
     fontSize: 13,
-    color: '#4CAF50',
+    color: '#79D2A9',
     fontWeight: '700',
   },
   loadingContainer: {

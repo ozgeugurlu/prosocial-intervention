@@ -62,7 +62,8 @@ export default function CalendarScreen() {
   const activeTotal = Array.from({ length: currentDay }, (_, i) => i + 1).filter((d) => isActiveDay(progress[d])).length;
 
   const colors: Record<DayState, { bg: string; fg: string; border: string }> = {
-    full: { bg: '#4CAF50', fg: '#fff', border: 'transparent' },
+    // Soft jade for completed days: still reads as green, but sits calmly on navy.
+    full: { bg: '#79D2A9', fg: '#0B1E46', border: 'transparent' },
     partial: { bg: `${theme.primary}55`, fg: theme.text, border: 'transparent' },
     missed: { bg: 'transparent', fg: theme.textSecondary, border: theme.border },
     today: { bg: 'transparent', fg: theme.text, border: theme.primary },
@@ -116,7 +117,7 @@ export default function CalendarScreen() {
               <ThemedText style={styles.statText}>Best: {best} days</ThemedText>
             </View>
             <View style={styles.stat}>
-              <Check size={16} color="#4CAF50" />
+              <Check size={16} color="#79D2A9" />
               <ThemedText style={styles.statText}>
                 {activeTotal} of {currentDay} days active
               </ThemedText>
@@ -162,7 +163,7 @@ export default function CalendarScreen() {
                 {Array.from({ length: GREEN_DAYS_FOR_BADGE }, (_, i) => (
                   <View
                     key={i}
-                    style={[styles.pip, { backgroundColor: i < greenThisWeek ? '#4CAF50' : theme.muted, borderColor: theme.border }]}
+                    style={[styles.pip, { backgroundColor: i < greenThisWeek ? '#79D2A9' : theme.muted, borderColor: theme.border }]}
                   />
                 ))}
               </View>
@@ -248,8 +249,8 @@ export default function CalendarScreen() {
               {TASKS.map((t) => {
                 const done = !!selectedProgress?.[t];
                 return (
-                  <View key={t} style={[styles.taskChip, { borderColor: done ? '#4CAF50' : theme.border, backgroundColor: done ? '#4CAF5018' : 'transparent' }]}>
-                    {done && <Check size={12} color="#4CAF50" strokeWidth={3} />}
+                  <View key={t} style={[styles.taskChip, { borderColor: done ? '#79D2A9' : theme.border, backgroundColor: done ? '#79D2A922' : 'transparent' }]}>
+                    {done && <Check size={12} color="#79D2A9" strokeWidth={3} />}
                     <ThemedText style={styles.taskChipText} themeColor={done ? 'text' : 'textSecondary'}>
                       {TASK_LABELS[t]}
                     </ThemedText>
