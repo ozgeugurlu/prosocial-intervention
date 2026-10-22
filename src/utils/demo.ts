@@ -235,14 +235,15 @@ export const demoData = {
 
 /** Example Library content for the preview (real content comes from Firestore). */
 const DEMO_MEDIA: MediaItem[] = [
-  { id: 'why-kindness-matters', week: 1, psychoed: true, type: 'video', title: 'Why small acts of kindness matter', durationLabel: '4:30', url: 'demo' },
+  // Each week: two videos and two flashcards (flashcards are below).
   { id: 'w1-ifthen', week: 1, day: 'Sunday', order: -2, type: 'video', title: 'Making if-then plans that stick', durationLabel: '3:15', url: 'demo' },
-  { id: 'evening-wind-down', week: 1, day: 'Wednesday', order: 3, type: 'audio', title: 'Evening wind-down', durationLabel: '3:00', url: 'demo' },
+  { id: 'why-kindness-matters', week: 1, psychoed: true, type: 'video', title: 'Why small acts of kindness matter', durationLabel: '4:30', url: 'demo' },
   { id: 'w2-psychoed', week: 2, psychoed: true, type: 'video', title: 'Helping and your health', durationLabel: '5:10', url: 'demo' },
-  { id: 'w2-listen', week: 2, day: 'Monday', order: 1, type: 'video', title: 'The power of active listening', durationLabel: '4:30', url: 'demo' },
-  { id: 'w2-connect', week: 2, day: 'Wednesday', order: 3, type: 'video', title: 'Communication and connection', durationLabel: '5:20', url: 'demo' },
-  { id: 'w2-friday', week: 2, day: 'Friday', order: 5, type: 'video', title: 'Building stronger connections', durationLabel: '6:30', url: 'demo' },
+  { id: 'w2-listen', week: 2, day: 'Wednesday', order: 2, type: 'video', title: 'The power of active listening', durationLabel: '4:30', url: 'demo' },
   { id: 'w3-psychoed', week: 3, psychoed: true, type: 'video', title: 'Generosity and well-being', durationLabel: '4:45', url: 'demo' },
+  { id: 'w3-video', week: 3, day: 'Wednesday', order: 2, type: 'video', title: 'Giving without burning out', durationLabel: '4:10', url: 'demo' },
+  // Sent by Percy in the example evening chat; not part of the weekly Library list.
+  { id: 'evening-wind-down', type: 'audio', title: 'Evening wind-down', durationLabel: '3:00', url: 'demo' },
 ];
 
 type SampleScript = { name: string; studyDay: number; slot: 'morning' | 'evening'; segments: Omit<ScriptSegment, 'order'>[] };
@@ -283,8 +284,8 @@ export const demoContent = {
       description: '',
       week: 1,
       cards: [
-        { front: 'Two-minute kindness', back: 'Hold a door, send a thank-you text, or offer your seat.', type: 'text', order: 2 },
-        { front: 'Noticing needs', back: 'Look for small signs that someone could use a hand.', type: 'text', order: 4 },
+        { front: 'Two-minute kindness', back: 'Hold a door, send a thank-you text, or offer your seat.', type: 'text', order: 1 },
+        { front: 'Noticing needs', back: 'Look for small signs that someone could use a hand.', type: 'text', order: 3 },
       ],
     },
   ],
