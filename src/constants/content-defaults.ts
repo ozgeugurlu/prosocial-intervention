@@ -41,7 +41,7 @@ export const DEFAULT_FAQ: FaqItem[] = [
     order: 1,
     question: 'What happens each day?',
     answer:
-      'Each morning Percy, your coach, checks in with a short chat and sometimes a video. Each evening there is a short chat and a quick reflection survey. Most days take about 10 minutes in total.',
+      'Each morning Percy, your coach, checks in with a short chat and video. From 5 pm, your evening chat and a quick reflection open. Most days take about 10 minutes in total.',
   },
   {
     id: 'percy',

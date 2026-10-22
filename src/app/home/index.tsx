@@ -1,5 +1,6 @@
 import { useRouter, type Href } from 'expo-router';
-import { Check, ChevronRight, ClipboardList, Flame, Lock, Moon, PencilLine, PlayCircle, Sun, type LucideIcon } from 'lucide-react-native';
+import { Check, ChevronRight, ClipboardList, Flame, Info, Lock, Moon, PencilLine, PlayCircle, Sun, type LucideIcon } from 'lucide-react-native';
+import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -75,6 +76,7 @@ export default function HomeScreen() {
   const router = useRouter();
   const { currentWeek, currentDay, daysElapsed, progress, userName, startDate, hasStarted } = useStudy();
   const { goals, weekly, config } = useParticipantRecords();
+  const [showTimes, setShowTimes] = useState(false);
 
   const today: Partial<DailyProgress> = progress[currentDay] ?? {};
   const eveningOpen = new Date().getHours() >= EVENING_OPENS_AT_HOUR;
@@ -150,11 +152,28 @@ export default function HomeScreen() {
         {/* Today's tasks */}
         <HomeCard>
           <View style={styles.cardHeader}>
-            <ThemedText style={styles.cardTitle}>Today</ThemedText>
+            <View style={styles.titleRow}>
+              <ThemedText style={styles.cardTitle}>Today</ThemedText>
+              <Pressable
+                onPress={() => setShowTimes((v) => !v)}
+                hitSlop={10}
+                accessibilityRole="button"
+                accessibilityLabel="When tasks open"
+                accessibilityState={{ expanded: showTimes }}
+              >
+                <Info size={17} color={showTimes ? theme.primary : theme.textSecondary} />
+              </Pressable>
+            </View>
             <ThemedText style={styles.cardMeta} themeColor="textSecondary">
               Day {currentDay} of {studyLength}
             </ThemedText>
           </View>
+          {showTimes && (
+            <ThemedText style={styles.timesNote} themeColor="textSecondary">
+              Your morning chat and video are open all day. Your evening chat and reflection open at{' '}
+              {formatHour(EVENING_OPENS_AT_HOUR)}.
+            </ThemedText>
+          )}
           <View style={styles.tasks}>
             <ThemedText style={styles.section} themeColor="textSecondary">
               Morning
@@ -217,7 +236,9 @@ const styles = StyleSheet.create({
   weeklyCta: { flexDirection: 'row', alignItems: 'center', gap: 12, borderRadius: 20, padding: Spacing.three },
   weeklyTitle: { fontSize: 16, fontWeight: '700' },
   weeklySub: { fontSize: 13, opacity: 0.85 },
-  cardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline' },
+  titleRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  timesNote: { fontSize: 14, lineHeight: 20, marginTop: Spacing.two },
+  cardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   cardTitle: { fontFamily: Fonts.serif, fontSize: 20, fontWeight: '700', lineHeight: 24 },
   cardMeta: { fontSize: 13 },
   tasks: { marginTop: Spacing.two, gap: Spacing.two },

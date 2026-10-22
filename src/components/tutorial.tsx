@@ -36,7 +36,7 @@ const STEPS: Step[] = [
     icon: Home,
     tab: 'Home tab',
     title: 'Your day at a glance',
-    body: "Home shows today's tasks: a morning chat with Percy (often with a short video) and an evening chat plus a 2-minute reflection. Tasks tick off as you finish them.",
+    body: "Home shows today's tasks: a morning chat with Percy (often with a short video) and an evening chat plus a 2-minute reflection. Your morning chat is open all day. Your evening chat and reflection open at 5 pm.",
   },
   {
     icon: MessageCircle,
