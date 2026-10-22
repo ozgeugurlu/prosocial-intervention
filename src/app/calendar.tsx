@@ -1,7 +1,7 @@
 /**
  * Calendar: interaction streak plus a day-by-day record of activity across the program.
  */
-import { Check, Flame, Trophy } from 'lucide-react-native';
+import { Check, ChevronDown, ChevronUp, Flame, Info, Trophy } from 'lucide-react-native';
 import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -53,6 +53,7 @@ export default function CalendarScreen() {
   const { currentDay, progress, startDate, hasStarted } = useStudy();
   const { config } = useParticipantRecords();
   const [selected, setSelected] = useState<number>(currentDay);
+  const [showRule, setShowRule] = useState(false);
 
   const studyLength = config.studyLengthDays;
   const weeks = Math.ceil(studyLength / 7);
@@ -131,10 +132,26 @@ export default function CalendarScreen() {
               {earnedCount} of {Math.min(weeks, BADGES.length)} earned
             </ThemedText>
           </View>
-          <ThemedText style={styles.badgeRule} themeColor="textSecondary">
-            Turn {GREEN_DAYS_FOR_BADGE} days green in a week to earn that week&apos;s badge. A day turns green when you
-            finish all four activities: both chats with Percy, the video and the evening reflection.
-          </ThemedText>
+          <Pressable
+            onPress={() => setShowRule((v) => !v)}
+            style={styles.ruleToggle}
+            accessibilityRole="button"
+            accessibilityState={{ expanded: showRule }}
+          >
+            <Info size={15} color={theme.primary} />
+            <ThemedText style={[styles.ruleToggleText, { color: theme.primary }]}>How to earn badges</ThemedText>
+            {showRule ? <ChevronUp size={16} color={theme.primary} /> : <ChevronDown size={16} color={theme.primary} />}
+          </Pressable>
+          {showRule && (
+            <View style={[styles.ruleBox, { backgroundColor: theme.background }]}>
+              <ThemedText style={styles.ruleLine}>
+                <ThemedText style={styles.ruleStrong}>4 green days</ThemedText> in a week earns that week&apos;s badge.
+              </ThemedText>
+              <ThemedText style={styles.ruleLine} themeColor="textSecondary">
+                A day turns green when you finish all 4: morning chat, video, evening chat and reflection.
+              </ThemedText>
+            </View>
+          )}
           {hasStarted && thisBadge && (
             <View style={[styles.goalBox, { backgroundColor: theme.background, borderColor: theme.border }]}>
               <View style={styles.goalTop}>
@@ -155,10 +172,10 @@ export default function CalendarScreen() {
               </View>
               <ThemedText style={styles.goalHint} themeColor="textSecondary">
                 {toGo === 0
-                  ? 'Nicely done. Keep going to grow your streak.'
+                  ? 'Badge unlocked. Keep your streak going!'
                   : toGo === 1
-                    ? 'One more green day to unlock it!'
-                    : `${toGo} more green days to unlock it.`}
+                    ? '1 more green day to unlock it'
+                    : `${toGo} more green days to unlock it`}
               </ThemedText>
             </View>
           )}
@@ -270,7 +287,11 @@ const styles = StyleSheet.create({
   badges: { flexDirection: 'row', gap: 12, paddingRight: Spacing.four },
   badgeHead: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline' },
   badgeCount: { fontSize: 13, fontWeight: '600' },
-  badgeRule: { fontSize: 14, lineHeight: 20 },
+  ruleToggle: { flexDirection: 'row', alignItems: 'center', gap: 6, alignSelf: 'flex-start', paddingVertical: 2 },
+  ruleToggleText: { fontSize: 14, fontWeight: '700' },
+  ruleBox: { borderRadius: 12, padding: 12, gap: 4 },
+  ruleLine: { fontSize: 14, lineHeight: 20 },
+  ruleStrong: { fontSize: 14, fontWeight: '700' },
   goalBox: { borderRadius: 14, borderWidth: 1, padding: Spacing.three, gap: 8 },
   goalTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   goalTitle: { fontSize: 15, fontWeight: '700', flexShrink: 1 },
