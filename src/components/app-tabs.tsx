@@ -162,6 +162,7 @@ export default function AppTabs() {
       tabBar={(props) => <CustomTabBar {...props as any} />}
       screenOptions={{
         headerShown: false,
+        sceneStyle: { backgroundColor: 'transparent' },
       }}
     >
       <Tabs.Screen
