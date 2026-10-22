@@ -1,4 +1,4 @@
-import { Bird } from 'lucide-react-native';
+import { HandHeart } from 'lucide-react-native';
 import { useState } from 'react';
 import {
   ActivityIndicator,
@@ -67,7 +67,7 @@ export function AuthScreen() {
           keyboardShouldPersistTaps="handled"
         >
           <View style={[styles.logo, { backgroundColor: `${theme.primary}25` }]}>
-            <Bird size={36} color={theme.primary} strokeWidth={1.8} />
+            <HandHeart size={36} color={theme.primary} strokeWidth={1.8} />
           </View>
           <ThemedText style={styles.title}>{mode === 'signUp' ? 'Welcome to PEACH' : 'Welcome back'}</ThemedText>
           <ThemedText style={styles.subtitle} themeColor="textSecondary">
