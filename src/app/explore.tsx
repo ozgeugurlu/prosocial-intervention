@@ -2,7 +2,7 @@
  * Library: an Onboarding drop-down (content with week 0), then one drop-down per program week. Each open week lists, in order:
  *   1. the participant's if-then plan for that week,
  *   2. the week's psychoeducation video (unless an item's `order` places it earlier),
- *   3. the rest of the week's videos, audio, messages and flashcards.
+ *   3. the rest of the week's videos and flashcards, alternating video, card, video, card.
  * Weeks after the current one stay locked until the participant reaches them.
  */
 import { useFocusEffect, useRouter } from 'expo-router';
@@ -118,11 +118,20 @@ export default function LibraryScreen() {
 
   const entriesFor = useMemo(
     () => (week: number): Entry[] => {
-      const items: Entry[] = media
+      const videos: Entry[] = media
         .filter((m) => m.week === week)
-        .map((m) => ({ kind: 'media' as const, item: m, order: m.order ?? (m.psychoed ? 0 : 500) }));
-      (cardWeeks[week] ?? []).forEach((c, i) => items.push({ kind: 'card', card: c, order: c.order ?? 600 + i }));
-      return items.sort((a, b) => a.order - b.order);
+        .map((m) => ({ kind: 'media' as const, item: m, order: m.order ?? (m.psychoed ? 0 : 500) }))
+        .sort((a, b) => a.order - b.order);
+      const cards: Entry[] = (cardWeeks[week] ?? [])
+        .map((c, i) => ({ kind: 'card' as const, card: c, order: c.order ?? 600 + i }))
+        .sort((a, b) => a.order - b.order);
+      // Alternate: video, flashcard, video, flashcard… (any extras go at the end).
+      const out: Entry[] = [];
+      for (let i = 0; i < Math.max(videos.length, cards.length); i++) {
+        if (videos[i]) out.push(videos[i]);
+        if (cards[i]) out.push(cards[i]);
+      }
+      return out;
     },
     [media, cardWeeks],
   );
