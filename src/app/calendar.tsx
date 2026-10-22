@@ -32,17 +32,17 @@ const TASK_LABELS: Record<(typeof TASKS)[number], string> = {
   'night survey': 'Reflection',
 };
 
-// Badge names for weeks 4–9 are placeholders: research team to rename to match the weekly themes.
+// One badge per week, named after that week's theme in the intervention scripts.
 const BADGES: { title: string; icon: BadgeIconType }[] = [
-  { title: 'First Steps', icon: 'sprout' },
-  { title: 'Empathy Builder', icon: 'heart' },
-  { title: 'Deep Listener', icon: 'ear' },
-  { title: 'Kind Habit', icon: 'sprout' },
-  { title: 'Generous Spirit', icon: 'heart' },
-  { title: 'Good Neighbor', icon: 'ear' },
-  { title: 'Bridge Builder', icon: 'sprout' },
-  { title: 'Steady Helper', icon: 'heart' },
-  { title: 'Kindness Champion', icon: 'ear' },
+  { title: 'Own Best Friend', icon: 'smile' }, // Week 1: self-affirmation + mental contrasting
+  { title: 'Gratitude Crew', icon: 'heart' }, // Week 2: gratitude + organizing a change team
+  { title: 'Helping Hand', icon: 'helping' }, // Week 3: offer help + systematic reflection
+  { title: 'Hello, Stranger', icon: 'chat' }, // Week 4: talk to strangers + situation triggers
+  { title: 'In Their Shoes', icon: 'footprints' }, // Week 5: strengths diary + empathy
+  { title: 'Compliment Pro', icon: 'sparkles' }, // Week 6: observational learning + compliments
+  { title: 'Awestruck', icon: 'mountain' }, // Week 7: introspection + awe
+  { title: 'Brave Asker', icon: 'users' }, // Week 8: thinking about the future + ask for help
+  { title: 'Ripple Maker', icon: 'ripple' }, // Week 9: motivational interviewing + moral elevation
 ];
 /** A week's badge is earned with this many green days (all four activities done) in that week. */
 const GREEN_DAYS_FOR_BADGE = 4;
