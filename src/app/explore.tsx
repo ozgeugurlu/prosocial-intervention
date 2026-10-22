@@ -68,7 +68,8 @@ function IfThenReminder({ goal, isCurrent }: { goal?: WeeklyGoal; isCurrent: boo
 function MediaRow({ item, onPress }: { item: MediaItem; onPress: () => void }) {
   const theme = useTheme();
   const Icon = item.type === 'audio' ? Headphones : item.type === 'text' ? FileText : Play;
-  const meta = [item.psychoed ? 'Psychoeducation' : item.day, item.durationLabel].filter(Boolean).join(' • ');
+  // Videos are all under 30 seconds, so rows show just the day, not a type label or length.
+  const meta = item.psychoed ? '' : (item.day ?? '');
   return (
     <Pressable
       onPress={onPress}

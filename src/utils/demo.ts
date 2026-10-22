@@ -236,15 +236,15 @@ export const demoData = {
 /** Example Library content for the preview (real content comes from Firestore). */
 const DEMO_MEDIA: MediaItem[] = [
   // Onboarding (week 0), then each week: two videos and two flashcards (flashcards are below).
-  { id: 'onb-ifthen', week: 0, order: 1, type: 'video', title: 'What is an if-then plan?', durationLabel: '2:45', url: 'demo' },
-  { id: 'w1-ifthen', week: 1, day: 'Sunday', order: -2, type: 'video', title: 'Making if-then plans that stick', durationLabel: '3:15', url: 'demo' },
-  { id: 'why-kindness-matters', week: 1, psychoed: true, type: 'video', title: 'Why small acts of kindness matter', durationLabel: '4:30', url: 'demo' },
-  { id: 'w2-psychoed', week: 2, psychoed: true, type: 'video', title: 'Helping and your health', durationLabel: '5:10', url: 'demo' },
-  { id: 'w2-listen', week: 2, day: 'Wednesday', order: 2, type: 'video', title: 'The power of active listening', durationLabel: '4:30', url: 'demo' },
-  { id: 'w3-psychoed', week: 3, psychoed: true, type: 'video', title: 'Generosity and well-being', durationLabel: '4:45', url: 'demo' },
-  { id: 'w3-video', week: 3, day: 'Wednesday', order: 2, type: 'video', title: 'Giving without burning out', durationLabel: '4:10', url: 'demo' },
+  { id: 'onb-ifthen', week: 0, order: 1, type: 'video', title: 'What is an if-then plan?', url: 'demo' },
+  { id: 'w1-ifthen', week: 1, day: 'Sunday', order: -2, type: 'video', title: 'Making if-then plans that stick', url: 'demo' },
+  { id: 'why-kindness-matters', week: 1, psychoed: true, type: 'video', title: 'Why small acts of kindness matter', url: 'demo' },
+  { id: 'w2-psychoed', week: 2, psychoed: true, type: 'video', title: 'Helping and your health', url: 'demo' },
+  { id: 'w2-listen', week: 2, day: 'Wednesday', order: 2, type: 'video', title: 'The power of active listening', url: 'demo' },
+  { id: 'w3-psychoed', week: 3, psychoed: true, type: 'video', title: 'Generosity and well-being', url: 'demo' },
+  { id: 'w3-video', week: 3, day: 'Wednesday', order: 2, type: 'video', title: 'Giving without burning out', url: 'demo' },
   // Sent by Percy in the example evening chat; not part of the weekly Library list.
-  { id: 'evening-wind-down', type: 'audio', title: 'Evening wind-down', durationLabel: '3:00', url: 'demo' },
+  { id: 'evening-wind-down', type: 'audio', title: 'Evening wind-down', url: 'demo' },
 ];
 
 type SampleScript = { name: string; studyDay: number; slot: 'morning' | 'evening'; segments: Omit<ScriptSegment, 'order'>[] };
