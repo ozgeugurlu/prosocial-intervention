@@ -8,7 +8,6 @@ import { GoalBoard } from '@/components/goal-board';
 import { HomeCard } from '@/components/home-card';
 import { PrestartCard } from '@/components/prestart-card';
 import { ProsocialityCard } from '@/components/prosociality-card';
-import { RollingScoreCard } from '@/components/rolling-score-card';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { EVENING_OPENS_AT_HOUR, formatHour } from '@/constants/study';
@@ -198,7 +197,6 @@ export default function HomeScreen() {
         </HomeCard>
 
         <ProsocialityCard records={weekly} />
-        <RollingScoreCard />
           </>
         )}
       </ScrollView>
