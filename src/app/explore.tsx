@@ -1,7 +1,7 @@
 /**
  * Library: one drop-down per program week. Each open week lists, in order:
  *   1. the participant's if-then plan for that week,
- *   2. the week's psychoeducation video,
+ *   2. the week's psychoeducation video (unless an item's `order` places it earlier),
  *   3. the rest of the week's videos, audio, messages and flashcards.
  * Weeks after the current one stay locked until the participant reaches them.
  */
@@ -119,7 +119,7 @@ export default function LibraryScreen() {
     () => (week: number): Entry[] => {
       const items: Entry[] = media
         .filter((m) => m.week === week)
-        .map((m) => ({ kind: 'media' as const, item: m, order: m.psychoed ? -1 : (m.order ?? 500) }));
+        .map((m) => ({ kind: 'media' as const, item: m, order: m.order ?? (m.psychoed ? 0 : 500) }));
       (cardWeeks[week] ?? []).forEach((c, i) => items.push({ kind: 'card', card: c, order: c.order ?? 600 + i }));
       return items.sort((a, b) => a.order - b.order);
     },

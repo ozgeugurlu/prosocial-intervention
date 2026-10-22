@@ -35,8 +35,8 @@ Branching beyond per-option replies is not supported yet; tell the developer if 
 | `youtubeId` **or** `url` | `url` should be an https link to a file in Firebase Storage (recommended: no third party involved) |
 | `body` | Text for `text` items (informational messages) |
 | `week` | Which Library week (1–9) the item is listed under |
-| `psychoed` | `true` for the week's psychoeducation video; listed first, right after the participant's if-then plan |
-| `day`, `order` | Day label shown on the row ("Monday") and position in the week; flashcards share the same `order` numbers so videos and cards interleave |
+| `psychoed` | `true` for the week's psychoeducation video; listed right after the participant's if-then plan unless other items have a lower `order` |
+| `day`, `order` | Day label shown on the row ("Monday") and position in the week (lower comes first; the psychoed video counts as 0, so use negative numbers to place something before it); flashcards share the same `order` numbers so videos and cards interleave |
 | `durationLabel`, `description` | Display only |
 | `availableFromDay` | Optional: unlock automatically on that study day, without Percy sending it |
 

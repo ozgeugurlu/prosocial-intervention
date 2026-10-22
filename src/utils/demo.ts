@@ -236,9 +236,8 @@ export const demoData = {
 /** Example Library content for the preview (real content comes from Firestore). */
 const DEMO_MEDIA: MediaItem[] = [
   { id: 'why-kindness-matters', week: 1, psychoed: true, type: 'video', title: 'Why small acts of kindness matter', durationLabel: '4:30', url: 'demo' },
-  { id: 'w1-ifthen', week: 1, day: 'Monday', order: 1, type: 'video', title: 'Making if-then plans that stick', durationLabel: '3:15', url: 'demo' },
+  { id: 'w1-ifthen', week: 1, day: 'Sunday', order: -2, type: 'video', title: 'Making if-then plans that stick', durationLabel: '3:15', url: 'demo' },
   { id: 'evening-wind-down', week: 1, day: 'Wednesday', order: 3, type: 'audio', title: 'Evening wind-down', durationLabel: '3:00', url: 'demo' },
-  { id: 'week1-tip', week: 1, day: 'Friday', order: 5, type: 'text', title: 'Tip: start small', body: 'The most lasting changes start small. A two-minute act of kindness you actually do beats a grand plan you never get to.' },
   { id: 'w2-psychoed', week: 2, psychoed: true, type: 'video', title: 'Helping and your health', durationLabel: '5:10', url: 'demo' },
   { id: 'w2-listen', week: 2, day: 'Monday', order: 1, type: 'video', title: 'The power of active listening', durationLabel: '4:30', url: 'demo' },
   { id: 'w2-connect', week: 2, day: 'Wednesday', order: 3, type: 'video', title: 'Communication and connection', durationLabel: '5:20', url: 'demo' },
@@ -275,7 +274,7 @@ export const demoContent = {
       week: 0,
       cards: [
         { front: 'Kindness and stress', back: 'Helping others is linked to lower stress and a better mood.', type: 'text', order: 2 },
-        { front: 'What is an if-then plan?', back: 'A plan that links a situation to an action: "If X happens, then I will do Y."', type: 'text', order: 4 },
+        { front: 'What is an if-then plan?', back: 'A plan that links a situation to an action: "If X happens, then I will do Y."', type: 'text', order: -1 },
       ],
     },
     {
