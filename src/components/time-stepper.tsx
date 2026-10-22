@@ -61,5 +61,5 @@ const styles = StyleSheet.create({
   label: { fontSize: 15, fontWeight: '600' },
   controls: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   btn: { width: 36, height: 36, borderRadius: 18, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
-  time: { fontFamily: Fonts.serif, fontSize: 20, fontWeight: '700', minWidth: 84, textAlign: 'center' },
+  time: { fontFamily: Fonts.serif, fontSize: 17, fontWeight: '700', minWidth: 84, textAlign: 'center' },
 });

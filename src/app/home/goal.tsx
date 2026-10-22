@@ -162,7 +162,7 @@ export default function GoalScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: Spacing.four, paddingBottom: 12 },
-  headerTitle: { fontFamily: Fonts.serif, fontSize: 22, fontWeight: '700' },
+  headerTitle: { fontFamily: Fonts.serif, fontSize: 18, fontWeight: '700' },
   content: { padding: Spacing.four, gap: Spacing.two, maxWidth: 640, width: '100%', alignSelf: 'center' },
   intro: { fontSize: 15, lineHeight: 22, marginBottom: Spacing.two },
   percyCard: { borderWidth: 1, borderRadius: 18, padding: Spacing.three, gap: 10, marginBottom: Spacing.two },
@@ -174,7 +174,7 @@ const styles = StyleSheet.create({
   label: { fontSize: 15, fontWeight: '700', marginTop: Spacing.three },
   input: { borderWidth: 1, borderRadius: 14, paddingHorizontal: 14, paddingVertical: 12, fontSize: 16, fontFamily: Fonts.sans, textAlignVertical: 'top' },
   ifRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 10 },
-  kw: { fontFamily: Fonts.serif, fontSize: 20, fontWeight: '700', width: 44, paddingTop: 10 },
+  kw: { fontFamily: Fonts.serif, fontSize: 17, fontWeight: '700', width: 44, paddingTop: 10 },
   flex: { flex: 1, minHeight: 56 },
   save: { borderRadius: 16, paddingVertical: 16, alignItems: 'center', marginTop: Spacing.four },
   saveText: { fontSize: 16, fontWeight: '700' },

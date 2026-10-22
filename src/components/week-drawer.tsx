@@ -122,9 +122,9 @@ const styles = StyleSheet.create({
   },
   title: {
     fontFamily: Fonts.serif,
-    fontSize: 22,
+    fontSize: 18,
     fontWeight: '700',
-    lineHeight: 28,
+    lineHeight: 24,
   },
   subtitle: {
     fontFamily: Fonts.sans,

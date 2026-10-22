@@ -377,7 +377,7 @@ const styles = StyleSheet.create({
   header: { paddingBottom: 12, borderBottomWidth: 1, gap: 12, zIndex: 10 },
   headerContent: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: Spacing.four, gap: 12 },
   avatar: { width: 48, height: 48, borderRadius: 24, justifyContent: 'center', alignItems: 'center' },
-  headerTitle: { fontFamily: Fonts.serif, fontSize: 22, fontWeight: '700', lineHeight: 26 },
+  headerTitle: { fontFamily: Fonts.serif, fontSize: 18, fontWeight: '700', lineHeight: 22 },
   headerSubtitle: { fontSize: 13, lineHeight: 16 },
   segmented: { flexDirection: 'row', marginHorizontal: Spacing.four, borderRadius: 14, padding: 4 },
   segment: { flex: 1, paddingVertical: 8, borderRadius: 10, alignItems: 'center' },

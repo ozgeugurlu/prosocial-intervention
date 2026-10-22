@@ -178,7 +178,7 @@ const styles = StyleSheet.create({
   iconWrap: { width: 104, height: 104, borderRadius: 52, alignItems: 'center', justifyContent: 'center' },
   tabChip: { borderWidth: 1, borderRadius: 14, paddingHorizontal: 12, paddingVertical: 4 },
   tabChipText: { fontSize: 12, fontWeight: '600' },
-  title: { fontFamily: Fonts.serif, fontSize: 30, lineHeight: 36, fontWeight: '700', textAlign: 'center', maxWidth: 360 },
+  title: { fontFamily: Fonts.serif, fontSize: 25, lineHeight: 30, fontWeight: '700', textAlign: 'center', maxWidth: 360 },
   text: { fontSize: 16, lineHeight: 24, textAlign: 'center', maxWidth: 380 },
   reminders: { width: '100%', maxWidth: 400, gap: 12, marginTop: Spacing.two },
   small: { fontSize: 12, lineHeight: 18, textAlign: 'center' },

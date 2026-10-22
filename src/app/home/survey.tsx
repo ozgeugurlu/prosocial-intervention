@@ -391,7 +391,7 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontFamily: Fonts.serif,
-    fontSize: 20,
+    fontSize: 17,
     fontWeight: '700',
   },
   headerSpacer: {
@@ -442,7 +442,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontFamily: Fonts.serif,
-    fontSize: 22,
+    fontSize: 18,
     fontWeight: '700',
     marginBottom: 4,
   },
@@ -617,7 +617,7 @@ const styles = StyleSheet.create({
   },
   successTitle: {
     fontFamily: Fonts.serif,
-    fontSize: 28,
+    fontSize: 24,
     fontWeight: '700',
     textAlign: 'center',
     marginTop: 8,

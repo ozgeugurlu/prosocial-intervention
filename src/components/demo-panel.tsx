@@ -159,7 +159,7 @@ const styles = StyleSheet.create({
   backdrop: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(5,10,20,0.45)' },
   sheet: { maxHeight: '82%', borderTopLeftRadius: 24, borderTopRightRadius: 24, borderWidth: 1, padding: Spacing.four, gap: Spacing.three },
   sheetHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  sheetTitle: { fontFamily: Fonts.serif, fontSize: 22, fontWeight: '700' },
+  sheetTitle: { fontFamily: Fonts.serif, fontSize: 18, fontWeight: '700' },
   groupTitle: { fontSize: 12, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.6 },
   row: { borderRadius: 12, paddingVertical: 11, paddingHorizontal: 14 },
   rowLabel: { fontSize: 15, fontWeight: '600' },

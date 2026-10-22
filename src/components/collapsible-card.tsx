@@ -72,8 +72,8 @@ const styles = StyleSheet.create({
   },
   title: {
     fontFamily: Fonts.sans,
-    fontSize: 20,
+    fontSize: 17,
     fontWeight: '700',
-    lineHeight: 26,
+    lineHeight: 22,
   },
 });

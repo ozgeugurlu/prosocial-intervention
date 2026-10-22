@@ -545,9 +545,9 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontFamily: Fonts.serif,
-    fontSize: 22,
+    fontSize: 18,
     fontWeight: '700',
-    lineHeight: 26,
+    lineHeight: 22,
   },
   headerSubtitle: {
     fontSize: 13,
@@ -709,7 +709,7 @@ const styles = StyleSheet.create({
   videoPlayerTitle: {
     color: '#ffffff',
     fontFamily: Fonts.serif,
-    fontSize: 20,
+    fontSize: 17,
     fontWeight: '700',
   },
   videoPlayerSubtitle: {

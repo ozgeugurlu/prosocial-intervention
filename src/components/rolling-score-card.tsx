@@ -106,9 +106,9 @@ const styles = StyleSheet.create({
   },
   summaryValue: {
     fontFamily: Fonts.serif,
-    fontSize: 32,
+    fontSize: 27,
     fontWeight: "700",
-    lineHeight: 38,
+    lineHeight: 32,
   },
   scaleHint: {
     fontFamily: Fonts.sans,

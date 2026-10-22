@@ -35,5 +35,5 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     zIndex: 10,
   },
-  title: { fontFamily: Fonts.serif, fontSize: 22, fontWeight: '700', flex: 1, textAlign: 'center' },
+  title: { fontFamily: Fonts.serif, fontSize: 18, fontWeight: '700', flex: 1, textAlign: 'center' },
 });

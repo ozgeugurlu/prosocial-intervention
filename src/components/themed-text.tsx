@@ -48,14 +48,14 @@ const styles = StyleSheet.create({
   },
   title: {
     fontFamily: Fonts.serif,
-    fontSize: 48,
+    fontSize: 40,
     fontWeight: 600,
-    lineHeight: 52,
+    lineHeight: 44,
   },
   subtitle: {
     fontFamily: Fonts.serif,
-    fontSize: 32,
-    lineHeight: 44,
+    fontSize: 27,
+    lineHeight: 37,
     fontWeight: 600,
   },
   link: {

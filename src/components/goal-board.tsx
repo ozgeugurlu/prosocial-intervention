@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
   header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   headerLeft: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   icon: { width: 38, height: 38, borderRadius: 19, alignItems: 'center', justifyContent: 'center' },
-  title: { fontFamily: Fonts.sans, fontSize: 20, fontWeight: '700', lineHeight: 24 },
+  title: { fontFamily: Fonts.sans, fontSize: 17, fontWeight: '700', lineHeight: 20 },
   subtitle: { fontSize: 13 },
   body: { marginTop: Spacing.three, gap: Spacing.two },
   box: { borderRadius: 14, padding: Spacing.three, gap: 4 },

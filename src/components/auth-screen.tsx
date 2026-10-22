@@ -174,7 +174,7 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   content: { paddingHorizontal: Spacing.four, paddingBottom: Spacing.six, alignItems: 'center' },
   logo: { width: 72, height: 72, borderRadius: 36, alignItems: 'center', justifyContent: 'center' },
-  title: { fontFamily: Fonts.serif, fontSize: 32, lineHeight: 38, fontWeight: '700', marginTop: Spacing.three, textAlign: 'center' },
+  title: { fontFamily: Fonts.serif, fontSize: 27, lineHeight: 32, fontWeight: '700', marginTop: Spacing.three, textAlign: 'center' },
   subtitle: { fontSize: 15, lineHeight: 22, textAlign: 'center', marginTop: Spacing.two, maxWidth: 340 },
   form: { width: '100%', maxWidth: 400, marginTop: Spacing.five, gap: Spacing.two },
   label: { fontSize: 14, fontWeight: '600', marginTop: Spacing.two },

@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   content: { paddingHorizontal: Spacing.four, gap: Spacing.four, maxWidth: 680, width: '100%', alignSelf: 'center' },
   header: { alignItems: 'center', gap: 4 },
-  title: { fontFamily: Fonts.serif, fontSize: 34, fontWeight: '700', lineHeight: 40, textAlign: 'center' },
+  title: { fontFamily: Fonts.serif, fontSize: 29, fontWeight: '700', lineHeight: 34, textAlign: 'center' },
   subtitle: { fontSize: 15 },
   list: { paddingVertical: Spacing.one, paddingHorizontal: Spacing.three },
   row: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 14 },

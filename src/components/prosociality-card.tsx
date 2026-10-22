@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
   icon: { width: 38, height: 38, borderRadius: 19, alignItems: 'center', justifyContent: 'center' },
   summary: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end', marginTop: Spacing.three, marginBottom: Spacing.two },
   label: { fontSize: 13 },
-  value: { fontFamily: Fonts.sans, fontSize: 34, fontWeight: '700', lineHeight: 40 },
+  value: { fontFamily: Fonts.sans, fontSize: 29, fontWeight: '700', lineHeight: 34 },
   change: { fontSize: 13, fontWeight: '600' },
   hint: { fontSize: 12 },
   empty: { fontSize: 14, lineHeight: 20, paddingVertical: Spacing.two, textAlign: 'center' },

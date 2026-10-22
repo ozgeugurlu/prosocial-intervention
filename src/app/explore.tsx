@@ -241,7 +241,7 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   content: { paddingHorizontal: Spacing.four, gap: Spacing.four, maxWidth: 800, width: '100%', alignSelf: 'center' },
   header: { gap: 4 },
-  title: { fontFamily: Fonts.serif, fontSize: 34, fontWeight: '700', lineHeight: 40 },
+  title: { fontFamily: Fonts.serif, fontSize: 29, fontWeight: '700', lineHeight: 34 },
   subtitle: { fontSize: 16, lineHeight: 22 },
   reminder: { borderRadius: 18, borderWidth: 1, padding: Spacing.three, gap: 6 },
   reminderHead: { flexDirection: 'row', alignItems: 'center', gap: 6 },
@@ -256,7 +256,7 @@ const styles = StyleSheet.create({
   backdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.4)' },
   sheet: { maxHeight: '85%', borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: Spacing.four, gap: Spacing.three },
   sheetHeader: { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 },
-  sheetTitle: { fontFamily: Fonts.serif, fontSize: 24, fontWeight: '700', lineHeight: 30, flex: 1 },
+  sheetTitle: { fontFamily: Fonts.serif, fontSize: 20, fontWeight: '700', lineHeight: 25, flex: 1 },
   close: { width: 32, height: 32, borderRadius: 16, alignItems: 'center', justifyContent: 'center' },
   body: { fontSize: 16, lineHeight: 25 },
 });

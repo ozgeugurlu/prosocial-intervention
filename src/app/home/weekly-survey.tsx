@@ -161,7 +161,7 @@ export default function WeeklySurveyScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: Spacing.four, paddingBottom: 12, borderBottomWidth: 1 },
-  headerTitle: { fontFamily: Fonts.serif, fontSize: 22, fontWeight: '700' },
+  headerTitle: { fontFamily: Fonts.serif, fontSize: 18, fontWeight: '700' },
   content: { padding: Spacing.four, gap: Spacing.three, maxWidth: 680, width: '100%', alignSelf: 'center' },
   card: { borderRadius: 18, borderWidth: 1, padding: Spacing.three, gap: Spacing.three },
   instructions: { fontSize: 15, lineHeight: 22 },
@@ -174,6 +174,6 @@ const styles = StyleSheet.create({
   submit: { borderRadius: 16, paddingVertical: 16, alignItems: 'center', marginTop: Spacing.two, alignSelf: 'stretch' },
   submitText: { fontSize: 16, fontWeight: '700' },
   done: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: Spacing.four, gap: Spacing.three },
-  doneTitle: { fontFamily: Fonts.serif, fontSize: 30, fontWeight: '700' },
+  doneTitle: { fontFamily: Fonts.serif, fontSize: 25, fontWeight: '700' },
   doneText: { fontSize: 16, lineHeight: 24, textAlign: 'center', maxWidth: 380 },
 });
