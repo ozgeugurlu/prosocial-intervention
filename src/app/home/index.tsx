@@ -183,26 +183,20 @@ export default function HomeScreen() {
           </View>
         </HomeCard>
 
-        <ProsocialityCard
-          records={weekly}
-          title="Your progress"
-          top={
-            <View style={styles.progressRow}>
-              <View style={{ flex: 1, gap: 2 }}>
-                <ThemedText style={styles.section} themeColor="textSecondary">
-                  Program progress
-                </ThemedText>
-                <ThemedText style={styles.progressText}>
-                  Day {Math.min(currentDay, studyLength)} of {studyLength}
-                </ThemedText>
-                <ThemedText themeColor="textSecondary" style={styles.cardMeta}>
-                  {daysRemaining} days remaining
-                </ThemedText>
-              </View>
-              <CircularProgress percentage={pct} size={60} strokeWidth={6} />
+        {/* Study progress */}
+        <HomeCard>
+          <View style={styles.progressRow}>
+            <View style={{ flex: 1, gap: 4 }}>
+              <ThemedText style={styles.cardTitle}>Program progress</ThemedText>
+              <ThemedText themeColor="textSecondary" style={styles.cardMeta}>
+                {daysRemaining} days remaining
+              </ThemedText>
             </View>
-          }
-        />
+            <CircularProgress percentage={pct} size={64} strokeWidth={6} />
+          </View>
+        </HomeCard>
+
+        <ProsocialityCard records={weekly} />
           </>
         )}
       </ScrollView>
@@ -233,6 +227,5 @@ const styles = StyleSheet.create({
   taskDone: { textDecorationLine: 'line-through', opacity: 0.6 },
   taskNote: { fontSize: 12 },
   check: { width: 22, height: 22, borderRadius: 11, alignItems: 'center', justifyContent: 'center' },
-  progressRow: { flexDirection: 'row', alignItems: 'center', gap: 12, marginTop: Spacing.three },
-  progressText: { fontSize: 16, fontWeight: '700' },
+  progressRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
 });
