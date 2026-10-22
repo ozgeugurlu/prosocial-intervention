@@ -143,14 +143,10 @@ export default function CalendarScreen() {
             {showRule ? <ChevronUp size={16} color={theme.primary} /> : <ChevronDown size={16} color={theme.primary} />}
           </Pressable>
           {showRule && (
-            <View style={styles.ruleBox}>
-              <ThemedText style={styles.ruleLine}>
-                <ThemedText style={styles.ruleStrong}>4 green days</ThemedText> in a week earns that week&apos;s badge.
-              </ThemedText>
-              <ThemedText style={styles.ruleLine} themeColor="textSecondary">
-                A day turns green when you finish all 4: morning chat, video, evening chat and reflection.
-              </ThemedText>
-            </View>
+            <ThemedText style={styles.ruleLine} themeColor="textSecondary">
+              <ThemedText style={styles.ruleStrong}>4 green days in a week earns that week&apos;s badge:</ThemedText> a day turns
+              green when you finish all 4: morning chat, video, evening chat and reflection.
+            </ThemedText>
           )}
           {hasStarted && thisBadge && (
             <View style={[styles.goalBox, { backgroundColor: theme.background, borderColor: theme.border }]}>
@@ -289,7 +285,6 @@ const styles = StyleSheet.create({
   badgeCount: { fontSize: 13, fontWeight: '600' },
   ruleToggle: { flexDirection: 'row', alignItems: 'center', gap: 6, alignSelf: 'flex-start', paddingVertical: 2 },
   ruleToggleText: { fontSize: 14, fontWeight: '700' },
-  ruleBox: { gap: 4 },
   ruleLine: { fontSize: 14, lineHeight: 20 },
   ruleStrong: { fontSize: 14, fontWeight: '700' },
   goalBox: { borderRadius: 14, borderWidth: 1, padding: Spacing.three, gap: 8 },
