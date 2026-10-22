@@ -101,7 +101,7 @@ export default function CalendarScreen() {
         {/* Streak */}
         <HomeCard style={styles.streakCard}>
           <View style={styles.streakMain}>
-            <Flame size={40} color="#E8763A" fill={streak > 0 ? theme.streak : 'transparent'} />
+            <Flame size={40} color={theme.streak} fill={streak > 0 ? theme.streak : 'transparent'} />
             <View>
               <ThemedText style={styles.streakNumber}>{streak}</ThemedText>
               <ThemedText themeColor="textSecondary" style={styles.streakLabel}>
