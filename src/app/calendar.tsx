@@ -92,7 +92,7 @@ export default function CalendarScreen() {
         <View style={styles.header}>
           <ThemedText style={styles.title}>Your journey</ThemedText>
           <ThemedText style={styles.subtitle} themeColor="textSecondary">
-            {weeks}-week prosociality program
+            {weeks}-week wellness program
           </ThemedText>
         </View>
 
