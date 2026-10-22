@@ -17,7 +17,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { VideoCard } from '@/components/video-card';
-import { VideoPlayer } from '@/components/video-player';
+import { MediaPlayer } from '@/components/media-player';
 import { Fonts, Spacing } from '@/constants/theme';
 import { useStudy } from '@/contexts/study-context';
 import { useTheme } from '@/hooks/use-theme';
@@ -494,8 +494,9 @@ export function OnboardingFlow({ onDone }: OnboardingFlowProps) {
               </ThemedText>
             </View>
 
-            <VideoPlayer
-              videoId="6RypXcD_u1w"
+            {/* TODO(research team): replace with the final welcome / psychoeducation video. */}
+            <MediaPlayer
+              item={{ type: 'video', youtubeId: '6RypXcD_u1w', title: 'Kindness & Generosity Introduction' }}
               width={Math.min(Dimensions.get('window').width - Spacing.four * 4, 368)}
             />
 
@@ -503,7 +504,7 @@ export function OnboardingFlow({ onDone }: OnboardingFlowProps) {
               style={[styles.videoCompleteButton, { backgroundColor: isDark ? '#262626' : '#E8DCC8' }]}
               onPress={handleVideoComplete}
             >
-              <ThemedText style={styles.videoCompleteText}>Skip to End</ThemedText>
+              <ThemedText style={styles.videoCompleteText}>{"I've finished watching"}</ThemedText>
             </Pressable>
           </View>
         </View>

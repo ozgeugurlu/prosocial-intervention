@@ -70,11 +70,11 @@ export default function FeedbackScreen() {
 
         <HomeCard style={{ gap: Spacing.three }}>
           <ThemedText style={styles.cardTitle}>Your numbers so far</ThemedText>
-          <Meter label="Check-in days" value={m.interactionRate} hint={`${m.activeDays} days with at least one activity`} />
+          <Meter label="Check-in days" value={m.interactionRate} hint={`${m.activeDays} ${m.activeDays === 1 ? 'day' : 'days'} with at least one activity`} />
           <Meter label="Percy chats" value={m.chatRate} hint="Morning and evening sessions completed" />
-          <Meter label="Evening reflections" value={m.dailySurveyRate} hint={`${daily.length} reflections completed`} />
+          <Meter label="Evening reflections" value={m.dailySurveyRate} hint={`${daily.length} ${daily.length === 1 ? 'reflection' : 'reflections'} completed`} />
           <Meter label="Activities done" value={m.behaviorRate} hint="Days you said you completed the suggested activity" />
-          <Meter label="Weekly surveys" value={m.weeklySurveyRate} hint={`${weekly.length} weekly surveys completed`} />
+          <Meter label="Weekly surveys" value={m.weeklySurveyRate} hint={`${weekly.length} weekly ${weekly.length === 1 ? 'survey' : 'surveys'} completed`} />
           <View style={styles.streaks}>
             <ThemedText style={styles.streakText}>🔥 Current streak: {m.currentStreak} days</ThemedText>
             <ThemedText style={styles.streakText} themeColor="textSecondary">

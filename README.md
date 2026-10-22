@@ -51,6 +51,12 @@ The admin tool needs a service-account key: Firebase console → Project setting
 | Firestore access | `src/utils/participant-data.ts`, `src/utils/firestore.ts` |
 | Metrics, streaks, evaluation logic | `src/utils/participation.ts` (`evaluateParticipation` is a placeholder for the team's design) |
 
+## Browser preview (no Firebase needed)
+
+`EXPO_PUBLIC_DEMO=1 npx expo start --web` runs the app with sample data held in memory, and
+`python3 scripts/preview/build-preview.py` builds the same thing as one HTML file. "Sign in" with any ID
+shows a participant on Day 11; "Create account" shows onboarding. Never ship a build with `EXPO_PUBLIC_DEMO` set.
+
 ## Checks
 
 ```bash

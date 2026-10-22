@@ -1,4 +1,5 @@
 import { doc, getDoc, collection, getDocs, query, orderBy, where } from 'firebase/firestore';
+import { DEMO, demoContent } from './demo';
 import { db } from './firebase';
 import {
   FaqItem,
@@ -86,6 +87,7 @@ export async function getFlashcardWeek(weekId: string): Promise<FlashcardWeek | 
  * Helper to fetch all FlashcardWeeks, including their nested cards.
  */
 export async function getFlashcardWeeks(): Promise<(FlashcardWeek & { id: string })[]> {
+  if (DEMO) return demoContent.getFlashcardWeeks();
   try {
     const weeksRef = collection(db, 'flashcards');
     const weeksSnap = await getDocs(weeksRef);
@@ -215,6 +217,7 @@ export async function getSessionScript(
   studyDay: number,
   slot: 'morning' | 'evening',
 ): Promise<(Script & { id: string }) | null> {
+  if (DEMO) return demoContent.getSessionScript(studyDay, slot);
   const q = query(collection(db, 'scripts'), where('studyDay', '==', studyDay), where('slot', '==', slot));
   const snap = await getDocs(q);
   const first = snap.docs[0];
@@ -224,16 +227,19 @@ export async function getSessionScript(
 }
 
 export async function getMediaItems(): Promise<MediaItem[]> {
+  if (DEMO) return demoContent.getMediaItems();
   const snap = await getDocs(collection(db, 'media'));
   return snap.docs.map((d) => ({ ...(d.data() as Omit<MediaItem, 'id'>), id: d.id }));
 }
 
 export async function getMediaItem(id: string): Promise<MediaItem | null> {
+  if (DEMO) return demoContent.getMediaItem(id);
   const snap = await getDoc(doc(db, 'media', id));
   return snap.exists() ? { ...(snap.data() as Omit<MediaItem, 'id'>), id: snap.id } : null;
 }
 
 export async function getFaq(): Promise<FaqItem[]> {
+  if (DEMO) return DEFAULT_FAQ;
   try {
     const snap = await getDocs(collection(db, 'faq'));
     const items = snap.docs.map((d) => ({ ...(d.data() as Omit<FaqItem, 'id'>), id: d.id }));
@@ -244,6 +250,7 @@ export async function getFaq(): Promise<FaqItem[]> {
 }
 
 export async function getWeeklyInstrument(): Promise<WeeklySurveyInstrument> {
+  if (DEMO) return PLACEHOLDER_WEEKLY_SURVEY;
   try {
     const snap = await getDoc(doc(db, 'surveys', 'weekly'));
     return snap.exists() ? (snap.data() as WeeklySurveyInstrument) : PLACEHOLDER_WEEKLY_SURVEY;
@@ -253,6 +260,7 @@ export async function getWeeklyInstrument(): Promise<WeeklySurveyInstrument> {
 }
 
 export async function getStudyConfig(): Promise<StudyConfig> {
+  if (DEMO) return { ...DEFAULT_STUDY_CONFIG, contactEmail: 'peach-study@example.edu' };
   try {
     const snap = await getDoc(doc(db, 'appConfig', 'study'));
     return snap.exists() ? { ...DEFAULT_STUDY_CONFIG, ...(snap.data() as StudyConfig) } : DEFAULT_STUDY_CONFIG;

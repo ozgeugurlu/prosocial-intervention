@@ -17,6 +17,7 @@ import { WebView } from 'react-native-webview';
 import { ThemedText } from '@/components/themed-text';
 import { Fonts } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
+import { DEMO } from '@/utils/demo';
 import type { MediaItem } from '@/utils/schema';
 
 interface MediaPlayerProps {
@@ -57,7 +58,7 @@ export function MediaPlayer({ item, width, onPlay }: MediaPlayerProps) {
   const start = () => {
     setStarted(true);
     onPlay?.();
-    if (Platform.OS === 'web') {
+    if (Platform.OS === 'web' && !DEMO) {
       const href = item.youtubeId ? `https://www.youtube-nocookie.com/embed/${item.youtubeId}` : item.url;
       if (href) Linking.openURL(href);
     }
@@ -67,6 +68,16 @@ export function MediaPlayer({ item, width, onPlay }: MediaPlayerProps) {
     return (
       <View style={[styles.poster, { width, height: 64, backgroundColor: theme.muted }]}>
         <ThemedText themeColor="textSecondary">This item is not available yet.</ThemedText>
+      </View>
+    );
+  }
+
+  if (DEMO && started) {
+    return (
+      <View style={[styles.poster, { width, height, backgroundColor: isAudio ? theme.muted : '#1d1a15' }]}>
+        <ThemedText style={[styles.posterTitle, isAudio && { color: theme.text, fontSize: 15 }]}>
+          {isAudio ? 'Audio plays here in the app' : 'Video plays here in the app'}
+        </ThemedText>
       </View>
     );
   }
@@ -82,11 +93,9 @@ export function MediaPlayer({ item, width, onPlay }: MediaPlayerProps) {
         <View style={[styles.playCircle, { backgroundColor: theme.primary }]}>
           {isAudio ? <Headphones size={20} color="#3D3428" /> : <Play size={20} color="#3D3428" fill="#3D3428" />}
         </View>
-        {!isAudio && (
-          <ThemedText style={styles.posterTitle} numberOfLines={2}>
-            {item.title}
-          </ThemedText>
-        )}
+        <ThemedText style={[styles.posterTitle, isAudio && { color: theme.text, fontSize: 15 }]} numberOfLines={2}>
+          {item.title}
+        </ThemedText>
         {item.durationLabel ? (
           <ThemedText style={[styles.duration, isAudio && { color: theme.textSecondary }]}>{item.durationLabel}</ThemedText>
         ) : null}

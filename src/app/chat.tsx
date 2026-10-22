@@ -221,7 +221,11 @@ function ChatSession({ slot, onSlotChange }: { slot: Slot; onSlotChange: (s: Slo
       );
     }
     const isPercy = item.role === 'percy';
-    const text = isPercy ? item.text.replace(/\{name\}/g, userName ?? 'there') : item.text;
+    const text = isPercy
+      ? userName
+        ? item.text.replace(/\{name\}/g, userName)
+        : item.text.replace(/[ ,]*\{name\}/g, '')
+      : item.text;
     return (
       <View style={isPercy ? styles.rowLeft : styles.rowRight}>
         <View

@@ -15,7 +15,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Platform } from 'react-native';
 
 const firebaseConfig = {
-  apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY,
+  // Preview builds (EXPO_PUBLIC_DEMO=1) never contact Firebase; a placeholder key keeps init happy.
+  apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY ?? (process.env.EXPO_PUBLIC_DEMO === '1' ? 'demo-key' : undefined),
   authDomain: process.env.EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN,
   projectId: process.env.EXPO_PUBLIC_FIREBASE_PROJECT_ID ?? 'marsh-prosocial-intervention',
   storageBucket: process.env.EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET,

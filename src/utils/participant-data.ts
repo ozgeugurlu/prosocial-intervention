@@ -35,6 +35,7 @@ import {
   type Unsubscribe,
 } from 'firebase/firestore';
 
+import { demoData, DEMO } from './demo';
 import { db } from './firebase';
 import type { DailyProgress } from './storage';
 
@@ -118,6 +119,7 @@ function toDate(value: unknown): Date | null {
 // ─── Profile ────────────────────────────────────────────────────────────────
 
 export async function getProfile(uid: string): Promise<ParticipantProfile | null> {
+  if (DEMO) return demoData.getProfile(uid);
   const snap = await getDoc(participantRef(uid));
   if (!snap.exists()) return null;
   const d = snap.data();
@@ -132,12 +134,14 @@ export async function getProfile(uid: string): Promise<ParticipantProfile | null
 }
 
 export async function updateProfile(uid: string, patch: Partial<ParticipantProfile>) {
+  if (DEMO) return demoData.updateProfile(uid, patch);
   await setDoc(participantRef(uid), { ...patch, updatedAt: serverTimestamp() }, { merge: true });
 }
 
 // ─── Daily tasks ────────────────────────────────────────────────────────────
 
 export async function saveDayTask(uid: string, day: number, task: keyof DailyProgress, done: boolean) {
+  if (DEMO) return demoData.saveDayTask(uid, day, task, done);
   await setDoc(
     doc(sub(uid, 'days'), String(day)),
     { day, [task]: done, [`${task} at`]: done ? serverTimestamp() : null },
@@ -146,6 +150,7 @@ export async function saveDayTask(uid: string, day: number, task: keyof DailyPro
 }
 
 export async function getAllDays(uid: string): Promise<Record<number, DailyProgress>> {
+  if (DEMO) return demoData.getAllDays(uid);
   const snap = await getDocs(sub(uid, 'days'));
   const out: Record<number, DailyProgress> = {};
   snap.forEach((s) => {
@@ -163,6 +168,7 @@ export async function getAllDays(uid: string): Promise<Record<number, DailyProgr
 // ─── Surveys ────────────────────────────────────────────────────────────────
 
 export async function saveDailySurvey(uid: string, record: DailySurveyRecord) {
+  if (DEMO) return demoData.saveDailySurvey(uid, record);
   await setDoc(doc(sub(uid, 'dailySurveys'), String(record.day)), {
     ...record,
     submittedAt: serverTimestamp(),
@@ -170,11 +176,13 @@ export async function saveDailySurvey(uid: string, record: DailySurveyRecord) {
 }
 
 export async function getDailySurveys(uid: string): Promise<DailySurveyRecord[]> {
+  if (DEMO) return demoData.getDailySurveys(uid);
   const snap = await getDocs(sub(uid, 'dailySurveys'));
   return snap.docs.map((s) => s.data() as DailySurveyRecord);
 }
 
 export async function saveWeeklySurvey(uid: string, record: WeeklySurveyRecord) {
+  if (DEMO) return demoData.saveWeeklySurvey(uid, record);
   await setDoc(doc(sub(uid, 'weeklySurveys'), record.weekOf), {
     ...record,
     submittedAt: serverTimestamp(),
@@ -182,6 +190,7 @@ export async function saveWeeklySurvey(uid: string, record: WeeklySurveyRecord) 
 }
 
 export async function getWeeklySurveys(uid: string): Promise<WeeklySurveyRecord[]> {
+  if (DEMO) return demoData.getWeeklySurveys(uid);
   const snap = await getDocs(sub(uid, 'weeklySurveys'));
   return snap.docs
     .map((s) => {
@@ -194,10 +203,12 @@ export async function getWeeklySurveys(uid: string): Promise<WeeklySurveyRecord[
 // ─── Goals ──────────────────────────────────────────────────────────────────
 
 export async function saveGoal(uid: string, goal: WeeklyGoal) {
+  if (DEMO) return demoData.saveGoal(uid, goal);
   await setDoc(doc(sub(uid, 'goals'), goal.weekOf), { ...goal, updatedAt: serverTimestamp() });
 }
 
 export async function getGoals(uid: string): Promise<WeeklyGoal[]> {
+  if (DEMO) return demoData.getGoals(uid);
   const snap = await getDocs(sub(uid, 'goals'));
   return snap.docs
     .map((s) => {
@@ -215,10 +226,12 @@ export async function saveChatLog(
   sessionId: string,
   data: { scriptId: string; day: number; slot: string; events: ChatEvent[]; completed: boolean },
 ) {
+  if (DEMO) return demoData.saveChatLog(uid, sessionId, data);
   await setDoc(doc(sub(uid, 'chatLogs'), sessionId), { ...data, updatedAt: serverTimestamp() }, { merge: true });
 }
 
 export async function getChatLog(uid: string, sessionId: string): Promise<{ events: ChatEvent[]; completed: boolean } | null> {
+  if (DEMO) return demoData.getChatLog(uid, sessionId);
   const snap = await getDoc(doc(sub(uid, 'chatLogs'), sessionId));
   if (!snap.exists()) return null;
   const d = snap.data();
@@ -228,10 +241,12 @@ export async function getChatLog(uid: string, sessionId: string): Promise<{ even
 // ─── Media unlocks ──────────────────────────────────────────────────────────
 
 export async function unlockMedia(uid: string, mediaId: string, source: string) {
+  if (DEMO) return demoData.unlockMedia(uid, mediaId);
   await setDoc(doc(sub(uid, 'unlocks'), mediaId), { source, unlockedAt: serverTimestamp() }, { merge: true });
 }
 
 export async function getUnlockedMediaIds(uid: string): Promise<Set<string>> {
+  if (DEMO) return demoData.getUnlockedMediaIds(uid);
   const snap = await getDocs(sub(uid, 'unlocks'));
   return new Set(snap.docs.map((s) => s.id));
 }
@@ -239,6 +254,7 @@ export async function getUnlockedMediaIds(uid: string): Promise<Set<string>> {
 // ─── Support (contact the research team) ────────────────────────────────────
 
 export function watchSupportMessages(uid: string, cb: (msgs: SupportMessage[]) => void): Unsubscribe {
+  if (DEMO) return demoData.watchSupport(uid, cb);
   const q = query(sub(uid, 'support'), orderBy('createdAt', 'asc'));
   return onSnapshot(q, (snap) => {
     cb(
@@ -251,12 +267,14 @@ export function watchSupportMessages(uid: string, cb: (msgs: SupportMessage[]) =
 }
 
 export async function sendSupportMessage(uid: string, text: string) {
+  if (DEMO) return demoData.sendSupport(uid, text);
   await addDoc(sub(uid, 'support'), { from: 'participant', text, createdAt: serverTimestamp() });
 }
 
 // ─── Research-team feedback ─────────────────────────────────────────────────
 
 export async function getTeamFeedback(uid: string): Promise<TeamFeedback[]> {
+  if (DEMO) return demoData.getTeamFeedback(uid);
   const snap = await getDocs(sub(uid, 'feedback'));
   return snap.docs
     .map((s) => {

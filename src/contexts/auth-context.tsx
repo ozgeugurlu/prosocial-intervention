@@ -22,6 +22,7 @@ import {
 import { doc, runTransaction, serverTimestamp } from 'firebase/firestore';
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 
+import { DEMO, demoSignIn, demoSignOut } from '@/utils/demo';
 import { auth, db } from '@/utils/firebase';
 
 const LOGIN_DOMAIN = 'peach-study.invalid';
@@ -62,23 +63,26 @@ function friendlyError(e: unknown): AuthError {
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(!DEMO);
   // While an account is being created and its study ID claimed, keep the app on
   // the sign-up screen (so a failed claim can show its error there).
   const [signingUp, setSigningUp] = useState(false);
 
-  useEffect(
-    () =>
-      onAuthStateChanged(auth, (u) => {
-        setUser(u);
-        setIsLoading(false);
-      }),
-    [],
-  );
+  useEffect(() => {
+    if (DEMO) return;
+    return onAuthStateChanged(auth, (u) => {
+      setUser(u);
+      setIsLoading(false);
+    });
+  }, []);
 
   const signIn = async (rawId: string, password: string) => {
     const studyId = normalizeStudyId(rawId);
     if (!studyId) throw new AuthError('Please enter your study ID.');
+    if (DEMO) {
+      setUser(demoSignIn(studyId, false) as unknown as User);
+      return;
+    }
     try {
       await signInWithEmailAndPassword(auth, toLoginEmail(studyId), password);
     } catch (e) {
@@ -90,6 +94,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const studyId = normalizeStudyId(rawId);
     if (!studyId) throw new AuthError('Please enter the study ID from the research team.');
     if (password.length < 8) throw new AuthError('Please choose a password of at least 8 characters.');
+    if (DEMO) {
+      setUser(demoSignIn(studyId, true) as unknown as User);
+      return;
+    }
 
     let created: User | null = null;
     setSigningUp(true);
@@ -129,6 +137,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signOut = async () => {
+    if (DEMO) {
+      demoSignOut();
+      setUser(null);
+      return;
+    }
     await fbSignOut(auth);
   };
 

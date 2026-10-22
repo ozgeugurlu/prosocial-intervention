@@ -32,17 +32,17 @@ const TASK_LABELS: Record<(typeof TASKS)[number], string> = {
   'night survey': 'Reflection',
 };
 
-// Placeholder badge names for weeks 4–9: research team to rename.
+// Badge names for weeks 4–9 are placeholders: research team to rename to match the weekly themes.
 const BADGES: { title: string; icon: BadgeIconType }[] = [
   { title: 'First Steps', icon: 'sprout' },
   { title: 'Empathy Builder', icon: 'heart' },
   { title: 'Deep Listener', icon: 'ear' },
-  { title: 'Week 4', icon: 'sprout' },
-  { title: 'Week 5', icon: 'heart' },
-  { title: 'Week 6', icon: 'ear' },
-  { title: 'Week 7', icon: 'sprout' },
-  { title: 'Week 8', icon: 'heart' },
-  { title: 'Week 9', icon: 'ear' },
+  { title: 'Kind Habit', icon: 'sprout' },
+  { title: 'Generous Spirit', icon: 'heart' },
+  { title: 'Good Neighbor', icon: 'ear' },
+  { title: 'Bridge Builder', icon: 'sprout' },
+  { title: 'Steady Helper', icon: 'heart' },
+  { title: 'Kindness Champion', icon: 'ear' },
 ];
 /** A week's badge is earned with at least this many active days in it. */
 const BADGE_MIN_ACTIVE_DAYS = 4;
