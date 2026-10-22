@@ -29,7 +29,7 @@ Branching beyond per-option replies is not supported yet; tell the developer if 
 
 ## Media library (`/media/{id}`)
 
-Each Library week holds **two videos and two flashcards** (plus, from week 2, the participant's if-then plan at the top). Give each item its `week` and an `order` so videos and cards alternate.
+Each Library week holds **two videos and two flashcards** (plus the participant's if-then plan for that week at the top). Give each item its `week` and an `order` so videos and cards alternate.
 
 | Field | Notes |
 |---|---|

@@ -1,6 +1,6 @@
 /**
  * Library: an Onboarding drop-down (content with week 0), then one drop-down per program week. Each open week lists, in order:
- *   1. the participant's if-then plan for that week (from week 2 on),
+ *   1. the participant's if-then plan for that week,
  *   2. the week's psychoeducation video (unless an item's `order` places it earlier),
  *   3. the rest of the week's videos, audio, messages and flashcards.
  * Weeks after the current one stay locked until the participant reaches them.
@@ -177,7 +177,7 @@ export default function LibraryScreen() {
           {Array.from({ length: weeks }, (_, i) => i + 1).map((week) => {
             const locked = week > reachedWeek;
             const entries = locked ? [] : entriesFor(week);
-            const count = entries.length + (week > 1 ? 1 : 0); // + the if-then plan reminder
+            const count = entries.length + 1; // + the if-then plan reminder
             return (
               <WeekDrawer
                 key={week}
@@ -187,8 +187,7 @@ export default function LibraryScreen() {
                 defaultOpen={week === reachedWeek}
                 locked={locked}
               >
-                {/* Week 1 introduces if-then plans, so there is no plan to remind yet. */}
-                {week > 1 && <IfThenReminder goal={goalFor(week)} isCurrent={week === reachedWeek} />}
+                <IfThenReminder goal={goalFor(week)} isCurrent={week === reachedWeek} />
                 {entries.map((e, i) =>
                   e.kind === 'media' ? (
                     <MediaRow key={e.item.id} item={e.item} onPress={() => setOpen(e.item)} />
