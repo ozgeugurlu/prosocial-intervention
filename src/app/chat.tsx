@@ -22,6 +22,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { MediaPlayer } from '@/components/media-player';
+import { PrestartCard } from '@/components/prestart-card';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { EVENING_OPENS_AT_HOUR, formatHour } from '@/constants/study';
@@ -41,8 +42,15 @@ const TYPING_DELAY_MS = 900;
 const defaultSlot = (): Slot => (new Date().getHours() >= EVENING_OPENS_AT_HOUR ? 'evening' : 'morning');
 
 export default function ChatScreen() {
-  const { currentDay } = useStudy();
+  const { currentDay, hasStarted } = useStudy();
   const [slot, setSlot] = useState<Slot>(defaultSlot);
+  if (!hasStarted) {
+    return (
+      <ThemedView style={{ flex: 1, justifyContent: 'center', padding: Spacing.four }}>
+        <PrestartCard compact />
+      </ThemedView>
+    );
+  }
   // Keyed so all session state resets when the day or slot changes.
   return <ChatSession key={`d${currentDay}-${slot}`} slot={slot} onSlotChange={setSlot} />;
 }

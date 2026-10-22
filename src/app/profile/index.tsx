@@ -24,7 +24,7 @@ export default function MeScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const { signOut } = useAuth();
-  const { studyId, userName, reminders, currentDay, clearLocalData } = useStudy();
+  const { studyId, userName, reminders, currentDay, hasStarted, clearLocalData } = useStudy();
 
   const rows: Row[] = [
     { icon: BarChart3, label: 'My participation', detail: 'Your progress and feedback', href: '/profile/feedback' },
@@ -63,7 +63,7 @@ export default function MeScreen() {
         <View style={styles.header}>
           <ThemedText style={styles.title}>{userName ? `Hi, ${userName}` : 'Me'}</ThemedText>
           <ThemedText themeColor="textSecondary" style={styles.subtitle}>
-            Study ID {studyId} · Day {currentDay}
+            Study ID {studyId} · {hasStarted ? `Day ${currentDay}` : 'Starts Sunday'}
           </ThemedText>
         </View>
 

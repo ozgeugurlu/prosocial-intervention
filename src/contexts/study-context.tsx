@@ -23,9 +23,13 @@ interface StudyContextType {
   uid: string | null;
   studyId: string | null;
   startDate: string | null;
+  /** Study day 1–63; stays 1 until the program starts. */
   currentDay: number;
   currentWeek: number;
   daysElapsed: number;
+  /** False between onboarding and the first Sunday (the baseline period). */
+  hasStarted: boolean;
+  daysUntilStart: number;
   isLoading: boolean;
   isOnboarded: boolean;
   isTutorialCompleted: boolean;
@@ -39,6 +43,13 @@ interface StudyContextType {
   updateProgress: (day: number, task: keyof DailyProgress, completed: boolean) => Promise<void>;
   /** Clears this device's cached study data (used on sign-out). */
   clearLocalData: () => Promise<void>;
+}
+
+/** Midnight (local) of the given day if it is a Sunday, otherwise of the next Sunday. */
+export function nextSundayOnOrAfter(date: Date): Date {
+  const d = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  d.setDate(d.getDate() + ((7 - d.getDay()) % 7));
+  return d;
 }
 
 const StudyContext = createContext<StudyContextType | undefined>(undefined);
@@ -116,12 +127,14 @@ export function StudyProvider({ children }: { children: ReactNode }) {
   };
 
   const completeOnboarding = async () => {
-    const today = new Date().toISOString();
-    setStartDateState(today);
+    // Everyone starts on a Sunday: the program begins on the next Sunday
+    // (today, if onboarding happens on a Sunday). Days before it are baseline.
+    const start = nextSundayOnOrAfter(new Date()).toISOString();
+    setStartDateState(start);
     setIsOnboarded(true);
     await storage.setItem('@percy_onboarded', true);
-    await storage.setItem('@percy_start_date', today);
-    if (uid) await updateProfile(uid, { onboarded: true, startDate: today });
+    await storage.setItem('@percy_start_date', start);
+    if (uid) await updateProfile(uid, { onboarded: true, startDate: start });
   };
 
   const completeTutorial = async () => {
@@ -165,14 +178,17 @@ export function StudyProvider({ children }: { children: ReactNode }) {
   };
 
   // Calendar-day math in the participant's local time zone
-  let daysElapsed = 0;
+  let rawElapsed = 0;
   if (startDate) {
     const start = new Date(startDate);
     const startLocal = new Date(start.getFullYear(), start.getMonth(), start.getDate());
     const today = new Date();
     const todayLocal = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-    daysElapsed = Math.max(0, Math.round((todayLocal.getTime() - startLocal.getTime()) / 86_400_000));
+    rawElapsed = Math.round((todayLocal.getTime() - startLocal.getTime()) / 86_400_000);
   }
+  const hasStarted = !!startDate && rawElapsed >= 0;
+  const daysUntilStart = Math.max(0, -rawElapsed);
+  const daysElapsed = Math.max(0, rawElapsed);
   const currentDay = daysElapsed + 1;
   const currentWeek = Math.floor(daysElapsed / 7) + 1;
 
@@ -185,6 +201,8 @@ export function StudyProvider({ children }: { children: ReactNode }) {
         currentDay,
         currentWeek,
         daysElapsed,
+        hasStarted,
+        daysUntilStart,
         isLoading,
         isOnboarded,
         isTutorialCompleted,

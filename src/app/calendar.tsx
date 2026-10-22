@@ -8,6 +8,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { BadgeCard, type BadgeIconType } from '@/components/badge-card';
 import { HomeCard } from '@/components/home-card';
+import { PrestartCard } from '@/components/prestart-card';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { BottomTabInset, Fonts, Spacing } from '@/constants/theme';
@@ -49,7 +50,7 @@ const BADGE_MIN_ACTIVE_DAYS = 4;
 export default function CalendarScreen() {
   const theme = useTheme();
   const insets = useSafeAreaInsets();
-  const { currentDay, progress, startDate } = useStudy();
+  const { currentDay, progress, startDate, hasStarted } = useStudy();
   const { config } = useParticipantRecords();
   const [selected, setSelected] = useState<number>(currentDay);
 
@@ -88,6 +89,8 @@ export default function CalendarScreen() {
             {weeks}-week prosociality program
           </ThemedText>
         </View>
+
+        {!hasStarted && <PrestartCard compact />}
 
         {/* Streak */}
         <HomeCard style={styles.streakCard}>
@@ -154,7 +157,7 @@ export default function CalendarScreen() {
                 {Array.from({ length: 7 }, (_, i) => {
                   const day = w * 7 + i + 1;
                   if (day > studyLength) return <View key={i} style={styles.dayCell} />;
-                  const state = dayState(progress, day, currentDay);
+                  const state = hasStarted ? dayState(progress, day, currentDay) : 'upcoming';
                   const c = colors[state];
                   const date = startDate ? dateForStudyDay(startDate, day) : null;
                   const isSel = selected === day;

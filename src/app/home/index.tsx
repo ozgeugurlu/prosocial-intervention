@@ -6,6 +6,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { CircularProgress } from '@/components/circular-progress';
 import { GoalBoard } from '@/components/goal-board';
 import { HomeCard } from '@/components/home-card';
+import { PrestartCard } from '@/components/prestart-card';
 import { ProsocialityCard } from '@/components/prosociality-card';
 import { RollingScoreCard } from '@/components/rolling-score-card';
 import { ThemedText } from '@/components/themed-text';
@@ -73,7 +74,7 @@ export default function HomeScreen() {
   const theme = useTheme();
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const { currentWeek, currentDay, daysElapsed, progress, userName, startDate } = useStudy();
+  const { currentWeek, currentDay, daysElapsed, progress, userName, startDate, hasStarted } = useStudy();
   const { goals, weekly, config } = useParticipantRecords();
 
   const today: Partial<DailyProgress> = progress[currentDay] ?? {};
@@ -101,7 +102,8 @@ export default function HomeScreen() {
           <View style={[styles.badge, { borderColor: theme.primary }]}>
             <View style={[styles.badgeDot, { backgroundColor: theme.primary }]} />
             <ThemedText style={styles.badgeText}>
-              Week {currentWeek} • {DAY_NAMES[new Date().getDay()]}
+              {hasStarted ? `Week ${currentWeek} • ` : 'Getting ready • '}
+              {DAY_NAMES[new Date().getDay()]}
             </ThemedText>
           </View>
           <Pressable
@@ -124,6 +126,10 @@ export default function HomeScreen() {
           </ThemedText>
         </View>
 
+        {!hasStarted ? (
+          <PrestartCard />
+        ) : (
+          <>
         {/* Weekly survey (Sun–Tue by default) */}
         {window.isOpen && !weeklyDone && (
           <Pressable onPress={() => go('/home/weekly-survey')} style={[styles.weeklyCta, { backgroundColor: accent }]}>
@@ -191,6 +197,8 @@ export default function HomeScreen() {
 
         <ProsocialityCard records={weekly} />
         <RollingScoreCard />
+          </>
+        )}
       </ScrollView>
     </ThemedView>
   );
